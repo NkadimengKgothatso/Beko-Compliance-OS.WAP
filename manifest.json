@@ -1,7 +1,7 @@
 {
   "name": "Beko Compliance OS",
   "short_name": "BekoOS",
-  "start_url": "./fPage.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0999e7",

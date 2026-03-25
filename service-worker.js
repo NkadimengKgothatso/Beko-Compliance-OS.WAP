@@ -1,6 +1,6 @@
 const CACHE_NAME = "beko-cache-v1";
 const urlsToCache = [
-  "./fpage.html",
+  "./index.html",
   "./login.html",
   "./login.css",
   "./login.js",
