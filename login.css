@@ -140,21 +140,7 @@ button:hover {
     text-align: center;
 }
 
-.ghost {
-    background: transparent;
-    border: 2px solid #fff;
-    border-radius: 20px;
-    color: #fff;
-    padding: 12px 24px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
 
-.ghost:hover {
-    background: rgba(255,255,255,0.1);
-    transform: translateY(-2px);
-}
 
 select {
     width: 100%;
@@ -197,17 +183,21 @@ select {
     font-weight: bold;
 }
 
-.google-btn {
-    background: #db4437;
-    color: white;
+.social-login button {
+    width: 100%;
+    margin: 8px 0;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* space between icon and text */
 }
 
-.facebook-btn {
-    background: #4267B2;
-    color: white;
-}
-
-.github-btn {
-    background: #333;
-    color: white;
+.social-login i {
+    font-size: 16px;
 }
