@@ -8,28 +8,66 @@
 </head>
 <body>
 
-<div class="container" id="container">
+    <div class="container" id="container">
 
-    <!-- SIGN UP FORM -->
+        <!-- SIGN UP FORM -->
     <div class="form-container sign-up-container">
         <form>
             <h1>Create Account</h1>
-            <input type="text" placeholder="Name" aria-label="Name" required />
+
+            <!-- <input type="text" placeholder="Name" aria-label="Name" required />
             <input type="email" placeholder="Email" aria-label="Email" required />
             <input type="password" placeholder="Password" aria-label="Password" required />
+
+            <p>Role</p>
+            <select name="role" required>
+                <option value="" disabled selected>Select Role</option>
+                <option value="client">Client</option>
+                <option value="admin">Admin</option>
+            </select>
+
             <button type="submit">Sign Up</button>
+
+            DIVIDER -->
+            <!-- <div class="divider">
+                <span>OR</span>
+            </div> -->
+
+            <!-- THIRD PARTY OPTIONS -->
+            <div class="social-login">
+                <button type="button" class="google-btn">
+                    Sign up with Google
+                </button>
+
+                <button type="button" class="facebook-btn">
+                    Sign up with Facebook
+                </button>
+
+                <button type="button" class="github-btn">
+                    Sign up with GitHub
+                </button>
+            </div>
         </form>
     </div>
 
     <!-- SIGN IN FORM -->
-    <div class="form-container sign-in-container">
-        <form>
-            <h1>Sign In</h1>
-            <input type="email" placeholder="Email" aria-label="Email" required />
-            <input type="password" placeholder="Password" aria-label="Password" required />
-            <button type="submit">Sign In</button>
-        </form>
-    </div>
+  <div class="form-container sign-in-container">
+    <form>
+        <h1>Sign In</h1>
+
+        <input type="email" placeholder="Email" aria-label="Email" required />
+        <input type="password" placeholder="Password" aria-label="Password" required />
+
+        <!-- ROLE SELECT -->
+        <select required>
+            <option value="" disabled selected>Select Role</option>
+            <option value="client">Client</option>
+            <option value="admin">Admin</option>
+        </select>
+
+        <button type="submit">Sign In</button>
+    </form>
+</div>
 
     <!-- OVERLAY -->
     <div class="overlay-container">
