@@ -1,10 +1,13 @@
+/* RESET & BASE */
 * {
     box-sizing: border-box;
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    background: linear-gradient(to right, #cfd9df, #e2ebf0);
+    background: none;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -13,13 +16,16 @@ body {
 
 /* MAIN CONTAINER */
 .container {
-    background: #fff;
+    background:none;
     border-radius: 15px;
     width: 800px;
-    max-width: 100%;
+    max-width: 90%;
     min-height: 500px;
     position: relative;
     overflow: hidden;
+   
+    
+    transition: transform 0.6s ease-in-out;
 }
 
 /* FORMS */
@@ -42,7 +48,7 @@ body {
     z-index: 1;
 }
 
-/* ACTIVE STATE */
+/* ACTIVE STATE FOR FORM TOGGLE */
 .container.active .sign-in-container {
     transform: translateX(-100%);
     opacity: 0;
@@ -55,7 +61,7 @@ body {
     z-index: 5;
 }
 
-/* FORM STYLE */
+/* FORM STYLING */
 form {
     background: #fff;
     display: flex;
@@ -63,6 +69,7 @@ form {
     padding: 50px;
     height: 100%;
     justify-content: center;
+    transition: all 0.4s ease;
 }
 
 input {
@@ -70,19 +77,27 @@ input {
     padding: 12px;
     border-radius: 8px;
     border: 1px solid #ddd;
+    font-size: 1rem;
 }
 
 button {
-    margin-top: 10px;
+    margin-top: 20px;
     padding: 12px;
     border-radius: 20px;
     border: none;
-    background: #3b4cca;
+    background: linear-gradient(135deg, rgb(43, 219, 175), #0999e7);
     color: white;
+    font-weight: bold;
     cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* OVERLAY */
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* OVERLAY CONTAINER */
 .overlay-container {
     position: absolute;
     top: 0;
@@ -90,25 +105,31 @@ button {
     width: 50%;
     height: 100%;
     overflow: hidden;
-    z-index: 100;
+    z-index: 100; 
 }
 
+/* OVERLAY WITH FUN BORDER-RADIUS */
 .overlay {
-    background: linear-gradient(to right, #3b4cca, #5a6df0);
+    background: linear-gradient(to right, #0999e7, #23cd61);
     color: white;
     position: relative;
-    left: -100%;
-    width: 200%;
+    left: -100%; 
+    width: 200%; 
     height: 100%;
     display: flex;
-    transition: transform 0.6s ease-in-out;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.6s ease-in-out, border-radius 1.5s ease-in-out;
+    border-radius: 40% 60% 50% 50% / 50% 40% 60% 50%;
 }
 
+/* ACTIVE STATE FOR OVERLAY SLIDE */
 .container.active .overlay {
     transform: translateX(50%);
+    border-radius: 60% 40% 50% 30% / 30% 50% 60% 40%;
 }
 
-/* PANELS */
+/* OVERLAY PANELS */
 .overlay-panel {
     width: 50%;
     display: flex;
@@ -116,9 +137,21 @@ button {
     align-items: center;
     justify-content: center;
     padding: 40px;
+    text-align: center;
 }
 
 .ghost {
     background: transparent;
     border: 2px solid #fff;
+    border-radius: 20px;
+    color: #fff;
+    padding: 12px 24px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.ghost:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-2px);
 }
