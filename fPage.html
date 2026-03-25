@@ -4,84 +4,84 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Welcome</title>
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0999e7">
+
 <style>
-    /* Reset */
-    * {
-        margin: 0;
-        padding: 0;
-        
-    }
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    body, html {
-        height: 100%;
-        font-family: Arial, sans-serif;
-       
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        overflow: hidden;
-    }
+body, html {
+    height: 100%;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    overflow: hidden;
+    background: #f0f0f0;
+}
 
-    /* Logo styling */
-    .logo-container {
-        opacity: 0;
-        animation: logoFade 2s ease-in forwards, logoFadeOut 1s ease-in forwards;
-        animation-delay: 0s, 3s; /* fade in immediately, fade out after 3s */
-    }
+/* Logo styling */
+.logo-container {
+    opacity: 0;
+    animation: logoFade 2s ease-in forwards, logoFadeOut 1s ease-in forwards;
+    animation-delay: 0s, 3s; /* fade in immediately, fade out after 3s */
+}
 
-    .logo-container img {
-        max-width: 300px;
-        width: 80%;
-        height: auto;
-        border-radius: 20px;
-    }
+.logo-container img {
+    max-width: 300px;
+    width: 80%;
+    height: auto;
+    border-radius: 20px;
+}
 
-    /* Text styling */
-    .text-container {
-        opacity: 0;
-        transform: translateY(20px);
-        animation: showText 1.5s ease-out forwards;
-        animation-delay: 4s; /* appear after logo fades out */
-    }
+/* Text styling */
+.text-container {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: showText 1.5s ease-out forwards;
+    animation-delay: 4s; /* appear after logo fades out */
+}
 
-    .text-container h1 {
-        font-size: 2rem;
-        font-weight: 700;
-        height: 100;
-        size: 50%;
-        text-align: center;
-        background: linear-gradient(90deg, #0b0d1a, #898686, #1a8cac, #1dcde1);
-        background-size: 300% 300%;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        animation: gradientShift 5s ease infinite;
-    }
+.text-container h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    background: linear-gradient(90deg, #0b0d1a, #898686, #1a8cac, #1dcde1);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 5s ease infinite;
+}
 
-    /* Keyframes for logo fade in */
-    @keyframes logoFade {
-        0% { opacity: 0; }
-        100% { opacity: 1; }
-    }
+/* Keyframes */
+@keyframes logoFade {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
 
-    /* Keyframes for logo fade out */
-    @keyframes logoFadeOut {
-        0% { opacity: 1; }
-        100% { opacity: 0; }
-    }
+@keyframes logoFadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
 
-    /* Keyframes for text fade in */
-    @keyframes showText {
-        0% { opacity: 0; transform: translateY(20px); }
-        100% { opacity: 1; transform: translateY(0); }
-    }
+@keyframes showText {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
 
-    /* Gradient shift */
-    @keyframes gradientShift {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
 </style>
 </head>
 <body>
@@ -95,10 +95,19 @@
 </div>
 
 <script>
-    // Redirect to login page after 7 seconds
-    setTimeout(() => {
-        window.location.href = "login.html";
-    }, 7000);
+  // Redirect to login page after 7 seconds
+  setTimeout(() => {
+    window.location.href = "login.html";
+  }, 7000);
+
+  // Register service worker for PWA
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("service-worker.js")
+        .then(reg => console.log("Service Worker registered", reg))
+        .catch(err => console.log("Service Worker registration failed", err));
+    });
+  }
 </script>
 
 </body>

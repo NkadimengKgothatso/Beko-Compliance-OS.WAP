@@ -1,32 +1,32 @@
-const CACHE_NAME = "bekoos-cache-v1";
+const CACHE_NAME = "beko-cache-v1";
 const urlsToCache = [
-  "./fPage.html",
+  "./fpage.html",
   "./login.html",
-  "./login.css",
-  "./logo-192.png",
-  "./logo-512.png",
-  "./login.js"
+  "./bg.jpeg",
+  "./login.js",
+  "./manifest.json",
+  "./login.css"
 ];
 
-// Install event
+// Install: cache files
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(urlsToCache);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
   );
 });
 
-// Activate event
+// Activate: remove old caches
 self.addEventListener("activate", (event) => {
-  console.log("Service Worker activated");
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(keys.map(key => key !== CACHE_NAME ? caches.delete(key) : null))
+    )
+  );
 });
 
-// Fetch event - serve cached content when offline
+// Fetch: serve cached first
 self.addEventListener("fetch", (event) => {
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
+    caches.match(event.request).then(response => response || fetch(event.request))
   );
 });
