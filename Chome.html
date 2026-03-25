@@ -3,14 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>Client Dashboard</title>
-    <link rel="stylesheet" href="Chome.css">
+    <link rel="stylesheet" href="cHome.css">
+    <script> src="cHome.js" </script>
 </head>
 <body>
 
-<header class="navbar">
+<button class="menu-toggle" id="menuToggle">☰</button>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
     <h2>Beko Compliance OS</h2>
+
+    <nav>
+        <a href="#">Dashboard</a>
+        <a href="#">Compliance</a>
+        <a href="#">Documents</a>
+        <a href="#">Learning Hub</a>
+        <a href="#">Help</a>
+    </nav>
+
     <button class="logout-btn">Logout</button>
-</header>
+</div>
 
 <main class="dashboard">
 
