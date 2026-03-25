@@ -36,24 +36,23 @@
     </div>
 
     <!-- SIGN IN FORM -->
-  <div class="form-container sign-in-container">
-    <form>
-        <h1>Sign In</h1>
+    <div class="form-container sign-in-container">
+        <form id="loginForm">
+            <h1>Sign In</h1>
 
-        <input type="email" placeholder="Email" aria-label="Email" required />
-        <input type="password" placeholder="Password" aria-label="Password" required />
+            <input type="email" placeholder="Email" required />
+            <input type="password" placeholder="Password" required />
 
-        <!-- ROLE SELECT -->
-        <select required>
-            <option value="" disabled selected>Select Role</option>
-            <option value="client">Client</option>
-            <option value="admin">Admin</option>
-        </select>
+            <!-- ROLE SELECT -->
+            <select id="role" required>
+                <option value="" disabled selected>Select Role</option>
+                <option value="client">Client</option>
+                <option value="admin">Admin</option>
+            </select>
 
-        <button type="submit">Sign In</button>
-    </form>
-</div>
-
+            <button type="submit">Sign In</button>
+        </form>
+    </div>
     <!-- OVERLAY -->
     <div class="overlay-container">
         <div class="overlay">
