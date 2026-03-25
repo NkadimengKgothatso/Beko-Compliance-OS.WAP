@@ -2,10 +2,10 @@ const CACHE_NAME = "beko-cache-v1";
 const urlsToCache = [
   "./fpage.html",
   "./login.html",
-  "./bg.jpeg",
+  "./login.css",
   "./login.js",
-  "./manifest.json",
-  "./login.css"
+  "./bg.jpeg",
+  "./manifest.json"
 ];
 
 // Install: cache files
