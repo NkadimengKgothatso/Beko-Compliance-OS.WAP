@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <style>
+        /* Reset some default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #cfd9df, #e2ebf0);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo-container {
+            text-align: center;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        .logo-container img {
+            max-width: 300px;
+            width: 80%;
+            height: auto;
+        }
+
+        .logo-container h1 {
+            margin-top: 20px;
+            font-size: 2rem;
+            color: #333;
+            font-weight: 700;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="logo-container">
+        <img src="bg.jpeg" alt="App Logo">
+        <h1>Welcome to Our App</h1>
+    </div>
+
+    <script>
+        // Redirect to login page after 3 seconds
+        setTimeout(() => {
+            window.location.href = "login.html"; // Make sure your login file is named login.html
+        }, 5000);
+    </script>
+
+    <script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("service-worker.js")
+      .then(reg => console.log("Service Worker registered", reg))
+      .catch(err => console.log("Service Worker registration failed", err));
+    });
+  }
+</script>
+</body>
+</html>
