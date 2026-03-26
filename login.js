@@ -15,23 +15,17 @@ document.addEventListener("DOMContentLoaded", () => {
         container.classList.remove('active');
     });
 
-    // LOGIN FORM HANDLER
-    const loginForm = document.getElementById("loginForm");
-
-    if (loginForm) {
-        loginForm.addEventListener("submit", function(e) {
-            e.preventDefault();
-
-            const role = document.getElementById("role").value;
-
-            if (role === "client") {
-                window.location.href = "Chome.html";
-            } else if (role === "admin") {
-                window.location.href = "admin.html";
-            } else {
-                alert("Please select a role");
-            }
-        });
-    }
 
 });
+
+function handleLogin() {
+    const role = document.getElementById("role").value;
+
+    if (role === "client") {
+        window.location.href = "cHome.html";
+    } else if (role === "admin") {
+        window.location.href = "admin.html";
+    } else {
+        alert("Please select a role");
+    }
+}

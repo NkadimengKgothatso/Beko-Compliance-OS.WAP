@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+   
     font-family: Arial, sans-serif;
 }
 
@@ -12,15 +13,15 @@ body {
 /* NAVBAR */
 /* TOGGLE BUTTON */
 .menu-toggle {
-    position: fixed;
+    position: relative;
     top: 15px;
     left: 15px;
     font-size: 22px;
-    background: #3b4cca;
+    border-radius: 100%;
     color: white;
     border: none;
     padding: 10px 12px;
-    border-radius: 100%;
+   
     cursor: pointer;
     z-index: 1001;
 }
@@ -28,13 +29,14 @@ body {
 /* SIDEBAR */
 .sidebar {
     position: fixed;
-    top: 0;
+    top: 15px;
     left: -250px; /* hidden */
-    width: 250px;
+    width: fit-content;
     height: 100%;
-    background: linear-gradient(to bottom, #0999e7, #23cd61);
-    color: white;
+    background: white;
+    color: black;
     padding: 20px;
+    
     transition: 0.3s;
     display: flex;
     flex-direction: column;
@@ -55,7 +57,7 @@ body {
 }
 
 .sidebar nav a {
-    color: white;
+    color:black;
     text-decoration: none;
     font-weight: bold;
 }
@@ -65,7 +67,7 @@ body {
     background: none;
     border: none;
     padding: 10px;
-    color: white;
+    color: rgb(0, 0, 0);
     border-radius: 5px;
     cursor: pointer;
 }
@@ -73,7 +75,7 @@ body {
 
 .logout-btn:hover{
     transform: translateY(-5px);
-    background-color: rgb(36, 38, 40);
+    background-color: rgb(252, 253, 255);
 }
 
 
