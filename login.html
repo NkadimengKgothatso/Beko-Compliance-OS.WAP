@@ -2,36 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login & Register</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beko Compliance OS - Login</title>
     <link rel="stylesheet" href="login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3b4cca">
 </head>
 <body>
 
-    <div class="container" id="container">
+<div class="container" id="container">
 
-        <!-- SIGN UP FORM -->
+    <!-- SIGN UP FORM -->
     <div class="form-container sign-up-container">
-        <form>
+        <form id="signupForm">
             <h1>Create Account</h1>
             <h3>Sign up with</h3>
-
-        
             <div class="social-login">
-
-                <button  >
-                    <i class="fab fa-google"></i>  Google
-                </button>
-
-                <button  >
-                    <i class="fab fa-facebook-f"></i>  Facebook
-                </button>
-
-                <button  >
-                    <i class="fab fa-github"></i>  GitHub
-                </button>
-
+                <button type="button"><i class="fab fa-google"></i> Google</button>
+                <button type="button"><i class="fab fa-facebook-f"></i> Facebook</button>
+                <button type="button"><i class="fab fa-github"></i> GitHub</button>
             </div>
+            <input type="text" placeholder="Name" required />
+            <input type="email" placeholder="Email" required />
+            <input type="password" placeholder="Password" required />
+            <button type="button" onclick="handleSignup()">Sign Up</button>
         </form>
     </div>
 
@@ -39,47 +34,35 @@
     <div class="form-container sign-in-container">
         <form id="loginForm">
             <h1>Sign In</h1>
-
             <input type="email" placeholder="Email" required />
             <input type="password" placeholder="Password" required />
-
-            <!-- ROLE SELECT -->
             <select id="role" required>
                 <option value="" disabled selected>Select Role</option>
                 <option value="client">Client</option>
                 <option value="admin">Admin</option>
             </select>
-
             <button type="button" onclick="handleLogin()">Sign In</button>
+            
         </form>
     </div>
+
     <!-- OVERLAY -->
     <div class="overlay-container">
         <div class="overlay">
-            
-            <!-- LEFT PANEL (Login Switch) -->
             <div class="overlay-panel overlay-left">
                 <h1>Welcome Back!</h1>
                 <p>Enter your details to login</p>
                 <button class="ghost" id="loginSwitch">Sign In</button>
             </div>
-
-            <!-- RIGHT PANEL (Register Switch) -->
             <div class="overlay-panel overlay-right">
                 <h1>Hello, Friend!</h1>
                 <p>Register with your details</p>
                 <button class="ghost" id="registerSwitch">Sign Up</button>
             </div>
-
         </div>
     </div>
 
 </div>
-
-
-
-<button onclick="window.location.href='cHome.html'">Test Redirect</button>
-</script>
 
 <script src="login.js"></script>
 </body>
