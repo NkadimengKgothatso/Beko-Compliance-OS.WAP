@@ -1,0 +1,626 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --brand:#1D9E75;--brand-dark:#0F6E56;--brand-xdark:#085041;
+  --brand-light:#E1F5EE;--brand-mid:#5DCAA5;
+  --amber:#EF9F27;--amber-light:#FAEEDA;--amber-dark:#633806;
+  --red:#E24B4A;--red-light:#FCEBEB;
+  --blue:#185FA5;--blue-light:#E6F1FB;--blue-dark:#0C447C;
+  --gray-50:#f8faf8;--gray-100:#f0f4f1;--gray-200:#e4ebe5;
+  --border:rgba(0,0,0,0.08);--border-med:rgba(0,0,0,0.12);
+  --text:#181f18;--text-2:#4f5f50;--text-3:#8a9e8b;
+  --r-md:8px;--r-lg:12px;
+  --ff:'DM Sans',sans-serif;--ff-h:'Sora',sans-serif;
+}
+body{font-family:var(--ff);background:var(--gray-100);color:var(--text);min-height:680px;}
+.app{display:flex;min-height:680px;}
+
+/* SIDEBAR */
+.sidebar{width:212px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
+.sb-top{padding:0 14px 14px;}
+.logo-wrap{padding:16px 2px 16px;border-bottom:1px solid var(--border);margin-bottom:12px;}
+.logo-row{display:flex;align-items:center;gap:9px;}
+.logo-mark{width:30px;height:30px;background:linear-gradient(135deg,var(--brand),var(--brand-mid));border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.logo-mark svg{width:15px;height:15px;}
+.logo-txt{display:flex;flex-direction:column;line-height:1.2;}
+.logo-main{font-family:var(--ff-h);font-size:13px;font-weight:700;color:var(--text);}
+.logo-sub{font-size:9px;font-weight:500;color:var(--brand);letter-spacing:.4px;text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--r-md);cursor:pointer;font-size:13px;color:var(--text-2);margin-bottom:2px;transition:all .15s;}
+.nav-item:hover{background:var(--gray-50);color:var(--text);}
+.nav-item.active{background:var(--brand-light);color:var(--brand-xdark);font-weight:500;}
+.nav-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;}
+.nb{margin-left:auto;background:var(--red);color:#fff;font-size:10px;padding:1px 7px;border-radius:10px;font-weight:600;}
+.sb-footer{margin-top:auto;padding:14px;border-top:1px solid var(--border);}
+.user-row{display:flex;align-items:center;gap:9px;}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--brand-light);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--brand-xdark);flex-shrink:0;}
+.user-name{font-size:12px;font-weight:500;color:var(--text);}
+.user-role{font-size:11px;color:var(--text-3);}
+
+/* MAIN */
+.main{flex:1;padding:22px 24px;overflow-y:auto;}
+.screen{display:none;}.screen.active{display:block;}
+.page-title{font-family:var(--ff-h);font-size:18px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.page-sub{font-size:12px;color:var(--text-3);margin-bottom:18px;}
+
+/* KPI */
+.kpis{display:grid;gap:8px;margin-bottom:14px;}
+.kpis-4{grid-template-columns:repeat(4,minmax(0,1fr));}
+.kpis-3{grid-template-columns:repeat(3,minmax(0,1fr));}
+.kpi{background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);padding:14px 16px;border-top:3px solid var(--brand);}
+.kpi.amber{border-top-color:var(--amber);}
+.kpi.red{border-top-color:var(--red);}
+.kpi-val{font-family:var(--ff-h);font-size:24px;font-weight:700;color:var(--text);}
+.kpi-lbl{font-size:11px;color:var(--text-3);margin-top:2px;}
+.kpi-note{font-size:10px;color:var(--brand-dark);margin-top:3px;font-weight:500;}
+
+/* CARDS */
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;margin-bottom:12px;}
+.card-title{font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;}
+
+/* SCORE RING */
+.score-wrap{display:flex;align-items:center;gap:20px;padding:4px 0 8px;}
+.ring-svg{width:80px;height:80px;flex-shrink:0;}
+.ring-track{fill:none;stroke:var(--brand-light);stroke-width:7;}
+.ring-fill{fill:none;stroke-width:7;stroke-linecap:round;stroke-dasharray:220;transform-origin:center;transform:rotate(-90deg);}
+.ring-green{stroke:var(--brand);stroke-dashoffset:66;}
+.ring-yellow{stroke:var(--amber);stroke-dashoffset:110;}
+.ring-red{stroke:var(--red);stroke-dashoffset:176;}
+.score-pct{font-family:var(--ff-h);font-size:17px;font-weight:700;}
+.score-label{font-size:13px;font-weight:600;margin-bottom:2px;}
+.score-desc{font-size:12px;color:var(--text-2);}
+.score-bar-wrap{margin-top:8px;}
+.score-bar{height:5px;background:var(--gray-200);border-radius:3px;overflow:hidden;}
+.score-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--brand),var(--brand-mid));}
+
+/* DEADLINE ROWS */
+.dl-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);}
+.dl-row:last-child{border-bottom:none;}
+.dl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-right:10px;}
+.dl-name{font-size:13px;font-weight:500;color:var(--text);flex:1;}
+.dl-date{font-size:12px;color:var(--text-3);}
+.dl-pill{font-size:10px;padding:2px 9px;border-radius:20px;font-weight:500;margin-left:10px;}
+.dot-g{background:var(--brand);}
+.dot-y{background:var(--amber);}
+.dot-r{background:var(--red);}
+.pill-g{background:var(--brand-light);color:var(--brand-xdark);}
+.pill-y{background:var(--amber-light);color:var(--amber-dark);}
+.pill-r{background:var(--red-light);color:#791F1F;}
+
+/* ALERT ROWS */
+.alert-row{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:var(--r-md);margin-bottom:8px;}
+.alert-row:last-child{margin-bottom:0;}
+.alert-r{background:var(--red-light);}
+.alert-y{background:var(--amber-light);}
+.alert-icon{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.alert-body{flex:1;}
+.alert-title{font-size:13px;font-weight:500;color:var(--text);}
+.alert-sub{font-size:11px;color:var(--text-2);margin-top:1px;}
+
+/* ACTION ROWS */
+.action-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+.action-row:last-child{border-bottom:none;}
+.action-ic{width:32px;height:32px;border-radius:var(--r-md);background:var(--brand-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.action-ic svg{width:14px;height:14px;}
+.action-name{font-size:13px;font-weight:500;color:var(--text);flex:1;}
+.action-tag{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;}
+
+/* BUTTONS */
+.btn{padding:7px 14px;font-size:12px;border-radius:var(--r-md);cursor:pointer;border:1px solid var(--border-med);background:#fff;color:var(--text);font-family:var(--ff);transition:all .15s;}
+.btn:hover{background:var(--gray-50);}
+.btn-g{background:var(--brand);color:#fff;border-color:var(--brand);}
+.btn-g:hover{background:var(--brand-dark);}
+.btn-o{background:transparent;border:1px solid var(--brand);color:var(--brand-dark);}
+.btn-o:hover{background:var(--brand-light);}
+
+/* TABS */
+.q-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.tabs{display:flex;gap:3px;}
+.tab{font-size:12px;padding:5px 12px;border-radius:var(--r-md);cursor:pointer;color:var(--text-2);transition:all .15s;}
+.tab:hover{background:var(--gray-50);}
+.tab.active{background:var(--brand-light);color:var(--brand-xdark);font-weight:500;}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;}
+.tbl th{text-align:left;color:var(--text-3);font-weight:500;padding:0 0 9px;border-bottom:1px solid var(--border);}
+.tbl td{padding:9px 0;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.pill{font-size:10px;padding:3px 9px;border-radius:20px;font-weight:500;}
+.p-wait{background:var(--blue-light);color:var(--blue-dark);}
+.p-consult{background:var(--brand-light);color:var(--brand-xdark);}
+.p-called{background:var(--amber-light);color:var(--amber-dark);}
+.p-done{background:var(--gray-100);color:var(--text-2);}
+.act-btns{display:flex;gap:4px;}
+.act-btn{font-size:10px;padding:4px 9px;border:1px solid var(--border-med);border-radius:var(--r-md);cursor:pointer;color:var(--text-2);background:transparent;font-family:var(--ff);transition:all .15s;}
+.act-btn:hover{background:var(--gray-50);}
+.act-btn.g{border-color:#9FE1CB;color:var(--brand-dark);}
+.act-btn.g:hover{background:var(--brand-light);}
+
+/* TEMPLATES */
+.tmpl-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+.tmpl-card{background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;cursor:pointer;transition:all .15s;}
+.tmpl-card:hover{border-color:var(--brand);box-shadow:0 2px 10px rgba(29,158,117,.07);}
+.tmpl-icon{width:32px;height:32px;border-radius:var(--r-md);background:var(--brand-light);display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+.tmpl-icon svg{width:15px;height:15px;}
+.tmpl-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px;}
+.tmpl-cat{font-size:11px;color:var(--text-3);}
+.tmpl-dl{margin-top:10px;width:100%;padding:6px 0;font-size:11px;font-weight:500;background:var(--brand-light);color:var(--brand-dark);border:none;border-radius:var(--r-md);cursor:pointer;font-family:var(--ff);}
+.tmpl-dl:hover{background:#c5e8d8;}
+
+/* NOTIF */
+.notif-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.notif-row:last-child{border-bottom:none;}
+.n-dot{width:7px;height:7px;border-radius:50%;margin-top:4px;flex-shrink:0;}
+.n-title{font-size:13px;color:var(--text);margin-bottom:2px;}
+.n-time{font-size:11px;color:var(--text-3);}
+.n-unread{font-size:10px;font-weight:600;color:var(--brand);background:var(--brand-light);padding:1px 7px;border-radius:10px;margin-left:auto;flex-shrink:0;}
+
+/* PROFILE */
+.profile-hero{background:linear-gradient(135deg,var(--brand-xdark),var(--brand));border-radius:var(--r-lg);padding:20px 24px;display:flex;align-items:center;gap:16px;margin-bottom:12px;color:#fff;}
+.profile-av{width:52px;height:52px;border-radius:14px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-family:var(--ff-h);font-size:18px;font-weight:700;flex-shrink:0;}
+.profile-name{font-family:var(--ff-h);font-size:18px;font-weight:700;margin-bottom:2px;}
+.profile-biz{font-size:13px;opacity:.8;}
+.profile-tag{display:inline-block;background:rgba(255,255,255,.18);font-size:11px;font-weight:500;padding:3px 10px;border-radius:8px;margin-top:6px;}
+.pf-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+.pf-row:last-child{border-bottom:none;}
+.pf-key{font-size:12px;color:var(--text-3);}
+.pf-val{font-size:12px;font-weight:500;color:var(--text);}
+.pf-val.green{color:var(--brand-dark);}
+.pf-val.red{color:var(--red);}
+.pf-val.amber{color:var(--amber-dark);}
+.toggle{width:36px;height:20px;border-radius:10px;background:var(--gray-200);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.toggle.on{background:var(--brand);}
+.toggle::after{content:'';position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.15);}
+.toggle.on::after{transform:translateX(16px);}
+.pf-toggle-row{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:10px;}
+.pf-toggle-row:last-child{border-bottom:none;}
+.pf-toggle-info{flex:1;}
+.pf-toggle-label{font-size:13px;font-weight:500;color:var(--text);}
+.pf-toggle-sub{font-size:11px;color:var(--text-3);}
+
+/* ONBOARD */
+.ob-steps{display:flex;gap:6px;margin-bottom:20px;}
+.ob-step{flex:1;height:4px;border-radius:2px;background:var(--gray-200);}
+.ob-step.done{background:var(--brand);}
+.field-lbl{font-size:11px;color:var(--text-2);margin-bottom:4px;font-weight:500;}
+.field-inp{width:100%;padding:8px 10px;border:1px solid var(--border-med);border-radius:var(--r-md);font-size:13px;background:#fff;color:var(--text);font-family:var(--ff);outline:none;transition:border .15s;}
+.field-inp:focus{border-color:var(--brand);}
+.chip-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px;}
+.chip{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border-med);font-size:12px;cursor:pointer;color:var(--text-2);background:#fff;transition:all .15s;}
+.chip.on{background:var(--brand-light);border-color:var(--brand);color:var(--brand-xdark);font-weight:500;}
+
+/* CONSULT */
+.consult-banner{background:linear-gradient(135deg,var(--brand-xdark),var(--brand));border-radius:var(--r-lg);padding:18px 20px;color:#fff;display:flex;align-items:center;gap:16px;margin-top:12px;}
+.cb-icon{width:44px;height:44px;background:rgba(255,255,255,.15);border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.cb-icon svg{width:22px;height:22px;}
+.cb-title{font-family:var(--ff-h);font-size:14px;font-weight:700;margin-bottom:3px;}
+.cb-sub{font-size:11px;opacity:.8;}
+.cb-btn{margin-left:auto;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:var(--r-md);padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--ff);white-space:nowrap;}
+.cb-btn:hover{background:rgba(255,255,255,.28);}
+
+/* BAR CHART */
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:80px;margin-top:10px;}
+.bar-g{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
+.bar-b{width:100%;border-radius:3px 3px 0 0;}
+.bar-l{font-size:10px;color:var(--text-3);}
+</style>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-top">
+      <div class="logo-wrap">
+        <div class="logo-row">
+          <div class="logo-mark">
+            <svg viewBox="0 0 15 15" fill="none"><path d="M2.5 7.5L6 11L12.5 4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="logo-txt">
+            <span class="logo-main">Beko</span>
+            <span class="logo-sub">ComplianceOS</span>
+          </div>
+        </div>
+      </div>
+      <div class="nav-item active" onclick="show('dashboard')"><div class="nav-dot"></div>Dashboard</div>
+      <div class="nav-item" onclick="show('onboard')"><div class="nav-dot"></div>Onboarding</div>
+      <div class="nav-item" onclick="show('templates')"><div class="nav-dot"></div>Templates</div>
+      <div class="nav-item" onclick="show('notifications')"><div class="nav-dot"></div>Notifications <span class="nb">3</span></div>
+      <div class="nav-item" onclick="show('consultation')"><div class="nav-dot"></div>Consultation</div>
+      <div class="nav-item" onclick="show('profile')"><div class="nav-dot"></div>Profile</div>
+    </div>
+    <div class="sb-footer">
+      <div class="user-row">
+        <div class="avatar">NM</div>
+        <div><div class="user-name">Nqubeko Masondo</div><div class="user-role">Salon / Beauty</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div class="screen active" id="screen-dashboard">
+      <div class="page-title">Welcome back, Nqubeko</div>
+      <div class="page-sub">Nqubeko Hair Studio &middot; Saturday, 11 April 2026</div>
+
+      <div class="kpis kpis-4">
+        <div class="kpi">
+          <div class="kpi-val">70%</div>
+          <div class="kpi-lbl">Compliance score</div>
+          <div class="kpi-note">2 items need attention</div>
+        </div>
+        <div class="kpi amber">
+          <div class="kpi-val">5</div>
+          <div class="kpi-lbl">Days to VAT deadline</div>
+          <div class="kpi-note">Act soon</div>
+        </div>
+        <div class="kpi red">
+          <div class="kpi-val">1</div>
+          <div class="kpi-lbl">Overdue filing</div>
+          <div class="kpi-note">UIF — penalty risk</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val">3</div>
+          <div class="kpi-lbl">Actions required</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div class="card">
+          <div class="card-title">Compliance status</div>
+          <div class="score-wrap">
+            <svg class="ring-svg" viewBox="0 0 80 80">
+              <circle class="ring-track" cx="40" cy="40" r="33"/>
+              <circle class="ring-fill ring-green" cx="40" cy="40" r="33"/>
+              <text x="40" y="44" text-anchor="middle" font-family="Sora,sans-serif" font-size="13" font-weight="700" fill="#1a1a1a">70%</text>
+            </svg>
+            <div>
+              <div class="score-label" style="color:var(--amber-dark)">Needs attention</div>
+              <div class="score-desc">2 compliance items require action before penalties apply</div>
+              <div class="score-bar-wrap">
+                <div class="score-bar"><div class="score-bar-fill" style="width:70%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Alerts</div>
+          <div class="alert-row alert-r">
+            <div class="alert-icon dot-r"></div>
+            <div class="alert-body"><div class="alert-title">Late on UIF submission</div><div class="alert-sub">Penalty risk detected — act immediately</div></div>
+          </div>
+          <div class="alert-row alert-y">
+            <div class="alert-icon dot-y"></div>
+            <div class="alert-body"><div class="alert-title">VAT return due in 5 days</div><div class="alert-sub">File before 16 April to avoid interest</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="card">
+          <div class="card-title">Upcoming deadlines</div>
+          <div class="dl-row"><div class="dl-dot dot-r"></div><div class="dl-name">UIF Submission</div><div class="dl-date">Overdue</div><span class="dl-pill pill-r">Overdue</span></div>
+          <div class="dl-row"><div class="dl-dot dot-y"></div><div class="dl-name">VAT Return</div><div class="dl-date">16 Apr 2026</div><span class="dl-pill pill-y">5 days</span></div>
+          <div class="dl-row"><div class="dl-dot dot-y"></div><div class="dl-name">CIPC Annual Return</div><div class="dl-date">1 May 2026</div><span class="dl-pill pill-y">20 days</span></div>
+          <div class="dl-row"><div class="dl-dot dot-g"></div><div class="dl-name">Tax Return (SARS)</div><div class="dl-date">15 Jan 2027</div><span class="dl-pill pill-g">On track</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Required actions</div>
+          <div class="action-row">
+            <div class="action-ic">
+              <svg viewBox="0 0 14 14" fill="none"><path d="M7 1v6M4 4l3-3 3 3M2 10h10v2H2z" stroke="var(--brand-dark)" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div class="action-name">Submit UIF return</div>
+            <span class="action-tag pill-r">Urgent</span>
+          </div>
+          <div class="action-row">
+            <div class="action-ic">
+              <svg viewBox="0 0 14 14" fill="none"><rect x="2" y="2" width="10" height="10" rx="2" stroke="var(--brand-dark)" stroke-width="1.5"/><path d="M5 7h4M7 5v4" stroke="var(--brand-dark)" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div class="action-name">File VAT return</div>
+            <span class="action-tag pill-y">Soon</span>
+          </div>
+          <div class="action-row">
+            <div class="action-ic">
+              <svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="5" r="3" stroke="var(--brand-dark)" stroke-width="1.5"/><path d="M2 12c0-2.2 2.2-4 5-4s5 1.8 5 4" stroke="var(--brand-dark)" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div class="action-name">Update company details at CIPC</div>
+            <span class="action-tag pill-g">Routine</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ONBOARDING -->
+    <div class="screen" id="screen-onboard">
+      <div class="page-title">Business onboarding</div>
+      <div class="page-sub">Tell us about your business so we can determine which laws apply to you</div>
+
+      <div class="card" style="max-width:640px;">
+        <div class="ob-steps">
+          <div class="ob-step done"></div>
+          <div class="ob-step done"></div>
+          <div class="ob-step"></div>
+        </div>
+        <div style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Step 2 of 3 — Legal status</div>
+        <div style="font-family:var(--ff-h);font-size:16px;font-weight:700;color:var(--text);margin-bottom:18px;">What is your business legal status?</div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+          <div>
+            <div class="field-lbl">Business name</div>
+            <input class="field-inp" value="Nqubeko Hair Studio">
+          </div>
+          <div>
+            <div class="field-lbl">Province</div>
+            <select class="field-inp"><option>Gauteng</option><option>Western Cape</option><option>KwaZulu-Natal</option></select>
+          </div>
+          <div>
+            <div class="field-lbl">Business registered?</div>
+            <div class="chip-row">
+              <div class="chip on" onclick="selectChip(this)">Yes</div>
+              <div class="chip" onclick="selectChip(this)">No</div>
+            </div>
+          </div>
+          <div>
+            <div class="field-lbl">Company type</div>
+            <select class="field-inp"><option>Sole trader</option><option>Pty Ltd</option><option>Partnership</option></select>
+          </div>
+          <div>
+            <div class="field-lbl">VAT registered?</div>
+            <div class="chip-row">
+              <div class="chip" onclick="selectChip(this)">Yes</div>
+              <div class="chip on" onclick="selectChip(this)">No</div>
+            </div>
+          </div>
+          <div>
+            <div class="field-lbl">Annual revenue</div>
+            <select class="field-inp"><option>Below R100,000</option><option>R100k – R1M</option><option>Above R1M</option></select>
+          </div>
+          <div>
+            <div class="field-lbl">Number of employees</div>
+            <input class="field-inp" type="number" value="4">
+          </div>
+          <div>
+            <div class="field-lbl">Operation mode</div>
+            <select class="field-inp"><option>Physical</option><option>Online</option><option>Both</option></select>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;">
+          <button class="btn">Back</button>
+          <button class="btn btn-g" onclick="show('dashboard')">Continue — Build my plan</button>
+        </div>
+      </div>
+
+      <div class="card" style="max-width:640px;margin-top:0;">
+        <div class="card-title">What this determines</div>
+        <div class="dl-row"><div class="dl-dot dot-g"></div><div class="dl-name">SARS — Tax obligations &amp; VAT registration</div></div>
+        <div class="dl-row"><div class="dl-dot dot-g"></div><div class="dl-name">CIPC — Annual returns &amp; company filings</div></div>
+        <div class="dl-row"><div class="dl-dot dot-g"></div><div class="dl-name">UIF — Employee compliance &amp; contributions</div></div>
+      </div>
+    </div>
+
+    <!-- TEMPLATES -->
+    <div class="screen" id="screen-templates">
+      <div class="page-title">Template library</div>
+      <div class="page-sub">Download professional legal documents for your business</div>
+
+      <div class="card" style="padding:10px 16px;margin-bottom:12px;">
+        <div class="q-header" style="margin-bottom:0;">
+          <div class="tabs">
+            <div class="tab active">All</div>
+            <div class="tab" onclick="selectTab(this)">Contracts</div>
+            <div class="tab" onclick="selectTab(this)">HR</div>
+            <div class="tab" onclick="selectTab(this)">Legal</div>
+            <div class="tab" onclick="selectTab(this)">Tax</div>
+          </div>
+          <input class="field-inp" style="width:200px;" placeholder="Search templates...">
+        </div>
+      </div>
+
+      <div class="tmpl-grid">
+        <div class="tmpl-card">
+          <div class="tmpl-icon"><svg viewBox="0 0 15 15" fill="none"><rect x="2" y="1" width="11" height="13" rx="2" stroke="var(--brand-dark)" stroke-width="1.5"/><path d="M5 5h5M5 8h5M5 11h3" stroke="var(--brand-dark)" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+          <div class="tmpl-name">Service agreement</div>
+          <div class="tmpl-cat">Contracts</div>
+          <button class="tmpl-dl">Download</button>
+        </div>
+        <div class="tmpl-card">
+          <div class="tmpl-icon"><svg viewBox="0 0 15 15" fill="none"><rect x="2" y="1" width="11" height="13" rx="2" stroke="var(--brand-dark)" stroke-width="1.5"/><path d="M5 5h5M5 8h5M5 11h3" stroke="var(--brand-dark)" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+          <div class="tmpl-name">NDA template</div>
+          <div class="tmpl-cat">Legal</div>
+          <button class="tmpl-dl">Download</button>
+        </div>
+        <div class="tmpl-card">
+          <div class="tmpl-icon"><svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="5" r="3" stroke="var(--brand-dark)" stroke-width="1.5"/><path d="M2 13c0-2.5 2.5-4.5 5.5-4.5S13 10.5 13 13" stroke="var(--brand-dark)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          <div class="tmpl-name">Employment contract</div>
+          <div class="tmpl-cat">HR</div>
+          <button class="tmpl-dl">Download</button>
+        </div>
+        <div class="tmpl-card">
+          <div class="tmpl-icon"><svg viewBox="0 0 15 15" fill="none"><rect x="2" y="1" width="11" height="13" rx="2" stroke="var(--brand-dark)" stroke-width="1.5"/><path d="M5 5h5M5 8h5M5 11h3" stroke="var(--brand-dark)" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+          <div class="tmpl-name">Affidavit</div>
+          <div class="tmpl-cat">Legal</div>
+          <button class="tmpl-dl">Download</button>
+        </div>
+        <div class="tmpl-card">
+          <div class="tmpl-icon"><svg viewBox="0 0 15 15" fill="none"><rect x="2" y="1" width="11" height="13" rx="2" stroke="var(--brand-dark)" stroke-width="1.5"/><path d="M5 5h5M5 8h5M5 11h3" stroke="var(--brand-dark)" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+          <div class="tmpl-name">Tax invoice template</div>
+          <div class="tmpl-cat">Tax</div>
+          <button class="tmpl-dl">Download</button>
+        </div>
+        <div class="tmpl-card">
+          <div class="tmpl-icon"><svg viewBox="0 0 15 15" fill="none"><rect x="2" y="1" width="11" height="13" rx="2" stroke="var(--brand-dark)" stroke-width="1.5"/><path d="M5 5h5M5 8h5M5 11h3" stroke="var(--brand-dark)" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+          <div class="tmpl-name">Leave policy</div>
+          <div class="tmpl-cat">HR</div>
+          <button class="tmpl-dl">Download</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    <div class="screen" id="screen-notifications">
+      <div class="page-title">Notifications</div>
+      <div class="page-sub">Reminders and compliance alerts</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="card">
+          <div class="card-title">Today</div>
+          <div class="notif-row">
+            <div class="n-dot" style="background:var(--red);"></div>
+            <div style="flex:1;"><div class="n-title">UIF submission overdue — penalty risk</div><div class="n-time">Today, 08:00</div></div>
+            <span class="n-unread">New</span>
+          </div>
+          <div class="notif-row">
+            <div class="n-dot" style="background:var(--amber);"></div>
+            <div style="flex:1;"><div class="n-title">VAT return due in 5 days — file now</div><div class="n-time">Today, 09:15</div></div>
+            <span class="n-unread">New</span>
+          </div>
+          <div class="notif-row">
+            <div class="n-dot" style="background:var(--brand);"></div>
+            <div style="flex:1;"><div class="n-title">CIPC Annual Return due in 20 days</div><div class="n-time">Today, 10:00</div></div>
+            <span class="n-unread">New</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Earlier</div>
+          <div class="notif-row">
+            <div class="n-dot" style="background:var(--brand);"></div>
+            <div><div class="n-title">SARS filing reminder: due 15 Jan 2027</div><div class="n-time">Yesterday, 14:30</div></div>
+          </div>
+          <div class="notif-row">
+            <div class="n-dot" style="background:var(--text-3);"></div>
+            <div><div class="n-title">New template available: Employment contract</div><div class="n-time">3 days ago</div></div>
+          </div>
+          <div class="notif-row">
+            <div class="n-dot" style="background:var(--brand);"></div>
+            <div><div class="n-title">Consultation with TaxHelp SA confirmed</div><div class="n-time">5 days ago</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:0;">
+        <div class="card-title">Notification channels</div>
+        <div class="pf-toggle-row"><div class="pf-toggle-info"><div class="pf-toggle-label">WhatsApp reminders</div><div class="pf-toggle-sub">Quick deadline nudges via WhatsApp</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="pf-toggle-row"><div class="pf-toggle-info"><div class="pf-toggle-label">Email notifications</div><div class="pf-toggle-sub">Weekly compliance summary</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+        <div class="pf-toggle-row"><div class="pf-toggle-info"><div class="pf-toggle-label">SMS alerts</div><div class="pf-toggle-sub">Critical alerts only</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+      </div>
+    </div>
+
+    <!-- CONSULTATION -->
+    <div class="screen" id="screen-consultation">
+      <div class="page-title">Consultation</div>
+      <div class="page-sub">Get legal and compliance help from verified professionals</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div class="card">
+          <div class="card-title">Book an appointment</div>
+          <div style="margin-bottom:12px;">
+            <div class="field-lbl">Consultation type</div>
+            <select class="field-inp"><option>General compliance review</option><option>Tax advisory (SARS)</option><option>Company registration (CIPC)</option><option>UIF and labour law</option></select>
+          </div>
+          <div style="margin-bottom:12px;">
+            <div class="field-lbl">Preferred date</div>
+            <input class="field-inp" type="date">
+          </div>
+          <div style="margin-bottom:16px;">
+            <div class="field-lbl">Message (optional)</div>
+            <textarea class="field-inp" rows="3" style="resize:none;" placeholder="Describe your situation briefly..."></textarea>
+          </div>
+          <button class="btn btn-g">Request consultation</button>
+        </div>
+        <div class="card">
+          <div class="card-title">Upcoming consultations</div>
+          <div class="dl-row"><div class="dl-dot dot-g"></div><div class="dl-name">TaxHelp SA<br><span style="font-size:11px;color:var(--text-3);">SARS compliance review</span></div><span class="dl-pill pill-g">15 Apr</span></div>
+          <div style="margin-top:12px;font-size:12px;color:var(--text-3);">No other consultations scheduled</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Partner law firms</div>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;">
+          <div style="border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;">
+            <div style="font-size:13px;font-weight:500;margin-bottom:3px;">TaxHelp SA</div>
+            <div style="font-size:11px;color:var(--text-3);margin-bottom:8px;">SARS, VAT, Income Tax</div>
+            <button class="btn btn-o" style="width:100%;font-size:11px;">Refer me</button>
+          </div>
+          <div style="border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;">
+            <div style="font-size:13px;font-weight:500;margin-bottom:3px;">CompliLegal Inc.</div>
+            <div style="font-size:11px;color:var(--text-3);margin-bottom:8px;">CIPC, Labour, UIF</div>
+            <button class="btn btn-o" style="width:100%;font-size:11px;">Refer me</button>
+          </div>
+          <div style="border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;">
+            <div style="font-size:13px;font-weight:500;margin-bottom:3px;">SME Law Partners</div>
+            <div style="font-size:11px;color:var(--text-3);margin-bottom:8px;">Contracts, NDAs, HR</div>
+            <button class="btn btn-o" style="width:100%;font-size:11px;">Refer me</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="screen" id="screen-profile">
+      <div class="page-title">Profile &amp; settings</div>
+      <div class="page-sub">Your business details and preferences</div>
+
+      <div class="profile-hero">
+        <div class="profile-av">NM</div>
+        <div>
+          <div class="profile-name">Nqubeko Masondo</div>
+          <div class="profile-biz">Nqubeko Hair Studio &middot; Gauteng</div>
+          <div class="profile-tag">Salon / Beauty</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="card">
+          <div class="card-title">Business details</div>
+          <div class="pf-row"><span class="pf-key">Company type</span><span class="pf-val">Sole trader</span></div>
+          <div class="pf-row"><span class="pf-key">Registration status</span><span class="pf-val green">Registered</span></div>
+          <div class="pf-row"><span class="pf-key">Tax status</span><span class="pf-val green">Compliant</span></div>
+          <div class="pf-row"><span class="pf-key">VAT registered</span><span class="pf-val red">No</span></div>
+          <div class="pf-row"><span class="pf-key">Employees</span><span class="pf-val">4 (full-time)</span></div>
+          <div class="pf-row"><span class="pf-key">Annual revenue</span><span class="pf-val">R100k – R1M</span></div>
+          <div class="pf-row"><span class="pf-key">Operation mode</span><span class="pf-val">Physical</span></div>
+        </div>
+
+        <div>
+          <div class="card" style="margin-bottom:12px;">
+            <div class="card-title">Notification preferences</div>
+            <div class="pf-toggle-row"><div class="pf-toggle-info"><div class="pf-toggle-label">WhatsApp</div><div class="pf-toggle-sub">Deadline reminders</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="pf-toggle-row"><div class="pf-toggle-info"><div class="pf-toggle-label">Email</div><div class="pf-toggle-sub">Weekly summary</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="pf-toggle-row"><div class="pf-toggle-info"><div class="pf-toggle-label">SMS</div><div class="pf-toggle-sub">Critical alerts only</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Documents</div>
+            <div class="pf-row"><span class="pf-key">CIPC Certificate</span><span class="pf-val green">Uploaded</span></div>
+            <div class="pf-row"><span class="pf-key">Tax clearance</span><span class="pf-val amber">Expiring soon</span></div>
+            <div class="pf-row"><span class="pf-key">UIF letter</span><span class="pf-val red">Not uploaded</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  const map={dashboard:0,onboard:1,templates:2,notifications:3,consultation:4,profile:5};
+  document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
+}
+function selectChip(el){
+  const g=el.closest('.chip-row');
+  g.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+}
+function selectTab(el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+</script>
