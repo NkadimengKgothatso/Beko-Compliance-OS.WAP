@@ -8,87 +8,7 @@
 <!-- PWA Manifest -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#3b4cca">
-
-<style>
-/* Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body, html {
-    height: 100%;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    overflow: hidden;
-    background: none;
-}
-
-/* Logo styling */
-.logo-container {
-    opacity: 0;
-    animation: logoFade 2s ease-in forwards, logoFadeOut 1s ease-in forwards;
-    animation-delay: 0s, 3s; /* fade in immediately, fade out after 3s */
-}
-
-.logo-container img {
-    max-width: 600px;
-    width: 80%;
-    height: auto;
-    /* border-radius: 20px; */
-}
-
-/* Text styling */
-.text-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) translateY(20px); /* keep animation offset */
-
-    opacity: 0;
-    animation: showText 3s ease-out forwards;
-    animation-delay: 4s;
-    text-align: center;
-}
-
-.text-container h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    text-align: center;
-    margin-top: auto;
-    background: linear-gradient(90deg, #0b0d1a, #898686, #1a8cac, #1dcde1);
-    background-size: 300% 300%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: gradientShift 5s ease infinite;
-}
-
-/* Keyframes */
-@keyframes logoFade {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-}
-
-@keyframes logoFadeOut {
-    0% { opacity: 1; }
-    100% { opacity: 0; }
-}
-
-@keyframes showText {
-    0% { opacity: 0; transform: translateY(20px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-</style>
+<link rel="stylesheet" href="index.css">
 </head>
 <body>
 
@@ -98,23 +18,12 @@ body, html {
 
 <div class="text-container">
     <h1>Welcome </h1>
+    <p><div class="text-container">
+    <h1>Compliance. Clarity. Confidence.</h1>
+    </div></p>
 </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  // Redirect after 7s
-  setTimeout(() => {
-    window.location.href = "login.html";
-  }, 7000);
-
-  // Register service worker
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js")
-      .then(reg => console.log("Service Worker registered", reg))
-      .catch(err => console.log("Service Worker registration failed", err));
-  }
-});
-</script>
+<script src="index.js"></script>
 
 </body>
 </html>
