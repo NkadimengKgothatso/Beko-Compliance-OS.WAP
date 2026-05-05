@@ -15,19 +15,15 @@ function handleLogin() {
     const password = document.querySelector('#loginForm input[type="password"]').value;
     const role = document.querySelector('#role').value;
 
-    if (!email || !password || !role) {
+    if (!email || !password ) {
         alert("Please fill in all fields!");
         return;
     }
 
-    // Redirect example
-    if(role === "client") {
-        window.location.href = "cHome.html";
-    } else if(role === "admin") {
-        window.location.href = "adminHome.html";
-    }
-}
+ 
+    window.location.href = "../DASHBOARD_FILES/dashboard.html";
 
+}
 // Handle Sign Up
 function handleSignup() {
     const inputs = document.querySelectorAll('#signupForm input');

@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Redirect after 7s
   setTimeout(() => {
-    window.location.href = "login.html";
+    window.location.href = "LOGIN_FILES/login.html";
   }, 7000);
 
   // Register service worker
