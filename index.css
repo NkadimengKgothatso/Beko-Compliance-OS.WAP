@@ -5,29 +5,42 @@
     box-sizing: border-box;
 }
 
-body, html {
+html, body {
     height: 100%;
-    font-family: Arial, sans-serif;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     overflow: hidden;
-    background: none;
+    background: white;
+    min-height: 100vh;
 }
 
 /* Logo styling */
 .logo-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     opacity: 0;
     animation: logoFade 2s ease-in forwards, logoFadeOut 1s ease-in forwards;
-    animation-delay: 0s, 3s; /* fade in immediately, fade out after 3s */
+    animation-delay: 0s, 3s;
 }
 
 .logo-container img {
-    max-width: 600px;
-    width: 80%;
+    max-width: 800px;
+    width: 90%;
     height: auto;
-    /* border-radius: 20px; */
+    display: block;
+    border-radius: 10px;
+    
 }
 
 /* Text styling */
@@ -35,24 +48,40 @@ body, html {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) translateY(20px); /* keep animation offset */
-
+    transform: translate(-50%, -50%);
     opacity: 0;
-    animation: showText 3s ease-out forwards;
+    animation: showText 0.8s ease-out forwards;
     animation-delay: 4s;
     text-align: center;
+    z-index: 10;
+    font-size: 0.8rem; /* Smaller text */
 }
 
 .text-container h1 {
-    font-size: 2rem;
+    font-size: 3.5rem;
     font-weight: 700;
     text-align: center;
-    margin-top: auto;
-    background: linear-gradient(90deg, #0b0d1a, #898686, #1a8cac, #1dcde1);
+    line-height: 1.4;
+    letter-spacing: -1px;
+    background:  linear-gradient(to right, #0999e7, #23cd61);
     background-size: 300% 300%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: gradientShift 5s ease infinite;
+    background-clip: text;
+    animation: gradientShift 6s ease infinite;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .text-container h1 {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .text-container h1 {
+        font-size: 1.8rem;
+    }
 }
 
 /* Keyframes */
@@ -67,8 +96,14 @@ body, html {
 }
 
 @keyframes showText {
-    0% { opacity: 0; transform: translateY(20px); }
-    100% { opacity: 1; transform: translateY(0); }
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
 }
 
 @keyframes gradientShift {

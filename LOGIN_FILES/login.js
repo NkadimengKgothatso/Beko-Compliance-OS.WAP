@@ -9,19 +9,23 @@ document.getElementById('loginSwitch').addEventListener('click', () => {
     container.classList.remove('active');  // <-- use 'active'
 });
 
+
+document.getElementById("googleBtn").addEventListener("click", function() {
+    window.location.href = "DASHBOARD_FILES/dashboard.html";
+});
+
+document.getElementById("googleSignup").addEventListener("click", function() {
+    window.location.href = "../DASHBOARD_FILES/dashboard.html";
+});
+
+document.getElementById("googleLogin").addEventListener("click", function() {
+    window.location.href = "../DASHBOARD_FILES/dashboard.html";
+});
 // Handle Sign In
 function handleLogin() {
-    const email = document.querySelector('#loginForm input[type="email"]').value;
-    const password = document.querySelector('#loginForm input[type="password"]').value;
-    const role = document.querySelector('#role').value;
-
-    if (!email || !password ) {
-        alert("Please fill in all fields!");
-        return;
-    }
-
+   
  
-    window.location.href = "../DASHBOARD_FILES/dashboard.html";
+
 
 }
 // Handle Sign Up
