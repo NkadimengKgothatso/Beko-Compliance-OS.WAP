@@ -3,19 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beko Compliance OS - Dashboard</title>
+    <title>Beko Compliance OS</title>
     <link rel="stylesheet" href="dashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#3b4cca">
 </head>
 <body>
+<!-- sidebar,logo and footer -->
+ <!-- ************************************************************************************************************************************************************* -->
+<aside>
+    <!-- logo -->
+    <header>
+        <h1>Beko</h1>
+        <p>ComplianceOS</p>
+    </header>
+    <!-- sidebar -->
+    <nav>
+        <ul>
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Onboarding</a></li>
+            <li><a href="#">Templates</a></li>
+            <li><a href="#">Notifications</a></li>
+            <li><a href="#">Consultation</a></li>
+            <li><a href="#">Profile</a></li>
+        </ul>
+    </nav>
+    <!-- footer -->
+    <footer>
+        <h3>Nqubeko Masondo</h3>
+        <p>Salon / Beauty</p>
+    </footer>
+</aside>
 
-    <div class="dashboard-container">
-        <h1>Welcome to the Dashboard</h1>
-        <p>This is the main dashboard of the Beko Compliance OS.</p>
-        <a href="../LOGIN_FILES/login.html" class="btn">Logout</a>
-    </div>  
-<script src="dashboard.js"></script>
+<!-- ************************************************************************************************************************************************************* -->
+<!-- main content -->
+<main>
+
+    <header>
+        <h1>Welcome back, Nqubeko</h1>
+        <p>Nqubeko Hair Studio · Saturday, 11 April 2026</p>
+    </header>
+
+    <section class="stats">
+
+        <article>
+            <h2>70%</h2>
+            <p>Compliance score</p>
+            <strong>2 items need attention</strong>
+        </article>
+
+        <article>
+            <h2>5</h2>
+            <p>Days to VAT deadline</p>
+            <strong>Act soon</strong>
+        </article>
+
+        <article>
+            <h2>1</h2>
+            <p>Overdue filing</p>
+            <strong>UIF – penalty risk</strong>
+        </article>
+
+        <article>
+            <h2>3</h2>
+            <p>Actions required</p>
+        </article>
+
+    </section>
+
+    <section class="middle">
+
+        <article>
+            <header>
+                <h2>Compliance Status</h2>
+            </header>
+
+            <h3>70%</h3>
+
+            <p>
+                Needs attention
+            </p>
+
+            <p>
+                2 compliance items require action before penalties apply
+            </p>
+
+            <progress value="70" max="100">70%</progress>
+        </article>
+
+        <article>
+            <header>
+                <h2>Alerts</h2>
+            </header>
+
+            <section>
+                <h3>Late on UIF submission</h3>
+                <p>Penalty risk detected — act immediately</p>
+            </section>
+
+            <section>
+                <h3>VAT return due in 5 days</h3>
+                <p>File before 16 April to avoid interest</p>
+            </section>
+        </article>
+
+    </section>
+
+    <section class="bottom">
+
+        <article>
+            <header>
+                <h2>Upcoming Deadlines</h2>
+            </header>
+
+            <ul>
+                <li>UIF Submission — Overdue</li>
+                <li>VAT Return — 16 Apr 2026</li>
+                <li>CIPC Annual Return — 1 May 2026</li>
+                <li>Tax Return (SARS) — 15 Jan 2027</li>
+            </ul>
+        </article>
+
+        <article>
+            <header>
+                <h2>Required Actions</h2>
+            </header>
+
+            <ul>
+                <li>Submit UIF return</li>
+                <li>File VAT return</li>
+                <li>Update company details at CIPC</li>
+            </ul>
+        </article>
+
+    </section>
+
+</main>
+
 </body>
 </html>
