@@ -10,11 +10,10 @@
 </head>
 <body>
 
+<!-- Main application shell -->
 <div class="app-shell">
 
-  <!-- ══════════════════════════════════════
-       SIDEBAR — aside + nav landmarks
-  ═══════════════════════════════════════ -->
+  <!-- Sidebar navigation with logo and user profile -->
   <aside class="sidebar" aria-label="Site navigation">
 
     <a class="sidebar-brand" href="/" aria-label="Beko ComplianceOS home">
@@ -103,12 +102,10 @@
     </footer>
   </aside>
 
-  <!-- ══════════════════════════════════════
-       PAGE WRAPPER
-  ═══════════════════════════════════════ -->
+  <!-- Main content area: header and dashboard sections -->
   <div class="page-wrapper">
 
-    <!-- Top bar — page-level banner landmark -->
+    <!-- Top navigation bar with date, score, and actions -->
     <header class="topbar">
       <h1 class="topbar-heading">Dashboard</h1>
       <time class="topbar-date" datetime="2026-05-05">Tuesday, 5 May 2026</time>
@@ -127,16 +124,16 @@
       </button>
     </header>
 
-    <!-- Main content landmark -->
+    <!-- Dashboard content -->
     <main class="dashboard-content" id="main-content" tabindex="-1">
 
-      <!-- Greeting -->
+      <!-- Welcome greeting -->
       <section class="greeting" aria-label="Welcome">
         <h2>Welcome back, Nqubeko 👋</h2>
         <p>Nqubeko Hair Studio &middot; Gauteng &middot; Here's your compliance overview for today</p>
       </section>
 
-      <!-- KPI summary -->
+      <!-- Key performance metrics -->
       <section aria-labelledby="kpi-heading">
         <h2 id="kpi-heading" style="display:none">Key Metrics</h2>
         <ul class="kpi-grid" role="list">
@@ -180,7 +177,7 @@
         </ul>
       </section>
 
-      <!-- Row 1: Compliance Status + Alerts -->
+      <!-- Compliance status and alerts -->
       <div class="grid-2">
 
         <article class="card" aria-labelledby="h-status">
@@ -264,7 +261,7 @@
         </article>
       </div>
 
-      <!-- Row 2: Deadlines + Actions + Chart -->
+      <!-- Deadlines, required actions, and compliance trend -->
       <div class="grid-3">
 
         <article class="card" aria-labelledby="h-deadlines">
@@ -392,7 +389,7 @@
         </article>
       </div>
 
-      <!-- Row 3: Activity + Snapshot -->
+      <!-- Activity feed and business snapshot -->
       <div class="grid-2">
 
         <article class="card" aria-labelledby="h-activity">
@@ -464,7 +461,7 @@
         </article>
       </div>
 
-      <!-- CTA Banner — aside: complementary content -->
+      <!-- Call-to-action banner for urgent filing -->
       <aside class="cta-banner" aria-label="Urgent action: UIF filing overdue">
         <span class="cta-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z" stroke="#fff" stroke-width="1.6"/><path d="M12 7v5l3 3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
