@@ -18,15 +18,13 @@
   <aside class="sidebar" aria-label="Site navigation">
 
     <a class="sidebar-brand" href="/" aria-label="Beko ComplianceOS home">
-      <span class="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 16 16" fill="none">
-          <path d="M3 8l3.5 3.5L13 4.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </span>
-      <span>
+      <svg class="brand-mark" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M3 8l3.5 3.5L13 4.5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="brand-text">
         <span class="brand-name">Beko</span>
         <span class="brand-tagline">ComplianceOS</span>
-      </span>
+      </div>
     </a>
 
     <nav class="sidebar-nav" aria-label="Primary navigation">
@@ -91,14 +89,12 @@
 
     <footer class="sidebar-footer">
       <button class="user-profile" aria-label="Open user menu — Nqubeko Masondo">
-        <span class="user-avatar" aria-hidden="true">NM</span>
-        <span>
+        <output class="user-avatar" aria-hidden="true">NM</output>
+        <div class="user-info">
           <span class="user-name">Nqubeko Masondo</span>
           <span class="user-role">Salon / Beauty</span>
-        </span>
-        <span class="user-chevron" aria-hidden="true">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4.5 3l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
+        </div>
+        <svg class="user-chevron" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 3l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
     </footer>
   </aside>
@@ -112,18 +108,14 @@
     <header class="topbar">
       <h1 class="topbar-heading">Dashboard</h1>
       <time class="topbar-date" datetime="2026-05-05">Tuesday, 5 May 2026</time>
-      <span class="topbar-sep" aria-hidden="true"></span>
-      <span class="score-chip" role="status" aria-live="polite" aria-label="Compliance score 70%, needs attention">
-        <span class="score-chip-dot" aria-hidden="true"></span>
+      <status class="score-chip" role="status" aria-live="polite" aria-label="Compliance score 70%, needs attention">
         Compliance: 70%
-      </span>
-      <span class="topbar-sep" aria-hidden="true"></span>
+      </status>
       <button class="icon-btn" aria-label="Search">
         <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="6.5" cy="6.5" r="4" stroke="currentColor" stroke-width="1.4"/><path d="M10 10l3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
       </button>
       <button class="icon-btn" aria-label="Notifications — 3 unread">
         <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5A4.5 4.5 0 003.5 6v3L2 11h12l-1.5-2V6A4.5 4.5 0 008 1.5z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M6.5 12.5a1.5 1.5 0 003 0" stroke="currentColor" stroke-width="1.4"/></svg>
-        <span class="notif-pip" aria-hidden="true"></span>
       </button>
     </header>
 
@@ -142,36 +134,28 @@
         <ul class="kpi-grid" role="list">
 
           <li class="kpi-card green">
-            <span class="kpi-icon green" aria-hidden="true">
-              <svg viewBox="0 0 15 15" fill="none"><path d="M2 8l3.5 3.5L13 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
+            <svg class="kpi-icon green" viewBox="0 0 15 15" fill="none" aria-hidden="true"><path d="M2 8l3.5 3.5L13 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
             <strong class="kpi-value">70%</strong>
             <span class="kpi-label">Compliance Score</span>
             <span class="kpi-note green">↑ 5% from last month</span>
           </li>
 
           <li class="kpi-card amber">
-            <span class="kpi-icon amber" aria-hidden="true">
-              <svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M7.5 4.5v3.5l2 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-            </span>
+            <svg class="kpi-icon amber" viewBox="0 0 15 15" fill="none" aria-hidden="true"><circle cx="7.5" cy="7.5" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M7.5 4.5v3.5l2 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             <strong class="kpi-value">5</strong>
             <span class="kpi-label">Days to VAT Deadline</span>
             <span class="kpi-note amber">⚠ File before 10 May</span>
           </li>
 
           <li class="kpi-card red">
-            <span class="kpi-icon red" aria-hidden="true">
-              <svg viewBox="0 0 15 15" fill="none"><path d="M7.5 2v6M7.5 10.5v1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="7.5" cy="12.5" r=".8" fill="currentColor"/></svg>
-            </span>
+            <svg class="kpi-icon red" viewBox="0 0 15 15" fill="none" aria-hidden="true"><path d="M7.5 2v6M7.5 10.5v1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="7.5" cy="12.5" r=".8" fill="currentColor"/></svg>
             <strong class="kpi-value">1</strong>
             <span class="kpi-label">Overdue Filing</span>
             <span class="kpi-note red">UIF — penalty risk</span>
           </li>
 
           <li class="kpi-card blue">
-            <span class="kpi-icon blue" aria-hidden="true">
-              <svg viewBox="0 0 15 15" fill="none"><rect x="2" y="2" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 7.5h5M7.5 5v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-            </span>
+            <svg class="kpi-icon blue" viewBox="0 0 15 15" fill="none" aria-hidden="true"><rect x="2" y="2" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 7.5h5M7.5 5v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
             <strong class="kpi-value">3</strong>
             <span class="kpi-label">Actions Required</span>
             <span class="kpi-note blue">2 urgent, 1 routine</span>
@@ -197,24 +181,22 @@
                 <text x="45" y="49" text-anchor="middle" font-family="Sora,sans-serif" font-size="14" font-weight="700" fill="#141b14">70%</text>
               </svg>
             </figure>
-            <div class="score-details">
-              <p class="score-status">Needs Attention</p>
+            <article class="score-details">
+              <h3 class="score-status">Needs Attention</h3>
               <p class="score-desc">2 compliance items require action before penalties apply.</p>
-              <div class="score-progress-wrap">
+              <section class="score-progress">
                 <p class="progress-labels"><span>Progress</span><span>70 / 100</span></p>
-                <div class="progress-track" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" aria-label="Compliance progress: 70%">
-                  <div class="progress-fill"></div>
-                </div>
-              </div>
-            </div>
+                <progress class="progress-bar" value="70" max="100" aria-label="Compliance progress: 70%"></progress>
+              </section>
+            </article>
           </section>
 
           <dl class="status-list">
-            <div class="status-row"><dt>SARS Tax Status</dt><dd class="green">Compliant</dd></div>
-            <div class="status-row"><dt>CIPC Registration</dt><dd class="green">Active</dd></div>
-            <div class="status-row"><dt>VAT Return</dt><dd class="amber">Pending</dd></div>
-            <div class="status-row"><dt>UIF Submission</dt><dd class="red">Overdue</dd></div>
-            <div class="status-row"><dt>Tax Clearance</dt><dd class="amber">Expiring soon</dd></div>
+            <dt>SARS Tax Status</dt><dd class="green">Compliant</dd>
+            <dt>CIPC Registration</dt><dd class="green">Active</dd>
+            <dt>VAT Return</dt><dd class="amber">Pending</dd>
+            <dt>UIF Submission</dt><dd class="red">Overdue</dd>
+            <dt>Tax Clearance</dt><dd class="amber">Expiring soon</dd>
           </dl>
         </article>
 
@@ -226,38 +208,26 @@
           <ul class="alert-list" role="list">
             <li>
               <article class="alert-item red">
-                <span class="alert-pip pip-r" aria-hidden="true"></span>
-                <div>
-                  <h3>UIF Submission Overdue</h3>
-                  <p>Penalty risk detected — immediate action required. Ref: UIF-2026-0421.</p>
-                </div>
+                <h3>UIF Submission Overdue</h3>
+                <p>Penalty risk detected — immediate action required. Ref: UIF-2026-0421.</p>
               </article>
             </li>
             <li>
               <article class="alert-item amber">
-                <span class="alert-pip pip-y" aria-hidden="true"></span>
-                <div>
-                  <h3>VAT Return Due in 5 Days</h3>
-                  <p>File before <time datetime="2026-05-10">10 May 2026</time> to avoid SARS interest. Period: Mar–Apr 2026.</p>
-                </div>
+                <h3>VAT Return Due in 5 Days</h3>
+                <p>File before <time datetime="2026-05-10">10 May 2026</time> to avoid SARS interest. Period: Mar–Apr 2026.</p>
               </article>
             </li>
             <li>
               <article class="alert-item amber">
-                <span class="alert-pip pip-y" aria-hidden="true"></span>
-                <div>
-                  <h3>Tax Clearance Certificate Expiring</h3>
-                  <p>Expires <time datetime="2026-06-30">30 June 2026</time>. Renew early to avoid gaps.</p>
-                </div>
+                <h3>Tax Clearance Certificate Expiring</h3>
+                <p>Expires <time datetime="2026-06-30">30 June 2026</time>. Renew early to avoid gaps.</p>
               </article>
             </li>
             <li>
               <article class="alert-item green">
-                <span class="alert-pip pip-g" aria-hidden="true"></span>
-                <div>
-                  <h3>CIPC Annual Return — On Track</h3>
-                  <p>Due <time datetime="2026-08-01">1 August 2026</time>. No action needed for now.</p>
-                </div>
+                <h3>CIPC Annual Return — On Track</h3>
+                <p>Due <time datetime="2026-08-01">1 August 2026</time>. No action needed for now.</p>
               </article>
             </li>
           </ul>
@@ -275,42 +245,32 @@
           <ul class="deadline-list" role="list">
             <li class="deadline-item">
               <span class="deadline-dot" style="background:var(--red);" aria-hidden="true"></span>
-              <span class="deadline-info">
-                <span class="deadline-name">UIF Submission</span>
-                <span class="deadline-sub">Department of Labour</span>
-              </span>
+              <h3 class="deadline-name">UIF Submission</h3>
+              <p class="deadline-sub">Department of Labour</p>
               <span class="pill red">Overdue</span>
             </li>
             <li class="deadline-item">
               <span class="deadline-dot" style="background:var(--amber);" aria-hidden="true"></span>
-              <span class="deadline-info">
-                <span class="deadline-name">VAT Return (SARS)</span>
-                <span class="deadline-sub">Period: Mar–Apr 2026</span>
-              </span>
+              <h3 class="deadline-name">VAT Return (SARS)</h3>
+              <p class="deadline-sub">Period: Mar–Apr 2026</p>
               <span class="pill amber">5 days</span>
             </li>
             <li class="deadline-item">
               <span class="deadline-dot" style="background:var(--amber);" aria-hidden="true"></span>
-              <span class="deadline-info">
-                <span class="deadline-name">CIPC Annual Return</span>
-                <span class="deadline-sub">Annual filing fee: R250</span>
-              </span>
+              <h3 class="deadline-name">CIPC Annual Return</h3>
+              <p class="deadline-sub">Annual filing fee: R250</p>
               <span class="pill amber">87 days</span>
             </li>
             <li class="deadline-item">
               <span class="deadline-dot" style="background:var(--brand);" aria-hidden="true"></span>
-              <span class="deadline-info">
-                <span class="deadline-name">Income Tax (SARS)</span>
-                <span class="deadline-sub">FY 2025 / 2026</span>
-              </span>
+              <h3 class="deadline-name">Income Tax (SARS)</h3>
+              <p class="deadline-sub">FY 2025 / 2026</p>
               <span class="pill green">On track</span>
             </li>
             <li class="deadline-item">
               <span class="deadline-dot" style="background:var(--brand);" aria-hidden="true"></span>
-              <span class="deadline-info">
-                <span class="deadline-name">Skills Levy (SETA)</span>
-                <span class="deadline-sub">Workplace Skills Plan</span>
-              </span>
+              <h3 class="deadline-name">Skills Levy (SETA)</h3>
+              <p class="deadline-sub">Workplace Skills Plan</p>
               <span class="pill gray">Apr 2027</span>
             </li>
           </ul>
@@ -322,43 +282,27 @@
           </header>
           <ul class="action-list" role="list">
             <li class="action-item">
-              <span class="action-icon" style="background:var(--red-light);" aria-hidden="true">
-                <svg viewBox="0 0 15 15" fill="none" style="color:var(--red-dark)"><path d="M7.5 1v7M4 3.5L7.5 1 11 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.5 10.5h10v2.5h-10z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
-              </span>
-              <span class="action-info">
-                <span class="action-name">Submit UIF Return</span>
-                <span class="action-sub">Urgent — penalty accumulating daily</span>
-              </span>
+              <svg class="action-icon" style="background:var(--red-light);" viewBox="0 0 15 15" fill="none" aria-hidden="true" style="color:var(--red-dark)"><path d="M7.5 1v7M4 3.5L7.5 1 11 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.5 10.5h10v2.5h-10z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+              <h3 class="action-name">Submit UIF Return</h3>
+              <p class="action-sub">Urgent — penalty accumulating daily</p>
               <span class="pill red">Urgent</span>
             </li>
             <li class="action-item">
-              <span class="action-icon" style="background:var(--amber-light);" aria-hidden="true">
-                <svg viewBox="0 0 15 15" fill="none" style="color:var(--amber-dark)"><rect x="2" y="2" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 7.5h5M7.5 5v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-              </span>
-              <span class="action-info">
-                <span class="action-name">File VAT Return</span>
-                <span class="action-sub">Due <time datetime="2026-05-10">10 May 2026</time> — 5 days left</span>
-              </span>
+              <svg class="action-icon" style="background:var(--amber-light);" viewBox="0 0 15 15" fill="none" aria-hidden="true" style="color:var(--amber-dark)"><rect x="2" y="2" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 7.5h5M7.5 5v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <h3 class="action-name">File VAT Return</h3>
+              <p class="action-sub">Due <time datetime="2026-05-10">10 May 2026</time> — 5 days left</p>
               <span class="pill amber">Soon</span>
             </li>
             <li class="action-item">
-              <span class="action-icon" aria-hidden="true">
-                <svg viewBox="0 0 15 15" fill="none"><path d="M2 2h11v11H2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M5 6h5M5 8.5h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-              </span>
-              <span class="action-info">
-                <span class="action-name">Renew Tax Clearance</span>
-                <span class="action-sub">Expires <time datetime="2026-06-30">30 June 2026</time></span>
-              </span>
+              <svg class="action-icon" viewBox="0 0 15 15" fill="none" aria-hidden="true"><path d="M2 2h11v11H2z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M5 6h5M5 8.5h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+              <h3 class="action-name">Renew Tax Clearance</h3>
+              <p class="action-sub">Expires <time datetime="2026-06-30">30 June 2026</time></p>
               <span class="pill amber">Soon</span>
             </li>
             <li class="action-item">
-              <span class="action-icon" aria-hidden="true">
-                <svg viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="5.5" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M2 13c0-2.5 2.5-4.5 5.5-4.5S13 10.5 13 13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-              </span>
-              <span class="action-info">
-                <span class="action-name">Update CIPC Director Info</span>
-                <span class="action-sub">Address change outstanding</span>
-              </span>
+              <svg class="action-icon" viewBox="0 0 15 15" fill="none" aria-hidden="true"><circle cx="7.5" cy="5.5" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M2 13c0-2.5 2.5-4.5 5.5-4.5S13 10.5 13 13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              <h3 class="action-name">Update CIPC Director Info</h3>
+              <p class="action-sub">Address change outstanding</p>
               <span class="pill green">Routine</span>
             </li>
           </ul>
@@ -371,12 +315,36 @@
           </header>
           <figure aria-label="Monthly compliance bar chart, Dec 2025 to May 2026">
             <div class="bar-chart" role="img" aria-label="Compliance rose from 52% in December 2025 to 70% in May 2026">
-              <span class="bar-col"><span class="bar-pct">52%</span><span class="bar-fill" style="height:47px;background:var(--gray-200);"></span><span class="bar-month">Dec</span></span>
-              <span class="bar-col"><span class="bar-pct">58%</span><span class="bar-fill" style="height:52px;background:var(--gray-200);"></span><span class="bar-month">Jan</span></span>
-              <span class="bar-col"><span class="bar-pct">61%</span><span class="bar-fill" style="height:55px;background:var(--brand-light);"></span><span class="bar-month">Feb</span></span>
-              <span class="bar-col"><span class="bar-pct">65%</span><span class="bar-fill" style="height:59px;background:var(--brand-light);"></span><span class="bar-month">Mar</span></span>
-              <span class="bar-col"><span class="bar-pct">65%</span><span class="bar-fill" style="height:59px;background:var(--brand-light);"></span><span class="bar-month">Apr</span></span>
-              <span class="bar-col"><span class="bar-pct" style="color:var(--brand-dark);font-weight:700;">70%</span><span class="bar-fill" style="height:63px;background:var(--brand);"></span><span class="bar-month" style="color:var(--brand-dark);font-weight:600;">May</span></span>
+              <div class="bar-col">
+                <span class="bar-pct">52%</span>
+                <div class="bar-fill" style="height:47px;background:var(--gray-200);"></div>
+                <span class="bar-month">Dec</span>
+              </div>
+              <div class="bar-col">
+                <span class="bar-pct">58%</span>
+                <div class="bar-fill" style="height:52px;background:var(--gray-200);"></div>
+                <span class="bar-month">Jan</span>
+              </div>
+              <div class="bar-col">
+                <span class="bar-pct">61%</span>
+                <div class="bar-fill" style="height:55px;background:var(--brand-light);"></div>
+                <span class="bar-month">Feb</span>
+              </div>
+              <div class="bar-col">
+                <span class="bar-pct">65%</span>
+                <div class="bar-fill" style="height:59px;background:var(--brand-light);"></div>
+                <span class="bar-month">Mar</span>
+              </div>
+              <div class="bar-col">
+                <span class="bar-pct">65%</span>
+                <div class="bar-fill" style="height:59px;background:var(--brand-light);"></div>
+                <span class="bar-month">Apr</span>
+              </div>
+              <div class="bar-col">
+                <span class="bar-pct" style="color:var(--brand-dark);font-weight:700;">70%</span>
+                <div class="bar-fill" style="height:63px;background:var(--brand);"></div>
+                <span class="bar-month" style="color:var(--brand-dark);font-weight:600;">May</span>
+              </div>
             </div>
             <ul class="chart-legend" role="list">
               <li class="legend-item"><span class="legend-swatch" style="background:var(--brand);" aria-hidden="true"></span>Current</li>
@@ -385,9 +353,9 @@
             </ul>
           </figure>
           <dl class="chart-stats">
-            <div class="stat-row"><dt>Target score</dt><dd>85%</dd></div>
-            <div class="stat-row"><dt>Current score</dt><dd class="amber">70%</dd></div>
-            <div class="stat-row"><dt>Gap to target</dt><dd class="red">−15 pts</dd></div>
+            <dt>Target score</dt><dd>85%</dd>
+            <dt>Current score</dt><dd class="amber">70%</dd>
+            <dt>Gap to target</dt><dd class="red">−15 pts</dd>
           </dl>
         </article>
       </div>
@@ -402,43 +370,43 @@
           </header>
           <ol class="activity-feed" aria-label="Recent compliance events, newest first">
             <li class="activity-item">
-              <span class="activity-avatar green" aria-hidden="true">SA</span>
-              <div class="activity-body">
+              <output class="activity-avatar green" aria-hidden="true">SA</output>
+              <article class="activity-body">
                 <p>SARS eFiling — Income tax submission confirmed</p>
                 <time datetime="2026-05-03">2 days ago · Auto-filed</time>
-              </div>
+              </article>
               <span class="pill green">Done</span>
             </li>
             <li class="activity-item">
-              <span class="activity-avatar blue" aria-hidden="true">CI</span>
-              <div class="activity-body">
+              <output class="activity-avatar blue" aria-hidden="true">CI</output>
+              <article class="activity-body">
                 <p>CIPC profile updated — operating address</p>
                 <time datetime="2026-05-01">4 days ago · Manual</time>
-              </div>
+              </article>
               <span class="pill blue">Done</span>
             </li>
             <li class="activity-item">
-              <span class="activity-avatar amber" aria-hidden="true">TC</span>
-              <div class="activity-body">
+              <output class="activity-avatar amber" aria-hidden="true">TC</output>
+              <article class="activity-body">
                 <p>Tax Clearance Certificate downloaded</p>
                 <time datetime="2026-04-28">1 week ago · Document</time>
-              </div>
+              </article>
               <span class="pill gray">Archived</span>
             </li>
             <li class="activity-item">
-              <span class="activity-avatar red" aria-hidden="true">UF</span>
-              <div class="activity-body">
+              <output class="activity-avatar red" aria-hidden="true">UF</output>
+              <article class="activity-body">
                 <p>UIF return — reminder sent (2nd notice)</p>
                 <time datetime="2026-04-27">8 days ago · Alert</time>
-              </div>
+              </article>
               <span class="pill red">Overdue</span>
             </li>
             <li class="activity-item">
-              <span class="activity-avatar green" aria-hidden="true">TH</span>
-              <div class="activity-body">
+              <output class="activity-avatar green" aria-hidden="true">TH</output>
+              <article class="activity-body">
                 <p>Consultation booked with TaxHelp SA</p>
                 <time datetime="2026-04-25">10 days ago · Calendar</time>
-              </div>
+              </article>
               <span class="pill green">Confirmed</span>
             </li>
           </ol>
@@ -450,29 +418,27 @@
             <button class="card-action">Edit profile →</button>
           </header>
           <dl class="snapshot-list">
-            <div class="snapshot-row"><dt>Business name</dt><dd>Nqubeko Hair Studio</dd></div>
-            <div class="snapshot-row"><dt>Entity type</dt><dd>Sole Trader</dd></div>
-            <div class="snapshot-row"><dt>Province</dt><dd>Gauteng</dd></div>
-            <div class="snapshot-row"><dt>Industry</dt><dd>Salon / Beauty</dd></div>
-            <div class="snapshot-row"><dt>CIPC status</dt><dd class="green">Registered ✓</dd></div>
-            <div class="snapshot-row"><dt>VAT registered</dt><dd class="red">No</dd></div>
-            <div class="snapshot-row"><dt>Employees</dt><dd>4 full-time</dd></div>
-            <div class="snapshot-row"><dt>Annual revenue</dt><dd>R100k – R1M</dd></div>
-            <div class="snapshot-row"><dt>Operation mode</dt><dd>Physical</dd></div>
-            <div class="snapshot-row"><dt>Compliance plan</dt><dd class="green">Active</dd></div>
+            <dt>Business name</dt><dd>Nqubeko Hair Studio</dd>
+            <dt>Entity type</dt><dd>Sole Trader</dd>
+            <dt>Province</dt><dd>Gauteng</dd>
+            <dt>Industry</dt><dd>Salon / Beauty</dd>
+            <dt>CIPC status</dt><dd class="green">Registered ✓</dd>
+            <dt>VAT registered</dt><dd class="red">No</dd>
+            <dt>Employees</dt><dd>4 full-time</dd>
+            <dt>Annual revenue</dt><dd>R100k – R1M</dd>
+            <dt>Operation mode</dt><dd>Physical</dd>
+            <dt>Compliance plan</dt><dd class="green">Active</dd>
           </dl>
         </article>
       </div>
 
       <!-- CTA Banner — aside: complementary content -->
       <aside class="cta-banner" aria-label="Urgent action: UIF filing overdue">
-        <span class="cta-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z" stroke="#fff" stroke-width="1.6"/><path d="M12 7v5l3 3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
-        </span>
-        <div class="cta-body">
+        <svg class="cta-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z" stroke="#fff" stroke-width="1.6"/><path d="M12 7v5l3 3" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <article class="cta-body">
           <h2>UIF return is overdue — avoid further penalties</h2>
           <p>Connect with TaxHelp SA or submit via the Department of Labour portal. Our filing assistant guides you step-by-step.</p>
-        </div>
+        </article>
         <button class="cta-btn">Start filing →</button>
       </aside>
 
