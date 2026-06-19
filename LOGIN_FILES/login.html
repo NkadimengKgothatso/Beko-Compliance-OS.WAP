@@ -3,61 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beko Compliance OS - Login</title>
+    <title>Beko ComplianceOS - Welcome & Login</title>
+   
     <link rel="stylesheet" href="login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#3b4cca">
 </head>
 <body>
 
-<div class="container" id="container">
+<main class="login-page">
+    
+    <!-- WELCOME SECTION -->
+    <section class="welcome-panel">
 
-    <!-- SIGN UP FORM -->
-    <div class="form-container sign-up-container">
-        <form id="signupForm">
-            <h1>Sign up </h1>
-            
-            <div class="social-login">
-                <button type="button" id="googleSignup"><i class="fab fa-google"></i> Google</button>
+        <header>
+            <h1>Beko ComplianceOS</h1>
 
-            </div>
-            
-           
-        </form>
-    </div>
+            <p class="tagline">
+                Simplifying compliance for South African SMEs,
+                startups and sole proprietors.
+            </p>
+        </header>
 
-    <!-- SIGN IN FORM -->
-    <div class="form-container sign-in-container">
+        <article>
+            <h2>About the Platform</h2>
+
+            <p>
+             Beko ComplianceOS is a South African legal-tech platform built to help businesses 
+             navigate their regulatoryresponsibilities with SARS, CIPC, and other relevant authorities. 
+              Our mission is to cut through the complexity of compliance by clearly showing users what's required, 
+              when it's due, and how to get it done right.
+            </p>
+
+
+        </article>
+
+        <article>
+            <h2>What We Offer</h2>
+
+            <ul>
+                <li>Monitoring of compliance obligations and key deadlines</li>
+                <li>Automated reminders via SMS, email, and in-app notifications</li>
+                <li>Clear, step-by-step guidance for completing compliance tasks</li>
+                <li>Access to legal templates and essential business documents</li>
+                <li>Plain-language legal and tax education for business owners</li>
+            </ul>
+        </article>
+
+   
+
+    </section>
+<section class="login-panel">
+
+    <header>
+        <h1>Welcome</h1>
+        <p>
+            Sign in to continue managing your business compliance.
+        </p>
+    </header>
+
+    <div class="form-wrapper">
+
+        <!-- LOGIN FORM -->
         <form id="loginForm">
-            <h1>Sign in</h1>
-            <a href="../DASHBOARD_FILES/dashboard.html" class="btn">Go to Dashboard</a>
-            <div class="social-login">
-                <button type="button" id="googleLogin"><i class="fab fa-google"></i> Google</button>
-            </div>
-            
-            
+
+            <label for="email">
+                Email Address
+            </label>
+
+            <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your email address"
+                required
+            >
+
+            <label for="password">
+                Password
+            </label>
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your password"
+                required
+            >
+
+            <button type="submit">
+                Sign In
+            </button>
+
+            <button type="button" id="googleLogin">
+                <i class="fab fa-google"></i>
+                Continue with Google
+            </button>
+
+            <p>
+                Don't have an account?
+                <a href="#" id="showSignup">Create Account</a>
+            </p>
+
         </form>
+
+        <!-- SIGNUP FORM -->
+        <form id="signupForm">
+
+            <label for="fullName">
+                Full Name
+            </label>
+
+            <input
+                type="text"
+                id="fullName"
+                name="fullName"
+                placeholder="Enter your full name"
+                required
+            >
+
+            <label for="businessName">
+                Business Name
+            </label>
+
+            <input
+                type="text"
+                id="businessName"
+                name="businessName"
+                placeholder="Enter business name"
+                required
+            >
+
+            <label for="signupEmail">
+                Email Address
+            </label>
+
+            <input
+                type="email"
+                id="signupEmail"
+                name="signupEmail"
+                placeholder="Enter your email address"
+                required
+            >
+
+            <label for="phone">
+                Mobile Number
+            </label>
+
+            <input
+                type="tel"
+                id="phone"
+                name="phone"
+                placeholder="+27 XX XXX XXXX"
+                required
+            >
+
+            <label for="businessType">
+                Business Type
+            </label>
+
+            <select id="businessType" name="businessType" required>
+                <option value="">Select Business Type</option>
+                <option value="sole-proprietor">Sole Proprietor</option>
+                <option value="startup">Startup</option>
+                <option value="pty">Private Company (Pty) Ltd</option>
+                <option value="partnership">Partnership</option>
+                <option value="non-profit">Non-Profit Organisation</option>
+            </select>
+
+            <label for="signupPassword">
+                Password
+            </label>
+
+            <input
+                type="password"
+                id="signupPassword"
+                name="signupPassword"
+                placeholder="Create a password"
+                required
+            >
+
+            <label for="confirmPassword">
+                Confirm Password
+            </label>
+
+            <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                placeholder="Confirm your password"
+                required
+            >
+
+            <button type="submit">
+                Create Account
+            </button>
+
+            <button type="button" id="googleSignup">
+                <i class="fab fa-google"></i>
+                Sign Up with Google
+            </button>
+
+            <p>
+                Already have an account?
+                <a href="#" id="showLogin">Sign In</a>
+            </p>
+
+        </form>
+
     </div>
 
-    <!-- OVERLAY -->
-    <div class="overlay-container">
-        <div class="overlay">
-            <div class="overlay-panel overlay-left">
-                <h1>Welcome !</h1>
-                <p>Enter your details to login</p>
-                <button class="ghost" id="loginSwitch">Sign In</button>
-            </div>
-            <div class="overlay-panel overlay-right">
-                <h1>Hello</h1><br>
-                <p>create an account to get started</p>
-                <button class="ghost" id="registerSwitch">Sign Up</button>
-            </div>
-        </div>
-    </div>
+    <footer>
+        <p>
+            Compliance guidance made simple.
+        </p>
+    </footer>
 
-</div>
+</section>
 
+</main>
 <script src="login.js"></script>
 </body>
+
 </html>

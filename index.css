@@ -43,33 +43,9 @@ body {
     
 }
 
-/* Text styling */
-.text-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    opacity: 0;
-    animation: showText 0.8s ease-out forwards;
-    animation-delay: 4s;
-    text-align: center;
-    z-index: 10;
-    font-size: 0.8rem; /* Smaller text */
-}
 
-.text-container h1 {
-    font-size: 3.5rem;
-    font-weight: 700;
-    text-align: center;
-    line-height: 1.4;
-    letter-spacing: -1px;
-    background:  linear-gradient(to right, #0999e7, #23cd61);
-    background-size: 300% 300%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: gradientShift 6s ease infinite;
-}
+
+
 
 /* Responsive design */
 @media (max-width: 768px) {
