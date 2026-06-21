@@ -5,13 +5,13 @@ import {
   createUserWithEmailAndPassword,
   signInWithPopup,
   updateProfile
-} from "firebase/auth";
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
   doc,
   setDoc,
   getDoc
-} from "firebase/firestore";
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
 // =======================
@@ -57,18 +57,24 @@ function showSuccess(message) {
   setTimeout(() => successDiv.remove(), 3000);
 }
 
+// FIX: previously this captured `button.textContent` *after* it had already
+// been overwritten to "Loading...", so re-enabling the button on error left
+// the label stuck on "Loading...". We now store the original label on the
+// element itself (dataset) the first time we enter the loading state, and
+// restore from there.
 function setButtonLoading(button, isLoading) {
-  const originalText = button.textContent;
   if (isLoading) {
+    if (button.dataset.originalText === undefined) {
+      button.dataset.originalText = button.textContent;
+    }
     button.disabled = true;
     button.textContent = "Loading...";
     button.style.opacity = "0.7";
   } else {
     button.disabled = false;
-    button.textContent = originalText;
+    button.textContent = button.dataset.originalText ?? button.textContent;
     button.style.opacity = "1";
   }
-  return originalText;
 }
 
 function validateEmail(email) {
@@ -85,6 +91,7 @@ const signupForm = document.getElementById("signupForm");
 
 document.getElementById("showSignup").addEventListener("click", (e) => {
   e.preventDefault();
+  loginForm.style.transition = "opacity 0.3s ease-out";
   loginForm.style.opacity = "0";
   setTimeout(() => {
     loginForm.style.display = "none";
@@ -95,11 +102,11 @@ document.getElementById("showSignup").addEventListener("click", (e) => {
       signupForm.style.opacity = "1";
     }, 10);
   }, 300);
-  loginForm.style.transition = "opacity 0.3s ease-out";
 });
 
 document.getElementById("showLogin").addEventListener("click", (e) => {
   e.preventDefault();
+  signupForm.style.transition = "opacity 0.3s ease-out";
   signupForm.style.opacity = "0";
   setTimeout(() => {
     signupForm.style.display = "none";
@@ -110,7 +117,6 @@ document.getElementById("showLogin").addEventListener("click", (e) => {
       loginForm.style.opacity = "1";
     }, 10);
   }, 300);
-  signupForm.style.transition = "opacity 0.3s ease-out";
 });
 
 signupForm.style.display = "none";

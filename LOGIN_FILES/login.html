@@ -4,14 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beko ComplianceOS - Welcome & Login</title>
-   
+
     <link rel="stylesheet" href="login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* Referenced by login.js for the toast notifications but was
+           missing from the stylesheet, so toasts never animated in. */
+        @keyframes slideIn {
+            from {
+                transform: translateX(40px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 <body>
 
 <main class="login-page">
-    
+
     <!-- WELCOME SECTION -->
     <section class="welcome-panel">
 
@@ -28,9 +42,9 @@
             <h2>About the Platform</h2>
 
             <p>
-             Beko ComplianceOS is a South African legal-tech platform built to help businesses 
-             navigate their regulatoryresponsibilities with SARS, CIPC, and other relevant authorities. 
-              Our mission is to cut through the complexity of compliance by clearly showing users what's required, 
+             Beko ComplianceOS is a South African legal-tech platform built to help businesses
+             navigate their regulatory responsibilities with SARS, CIPC, and other relevant authorities.
+              Our mission is to cut through the complexity of compliance by clearly showing users what's required,
               when it's due, and how to get it done right.
             </p>
 
@@ -48,8 +62,6 @@
                 <li>Plain-language legal and tax education for business owners</li>
             </ul>
         </article>
-
-   
 
     </section>
 <section class="login-panel">
@@ -98,7 +110,7 @@
                 <i class="fab fa-google"></i>
                 Continue with Google
             </button>
-        
+
             <p>
                 Don't have an account?
                 <a href="#" id="showSignup">Create Account</a>
@@ -107,7 +119,9 @@
         </form>
 
         <!-- SIGNUP FORM -->
-        <form id="signupForm">
+        <!-- Hidden by default inline (not just via JS) so it doesn't flash
+             on screen alongside the login form before login.js runs. -->
+        <form id="signupForm" style="display: none;">
 
             <label for="fullName">
                 Full Name
@@ -121,8 +135,6 @@
                 required
             >
 
-     
-
             <label for="signupEmail">
                 Email Address
             </label>
@@ -135,7 +147,6 @@
                 required
             >
 
-  
             <label for="signupPassword">
                 Password
             </label>
@@ -168,7 +179,7 @@
                 <i class="fab fa-google"></i>
                 Sign Up with Google
             </button>
-            
+
             <p>
                 Already have an account?
                 <a href="#" id="showLogin">Sign In</a>
@@ -187,7 +198,7 @@
 </section>
 
 </main>
-<script type="module" src="login.js"></script>
+<script  src="login.js"></script>
 </body>
 
 </html>

@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 import { auth } from "../firebase.js";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 // =======================
 // PROTECT DASHBOARD
@@ -20,7 +20,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 onAuthStateChanged(auth, (user) => {
   if (!user) {
     // not logged in → send back to login page
-    window.location.href = "index.html";
+    window.location.href = "../index.html";
   } else {
     // user is logged in → you can use user info
     document.getElementById("userEmail").textContent = user.email;
@@ -37,5 +37,5 @@ onAuthStateChanged(auth, (user) => {
 // =======================
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await signOut(auth);
-  window.location.href = "index.html";
+  window.location.href = "../index.html";
 });
