@@ -1,4 +1,4 @@
-import { auth, provider, db } from "./firebase.js";
+import { auth, provider, db } from "../firebase.js";
 
 import {
   signInWithEmailAndPassword,
@@ -47,7 +47,7 @@ loginForm.addEventListener("submit", async (e) => {
 
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    window.location.href = "dashboard.html";
+    window.location.href = "../DASHBOARD_FILES/dashboard.html";
   } catch (error) {
     alert(error.message);
   }
@@ -92,7 +92,7 @@ signupForm.addEventListener("submit", async (e) => {
       createdAt: new Date()
     });
 
-    window.location.href = "dashboard.html";
+    window.location.href = "../DASHBOARD_FILES/dashboard.html";
 
   } catch (error) {
     alert(error.message);
@@ -120,7 +120,7 @@ async function handleGoogleLogin() {
       });
     }
 
-    window.location.href = "dashboard.html";
+    window.location.href = "../DASHBOARD_FILES/dashboard.html";
 
   } catch (error) {
     alert(error.message);

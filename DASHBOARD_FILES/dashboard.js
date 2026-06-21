@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-import { auth } from "./firebase.js";
+import { auth } from "../firebase.js";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 
 // =======================
