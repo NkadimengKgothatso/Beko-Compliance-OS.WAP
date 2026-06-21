@@ -98,10 +98,7 @@
                 <i class="fab fa-google"></i>
                 Continue with Google
             </button>
-            <!-- temporary button  -->
-              <button onclick="window.location.href='../DASHBOARD_FILES/dashboard.html'">
-                Login
-            </button>
+        
             <p>
                 Don't have an account?
                 <a href="#" id="showSignup">Create Account</a>
@@ -124,17 +121,7 @@
                 required
             >
 
-            <label for="businessName">
-                Business Name
-            </label>
-
-            <input
-                type="text"
-                id="businessName"
-                name="businessName"
-                placeholder="Enter business name"
-                required
-            >
+     
 
             <label for="signupEmail">
                 Email Address
@@ -148,31 +135,7 @@
                 required
             >
 
-            <label for="phone">
-                Mobile Number
-            </label>
-
-            <input
-                type="tel"
-                id="phone"
-                name="phone"
-                placeholder="+27 XX XXX XXXX"
-                required
-            >
-
-            <label for="businessType">
-                Business Type
-            </label>
-
-            <select id="businessType" name="businessType" required>
-                <option value="">Select Business Type</option>
-                <option value="sole-proprietor">Sole Proprietor</option>
-                <option value="startup">Startup</option>
-                <option value="pty">Private Company (Pty) Ltd</option>
-                <option value="partnership">Partnership</option>
-                <option value="non-profit">Non-Profit Organisation</option>
-            </select>
-
+  
             <label for="signupPassword">
                 Password
             </label>
@@ -224,7 +187,7 @@
 </section>
 
 </main>
-<script src="login.js"></script>
+<script type="module" src="login.js"></script>
 </body>
 
 </html>

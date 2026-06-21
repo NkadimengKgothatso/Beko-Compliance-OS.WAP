@@ -1,69 +1,131 @@
-// LOGIN FORM
+import { auth, provider, db } from "./firebase.js";
+
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  updateProfile
+} from "firebase/auth";
+
+import {
+  doc,
+  setDoc,
+  getDoc
+} from "firebase/firestore";
+
+
+// =======================
+// SHOW / HIDE FORMS
+// =======================
 const loginForm = document.getElementById("loginForm");
 const signupForm = document.getElementById("signupForm");
 
-// SWITCH LINKS
-const showSignup = document.getElementById("showSignup");
-const showLogin = document.getElementById("showLogin");
-
-// Show Sign Up form
-showSignup.addEventListener("click", (e) => {
-    e.preventDefault();
-    loginForm.style.display = "none";
-    signupForm.style.display = "flex";
+document.getElementById("showSignup").addEventListener("click", (e) => {
+  e.preventDefault();
+  loginForm.style.display = "none";
+  signupForm.style.display = "block";
 });
 
-// Show Login form
-showLogin.addEventListener("click", (e) => {
-    e.preventDefault();
-    signupForm.style.display = "none";
-    loginForm.style.display = "flex";
+document.getElementById("showLogin").addEventListener("click", (e) => {
+  e.preventDefault();
+  signupForm.style.display = "none";
+  loginForm.style.display = "block";
 });
 
-// GOOGLE BUTTONS — go to dashboard
-document.getElementById("googleLogin").addEventListener("click", () => {
-    window.location.href = "../DASHBOARD_FILES/dashboard.html";
+// default view
+signupForm.style.display = "none";
+
+
+// =======================
+// EMAIL LOGIN
+// =======================
+loginForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    window.location.href = "dashboard.html";
+  } catch (error) {
+    alert(error.message);
+  }
 });
 
-document.getElementById("googleSignup").addEventListener("click", () => {
-    window.location.href = "../DASHBOARD_FILES/dashboard.html";
-});
 
-// HANDLE SIGN IN
-loginForm.addEventListener("submit", (e) => {
-    e.preventDefault();
+// =======================
+// EMAIL SIGNUP
+// =======================
+signupForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+  const fullName = document.getElementById("fullName").value;
+  const email = document.getElementById("signupEmail").value;
+  const password = document.getElementById("signupPassword").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
 
-    if (!email || !password) {
-        alert("Please fill in all fields!");
-        return;
-    }
+  if (password !== confirmPassword) {
+    alert("Passwords do not match");
+    return;
+  }
 
-    // TODO: replace with real authentication later
-    window.location.href = "../DASHBOARD_FILES/dashboard.html";
-});
+  try {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
 
-// HANDLE SIGN UP
-signupForm.addEventListener("submit", (e) => {
-    e.preventDefault();
+    const user = userCredential.user;
 
-    const inputs = signupForm.querySelectorAll("input, select");
-    let valid = true;
-
-    inputs.forEach((input) => {
-        if (!input.value) valid = false;
+    // save name to auth profile
+    await updateProfile(user, {
+      displayName: fullName
     });
 
-    if (!valid) {
-        alert("Please fill in all fields!");
-        return;
+    // save user in Firestore
+    await setDoc(doc(db, "users", user.uid), {
+      fullName: fullName,
+      email: email,
+      authProvider: "email",
+      createdAt: new Date()
+    });
+
+    window.location.href = "dashboard.html";
+
+  } catch (error) {
+    alert(error.message);
+  }
+});
+
+
+// =======================
+// GOOGLE LOGIN
+// =======================
+async function handleGoogleLogin() {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+
+    const userRef = doc(db, "users", user.uid);
+    const snap = await getDoc(userRef);
+
+    if (!snap.exists()) {
+      await setDoc(userRef, {
+        fullName: user.displayName,
+        email: user.email,
+        authProvider: "google",
+        createdAt: new Date()
+      });
     }
 
-    alert("Account created successfully!");
+    window.location.href = "dashboard.html";
 
-    // Switch back to login form after signup
-    signupForm.style.display = "none";
-    loginForm.style.display = "flex";
-});
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+document.getElementById("googleLogin").addEventListener("click", handleGoogleLogin);
+document.getElementById("googleSignup").addEventListener("click", handleGoogleLogin);
