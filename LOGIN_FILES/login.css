@@ -259,3 +259,24 @@ select:focus{
 #googleSignup i{
     margin-right:0.5rem;
 }
+
+/* ANIMATIONS */
+
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+button:disabled{
+    cursor: not-allowed;
+}
+
+button:disabled:hover{
+    background: inherit;
+}
