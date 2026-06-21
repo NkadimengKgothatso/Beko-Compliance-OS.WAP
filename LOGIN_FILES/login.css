@@ -95,19 +95,30 @@ form{
     max-width:450px;
     display:flex;
     flex-direction:column;
-    gap:1rem;
+    gap:1.25rem;
     background:var(--white);
     padding:2rem;
     border-radius:20px;
     box-shadow:0 10px 30px rgba(11,20,92,0.08);
 }
 
+/* Groups a label with its input so the two sit close together,
+   while still getting full breathing room from the next field. */
+.form-group{
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    gap:0.5rem;
+}
+
 label{
     color:var(--text-dark);
     font-weight:600;
+    font-size:0.95rem;
 }
 
 input{
+    width:100%;
     padding:1rem;
     border:1px solid #d1d5db;
     border-radius:10px;
@@ -122,13 +133,27 @@ input:focus{
 }
 
 button{
+    width:100%;
     padding:1rem;
     border:none;
     border-radius:10px;
     cursor:pointer;
     font-size:1rem;
     font-weight:600;
+    text-align:center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     transition:0.3s;
+}
+
+/* Groups the two action buttons (submit + Google) tightly together,
+   separating them from the fields above and the link below. */
+.button-group{
+    display:flex;
+    flex-direction:column;
+    gap:0.75rem;
+    margin-top:0.25rem;
 }
 
 /* SIGN IN BUTTON */
@@ -144,18 +169,17 @@ button[type="submit"]:hover{
 
 /* GOOGLE BUTTON */
 
-#googleLogin{
+#googleLogin,
+#googleSignup{
     background:white;
     color:var(--text-dark);
     border:1px solid #d1d5db;
+    gap:0.5rem;
 }
 
-#googleLogin:hover{
+#googleLogin:hover,
+#googleSignup:hover{
     background:#f9fafb;
-}
-
-#googleLogin i{
-    margin-right:0.5rem;
 }
 
 /* LINKS */
@@ -168,6 +192,12 @@ a{
 
 a:hover{
     text-decoration:underline;
+}
+
+form > p{
+    text-align:center;
+    color:var(--text-light);
+    font-size:0.95rem;
 }
 
 /* FOOTER */
@@ -215,13 +245,6 @@ footer{
 #loginForm,
 #signupForm{
     width:100%;
-    display:flex;
-    flex-direction:column;
-    gap:1rem;
-    background:var(--white);
-    padding:2rem;
-    border-radius:20px;
-    box-shadow:0 10px 30px rgba(11,20,92,0.08);
 }
 
 #signupForm{
@@ -231,6 +254,7 @@ footer{
 /* SELECT */
 
 select{
+    width:100%;
     padding:1rem;
     border:1px solid #d1d5db;
     border-radius:10px;
@@ -242,22 +266,6 @@ select:focus{
     outline:none;
     border-color:var(--secondary-green);
     box-shadow:0 0 0 3px rgba(47,174,125,0.15);
-}
-
-/* GOOGLE SIGNUP BUTTON */
-
-#googleSignup{
-    background:white;
-    color:var(--text-dark);
-    border:1px solid #d1d5db;
-}
-
-#googleSignup:hover{
-    background:#f9fafb;
-}
-
-#googleSignup i{
-    margin-right:0.5rem;
 }
 
 /* ANIMATIONS */

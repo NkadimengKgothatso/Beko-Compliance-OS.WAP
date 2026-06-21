@@ -7,20 +7,6 @@
 
     <link rel="stylesheet" href="login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        /* Referenced by login.js for the toast notifications but was
-           missing from the stylesheet, so toasts never animated in. */
-        @keyframes slideIn {
-            from {
-                transform: translateX(40px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-    </style>
 </head>
 <body>
 
@@ -78,38 +64,44 @@
         <!-- LOGIN FORM -->
         <form id="loginForm">
 
-            <label for="email">
-                Email Address
-            </label>
+            <div class="form-group">
+                <label for="email">
+                    Email Address
+                </label>
 
-            <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder="Enter your email address"
-                required
-            >
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email address"
+                    required
+                >
+            </div>
 
-            <label for="password">
-                Password
-            </label>
+            <div class="form-group">
+                <label for="password">
+                    Password
+                </label>
 
-            <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder="Enter your password"
-                required
-            >
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    required
+                >
+            </div>
 
-            <button type="submit">
-                Sign In
-            </button>
+            <div class="button-group">
+                <button type="submit">
+                    Sign In
+                </button>
 
-            <button type="button" id="googleLogin">
-                <i class="fab fa-google"></i>
-                Continue with Google
-            </button>
+                <button type="button" id="googleLogin">
+                    <i class="fab fa-google"></i>
+                    Continue with Google
+                </button>
+            </div>
 
             <p>
                 Don't have an account?
@@ -123,62 +115,72 @@
              on screen alongside the login form before login.js runs. -->
         <form id="signupForm" style="display: none;">
 
-            <label for="fullName">
-                Full Name
-            </label>
+            <div class="form-group">
+                <label for="fullName">
+                    Full Name
+                </label>
 
-            <input
-                type="text"
-                id="fullName"
-                name="fullName"
-                placeholder="Enter your full name"
-                required
-            >
+                <input
+                    type="text"
+                    id="fullName"
+                    name="fullName"
+                    placeholder="Enter your full name"
+                    required
+                >
+            </div>
 
-            <label for="signupEmail">
-                Email Address
-            </label>
+            <div class="form-group">
+                <label for="signupEmail">
+                    Email Address
+                </label>
 
-            <input
-                type="email"
-                id="signupEmail"
-                name="signupEmail"
-                placeholder="Enter your email address"
-                required
-            >
+                <input
+                    type="email"
+                    id="signupEmail"
+                    name="signupEmail"
+                    placeholder="Enter your email address"
+                    required
+                >
+            </div>
 
-            <label for="signupPassword">
-                Password
-            </label>
+            <div class="form-group">
+                <label for="signupPassword">
+                    Password
+                </label>
 
-            <input
-                type="password"
-                id="signupPassword"
-                name="signupPassword"
-                placeholder="Create a password"
-                required
-            >
+                <input
+                    type="password"
+                    id="signupPassword"
+                    name="signupPassword"
+                    placeholder="Create a password"
+                    required
+                >
+            </div>
 
-            <label for="confirmPassword">
-                Confirm Password
-            </label>
+            <div class="form-group">
+                <label for="confirmPassword">
+                    Confirm Password
+                </label>
 
-            <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                placeholder="Confirm your password"
-                required
-            >
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    placeholder="Confirm your password"
+                    required
+                >
+            </div>
 
-            <button type="submit">
-                Create Account
-            </button>
+            <div class="button-group">
+                <button type="submit">
+                    Create Account
+                </button>
 
-            <button type="button" id="googleSignup">
-                <i class="fab fa-google"></i>
-                Sign Up with Google
-            </button>
+                <button type="button" id="googleSignup">
+                    <i class="fab fa-google"></i>
+                    Sign Up with Google
+                </button>
+            </div>
 
             <p>
                 Already have an account?
