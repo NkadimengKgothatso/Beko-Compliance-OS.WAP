@@ -250,6 +250,20 @@ signupForm.addEventListener("submit", async (e) => {
 // =======================
 // GOOGLE LOGIN
 // =======================
+async function ensureGoogleUserProfile(user) {
+  const userRef = doc(db, "users", user.uid);
+  const snap = await getDoc(userRef);
+
+  if (!snap.exists()) {
+    await setDoc(userRef, {
+      fullName: user.displayName || "User",
+      email: user.email,
+      authProvider: "google",
+      createdAt: new Date()
+    });
+  }
+}
+
 async function handleGoogleLogin(e) {
   const button = e.target.closest('button');
   setButtonLoading(button, true);
@@ -258,24 +272,15 @@ async function handleGoogleLogin(e) {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
 
-    const userRef = doc(db, "users", user.uid);
-    const snap = await getDoc(userRef);
-
-    if (!snap.exists()) {
-      await setDoc(userRef, {
-        fullName: user.displayName || "User",
-        email: user.email,
-        authProvider: "google",
-        createdAt: new Date()
-      });
-    }
+    ensureGoogleUserProfile(user).catch((error) => {
+      console.error("Google profile sync failed:", error);
+    });
 
     showSuccess("Google login successful! Redirecting...");
-    setTimeout(() => {
-      window.location.href = "../DASHBOARD_FILES/dashboard.html";
-    }, 1000);
+    window.location.href = "../DASHBOARD_FILES/dashboard.html";
 
   } catch (error) {
+    console.error("Google login failed:", error);
     setButtonLoading(button, false);
     if (error.code !== "auth/popup-closed-by-user") {
       showError("Google login failed. Please try again");
