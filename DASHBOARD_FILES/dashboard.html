@@ -7,18 +7,20 @@
     <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
-<!-- sidebar,logo and footer -->
- <!-- ************************************************************************************************************************************************************* -->
 <aside>
-    <!-- logo -->
     <header>
-        <h1>Beko</h1>
-        <p>ComplianceOS</p>
+        <div class="brand">
+            <div class="brand-mark">✓</div>
+            <div>
+                <h1>Beko</h1>
+                <p>Compliance OS</p>
+            </div>
+        </div>
     </header>
-    <!-- sidebar -->
+
     <nav>
         <ul>
-            <li><a href="#">Dashboard</a></li>
+            <li><a href="#" class="active">Dashboard</a></li>
             <li><a href="#">Onboarding</a></li>
             <li><a href="#">Templates</a></li>
             <li><a href="#">Notifications</a></li>
@@ -26,25 +28,25 @@
             <li><a href="#">Profile</a></li>
         </ul>
     </nav>
-    <!-- footer -->
+
     <footer>
-       <h2>Welcome, <span id="userName"></span></h2>
-        <p>Email: <span id="userEmail"></span></p>
+        <h2>Welcome, <span class="userName"></span></h2>
+        <p>Email: <span class="userEmail"></span></p>
         <button id="logoutBtn">Logout</button>
     </footer>
 </aside>
 
-<!-- ************************************************************************************************************************************************************* -->
-<!-- main content -->
 <main>
-
-    <header>
-        <h1>Welcome back, <span id="userName"></span></h1>
-        <p><span id="userEmail"></span> · Saturday, 11 April 2026</p>
+    <header class="page-header">
+        <div>
+            <p class="eyebrow">Compliance dashboard</p>
+            <h1>Welcome back, <span class="userName"></span></h1>
+            <p><span class="userEmail"></span> · Saturday, 11 April 2026</p>
+        </div>
+        <button class="primary-action">Review tasks</button>
     </header>
 
     <section class="stats">
-
         <article>
             <h2>70%</h2>
             <p>Compliance score</p>
@@ -60,33 +62,25 @@
         <article>
             <h2>1</h2>
             <p>Overdue filing</p>
-            <strong>UIF – penalty risk</strong>
+            <strong>UIF - penalty risk</strong>
         </article>
 
         <article>
             <h2>3</h2>
             <p>Actions required</p>
+            <strong>Open checklist</strong>
         </article>
-
     </section>
 
     <section class="middle">
-
         <article>
             <header>
                 <h2>Compliance Status</h2>
             </header>
 
             <h3>70%</h3>
-
-            <p>
-                Needs attention
-            </p>
-
-            <p>
-                2 compliance items require action before penalties apply
-            </p>
-
+            <p class="status-label">Needs attention</p>
+            <p>2 compliance items require action before penalties apply</p>
             <progress value="70" max="100">70%</progress>
         </article>
 
@@ -95,31 +89,29 @@
                 <h2>Alerts</h2>
             </header>
 
-            <section>
+            <section class="alert danger">
                 <h3>Late on UIF submission</h3>
-                <p>Penalty risk detected — act immediately</p>
+                <p>Penalty risk detected - act immediately</p>
             </section>
 
-            <section>
+            <section class="alert warning">
                 <h3>VAT return due in 5 days</h3>
                 <p>File before 16 April to avoid interest</p>
             </section>
         </article>
-
     </section>
 
     <section class="bottom">
-
         <article>
             <header>
                 <h2>Upcoming Deadlines</h2>
             </header>
 
             <ul>
-                <li>UIF Submission — Overdue</li>
-                <li>VAT Return — 16 Apr 2026</li>
-                <li>CIPC Annual Return — 1 May 2026</li>
-                <li>Tax Return (SARS) — 15 Jan 2027</li>
+                <li><span>UIF Submission</span><strong>Overdue</strong></li>
+                <li><span>VAT Return</span><strong>16 Apr 2026</strong></li>
+                <li><span>CIPC Annual Return</span><strong>1 May 2026</strong></li>
+                <li><span>Tax Return (SARS)</span><strong>15 Jan 2027</strong></li>
             </ul>
         </article>
 
@@ -129,15 +121,14 @@
             </header>
 
             <ul>
-                <li>Submit UIF return</li>
-                <li>File VAT return</li>
-                <li>Update company details at CIPC</li>
+                <li><span>Submit UIF return</span><strong>High</strong></li>
+                <li><span>File VAT return</span><strong>Medium</strong></li>
+                <li><span>Update company details at CIPC</span><strong>Low</strong></li>
             </ul>
         </article>
-
     </section>
-
 </main>
+
 <script type="module" src="dashboard.js"></script>
 </body>
 </html>

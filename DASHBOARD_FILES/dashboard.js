@@ -1,36 +1,27 @@
-// Placeholder for future interactivity
-// Example: console log when DOM is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('Beko ComplianceOS — Dashboard ready');
-});
-
-
-
-
-
-
-
-
 import { auth } from "../firebase.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("Beko ComplianceOS - Dashboard ready");
+});
 
 // =======================
 // PROTECT DASHBOARD
 // =======================
 onAuthStateChanged(auth, (user) => {
   if (!user) {
-    // not logged in → send back to login page
     window.location.href = "../index.html";
-  } else {
-    // user is logged in → you can use user info
-    document.getElementById("userEmail").textContent = user.email;
-
-    if (user.displayName) {
-      document.getElementById("userName").textContent = user.displayName;
-    }
+    return;
   }
-});
 
+  document.querySelectorAll(".userEmail").forEach((element) => {
+    element.textContent = user.email;
+  });
+
+  document.querySelectorAll(".userName").forEach((element) => {
+    element.textContent = user.displayName || "User";
+  });
+});
 
 // =======================
 // LOGOUT
