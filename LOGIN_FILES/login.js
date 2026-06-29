@@ -6,6 +6,7 @@ import {
   signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
+  sendEmailVerification,
   updateProfile
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
@@ -84,6 +85,27 @@ function validateEmail(email) {
   return emailRegex.test(email);
 }
 
+function isEmailPasswordUser(user) {
+  return user.providerData.some((profile) => profile.providerId === "password");
+}
+
+async function routeAfterAuth(user) {
+  if (isEmailPasswordUser(user) && !user.emailVerified) {
+    window.location.href = "../VERIFY_FILES/verify-email.html";
+    return;
+  }
+
+  const userSnap = await getDoc(doc(db, "users", user.uid));
+  const userData = userSnap.exists() ? userSnap.data() : {};
+
+  if (userData.onboardingComplete) {
+    window.location.href = "../DASHBOARD_FILES/dashboard.html";
+    return;
+  }
+
+  window.location.href = "../ONBOARDING_FILES/onboarding.html";
+}
+
 
 // =======================
 // SHOW / HIDE FORMS
@@ -153,12 +175,11 @@ loginForm.addEventListener("submit", async (e) => {
   setButtonLoading(submitBtn, true);
 
   try {
-    await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
     showSuccess("Login successful! Redirecting...");
-    setTimeout(() => {
-      window.location.href = "../DASHBOARD_FILES/dashboard.html";
-    }, 1000);
+    await routeAfterAuth(userCredential.user);
   } catch (error) {
+    console.error("Login failed:", error);
     setButtonLoading(submitBtn, false);
     const errorMessages = {
       "auth/user-not-found": "No account found with this email",
@@ -228,15 +249,18 @@ signupForm.addEventListener("submit", async (e) => {
       fullName: fullName,
       email: email,
       authProvider: "email",
+      emailVerified: false,
+      onboardingComplete: false,
       createdAt: new Date()
     });
 
-    showSuccess("Account created successfully! Redirecting...");
-    setTimeout(() => {
-      window.location.href = "../DASHBOARD_FILES/dashboard.html";
-    }, 1000);
+    await sendEmailVerification(user);
+
+    showSuccess("Verification email sent. Please check your inbox.");
+    window.location.href = "../VERIFY_FILES/verify-email.html";
 
   } catch (error) {
+    console.error("Signup failed:", error);
     setButtonLoading(submitBtn, false);
     const errorMessages = {
       "auth/email-already-in-use": "This email is already registered",
@@ -261,18 +285,17 @@ async function ensureGoogleUserProfile(user) {
       fullName: user.displayName || "User",
       email: user.email,
       authProvider: "google",
+      emailVerified: user.emailVerified,
+      onboardingComplete: false,
       createdAt: new Date()
     });
   }
 }
 
 async function finishGoogleLogin(user) {
-  ensureGoogleUserProfile(user).catch((error) => {
-    console.error("Google profile sync failed:", error);
-  });
-
-  showSuccess("Google login successful! Redirecting...");
-  window.location.href = "../DASHBOARD_FILES/dashboard.html";
+  await ensureGoogleUserProfile(user);
+  showSuccess("Google login successful!");
+  await routeAfterAuth(user);
 }
 
 getRedirectResult(auth)

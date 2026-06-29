@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Onboarding - Beko ComplianceOS</title>
+    <link rel="stylesheet" href="onboarding.css">
+</head>
+<body>
+<main class="onboarding-shell">
+    <aside class="intro-panel">
+        <div class="brand">
+            <div class="brand-mark">✓</div>
+            <div>
+                <h1>Beko</h1>
+                <p>Compliance OS</p>
+            </div>
+        </div>
+
+        <p class="eyebrow">Welcome to Beko ComplianceOS</p>
+        <h2>Let us understand your business first.</h2>
+        <p>
+            Your answers create the company profile, initial compliance score,
+            and the first dashboard priorities.
+        </p>
+
+        <ol class="journey">
+            <li class="active">Business identity</li>
+            <li>Registration details</li>
+            <li>Tax and payroll</li>
+            <li>Operations</li>
+            <li>Compliance habits</li>
+            <li>Initial score</li>
+        </ol>
+    </aside>
+
+    <section class="form-panel">
+        <div class="progress-header">
+            <p id="stepLabel">Step 1 of 6</p>
+            <div class="progress-track"><span id="progressBar"></span></div>
+        </div>
+
+        <form id="onboardingForm">
+            <section class="step active" data-step="0">
+                <h3>Business identity</h3>
+                <label>
+                    Registered business name
+                    <input id="businessName" name="businessName" type="text" placeholder="Example: Beko Trading Pty Ltd" required>
+                </label>
+                <label>
+                    Business type
+                    <select id="businessType" name="businessType" required>
+                        <option value="">Select business type</option>
+                        <option value="sole-proprietor">Sole proprietor</option>
+                        <option value="private-company">Private company</option>
+                        <option value="non-profit">Non-profit company</option>
+                        <option value="partnership">Partnership</option>
+                    </select>
+                </label>
+            </section>
+
+            <section class="step" data-step="1">
+                <h3>Registration details</h3>
+                <label>
+                    CIPC registration number
+                    <input id="registrationNumber" name="registrationNumber" type="text" placeholder="Optional if sole proprietor">
+                </label>
+                <label>
+                    Province
+                    <select id="province" name="province" required>
+                        <option value="">Select province</option>
+                        <option>Eastern Cape</option>
+                        <option>Free State</option>
+                        <option>Gauteng</option>
+                        <option>KwaZulu-Natal</option>
+                        <option>Limpopo</option>
+                        <option>Mpumalanga</option>
+                        <option>Northern Cape</option>
+                        <option>North West</option>
+                        <option>Western Cape</option>
+                    </select>
+                </label>
+            </section>
+
+            <section class="step" data-step="2">
+                <h3>Tax and payroll</h3>
+                <label>
+                    Are you registered for VAT?
+                    <select id="vatRegistered" name="vatRegistered" required>
+                        <option value="">Select answer</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                        <option value="unsure">Not sure</option>
+                    </select>
+                </label>
+                <label>
+                    Number of employees
+                    <input id="employees" name="employees" type="number" min="0" value="0" required>
+                </label>
+            </section>
+
+            <section class="step" data-step="3">
+                <h3>Operations</h3>
+                <label>
+                    Primary industry
+                    <select id="industry" name="industry" required>
+                        <option value="">Select industry</option>
+                        <option>Retail</option>
+                        <option>Services</option>
+                        <option>Technology</option>
+                        <option>Manufacturing</option>
+                        <option>Construction</option>
+                        <option>Hospitality</option>
+                        <option>Other</option>
+                    </select>
+                </label>
+                <label>
+                    Estimated monthly revenue
+                    <select id="monthlyRevenue" name="monthlyRevenue" required>
+                        <option value="">Select range</option>
+                        <option value="under-50k">Under R50,000</option>
+                        <option value="50k-100k">R50,000 - R100,000</option>
+                        <option value="100k-500k">R100,000 - R500,000</option>
+                        <option value="over-500k">Over R500,000</option>
+                    </select>
+                </label>
+            </section>
+
+            <section class="step" data-step="4">
+                <h3>Compliance habits</h3>
+                <label>
+                    When did you last file a SARS return?
+                    <select id="lastTaxFiling" name="lastTaxFiling" required>
+                        <option value="">Select timeframe</option>
+                        <option value="current">Within the last 3 months</option>
+                        <option value="recent">Within the last year</option>
+                        <option value="late">More than a year ago</option>
+                        <option value="never">Never / unsure</option>
+                    </select>
+                </label>
+                <label class="checkbox-row">
+                    <input id="hasRecords" name="hasRecords" type="checkbox">
+                    I keep invoices, payroll records, and tax documents organised.
+                </label>
+            </section>
+
+            <section class="step" data-step="5">
+                <h3>Initial compliance score</h3>
+                <div class="score-card">
+                    <p>Your starting score</p>
+                    <strong id="scorePreview">--%</strong>
+                    <span id="scoreSummary">Complete the questions to generate your profile.</span>
+                </div>
+            </section>
+
+            <div class="form-actions">
+                <button id="backBtn" type="button">Back</button>
+                <button id="nextBtn" type="button">Next</button>
+                <button id="finishBtn" type="submit">Generate dashboard</button>
+            </div>
+        </form>
+    </section>
+</main>
+
+<script type="module" src="onboarding.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Email - Beko ComplianceOS</title>
+    <link rel="stylesheet" href="verify-email.css">
+</head>
+<body>
+<main class="verify-shell">
+    <section class="verify-panel">
+        <div class="brand">
+            <div class="brand-mark">✓</div>
+            <div>
+                <h1>Beko</h1>
+                <p>Compliance OS</p>
+            </div>
+        </div>
+
+        <p class="eyebrow">Email verification</p>
+        <h2>Confirm your email before onboarding</h2>
+        <p class="intro">
+            We sent a verification link to <strong id="userEmail">your email address</strong>.
+            Once verified, Beko ComplianceOS can start building your business profile.
+        </p>
+
+        <div class="status-box">
+            <span id="statusDot"></span>
+            <p id="statusText">Waiting for verification</p>
+        </div>
+
+        <div class="actions">
+            <button id="checkVerification">I have verified my email</button>
+            <button id="resendVerification" type="button">Resend email</button>
+        </div>
+
+        <button id="logoutBtn" class="secondary-action">Use a different account</button>
+    </section>
+</main>
+
+<script type="module" src="verify-email.js"></script>
+</body>
+</html>
