@@ -4,6 +4,8 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   updateProfile
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
@@ -264,23 +266,42 @@ async function ensureGoogleUserProfile(user) {
   }
 }
 
+async function finishGoogleLogin(user) {
+  ensureGoogleUserProfile(user).catch((error) => {
+    console.error("Google profile sync failed:", error);
+  });
+
+  showSuccess("Google login successful! Redirecting...");
+  window.location.href = "../DASHBOARD_FILES/dashboard.html";
+}
+
+getRedirectResult(auth)
+  .then((result) => {
+    if (result?.user) {
+      finishGoogleLogin(result.user);
+    }
+  })
+  .catch((error) => {
+    console.error("Google redirect login failed:", error);
+    showError("Google login failed. Please try again");
+  });
+
 async function handleGoogleLogin(e) {
   const button = e.target.closest('button');
   setButtonLoading(button, true);
 
   try {
     const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-
-    ensureGoogleUserProfile(user).catch((error) => {
-      console.error("Google profile sync failed:", error);
-    });
-
-    showSuccess("Google login successful! Redirecting...");
-    window.location.href = "../DASHBOARD_FILES/dashboard.html";
+    finishGoogleLogin(result.user);
 
   } catch (error) {
     console.error("Google login failed:", error);
+    if (error.code === "auth/popup-blocked") {
+      showSuccess("Opening Google sign-in...");
+      await signInWithRedirect(auth, provider);
+      return;
+    }
+
     setButtonLoading(button, false);
     if (error.code !== "auth/popup-closed-by-user") {
       showError("Google login failed. Please try again");
