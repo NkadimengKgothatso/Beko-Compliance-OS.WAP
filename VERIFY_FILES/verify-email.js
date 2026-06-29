@@ -7,7 +7,7 @@ import {
 import {
   doc,
   getDoc,
-  updateDoc
+  setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const userEmail = document.getElementById("userEmail");
@@ -27,9 +27,10 @@ async function continueAfterVerification(user) {
   const snap = await getDoc(userRef);
   const userData = snap.exists() ? snap.data() : {};
 
-  await updateDoc(userRef, {
-    emailVerified: true
-  });
+  await setDoc(userRef, {
+    emailVerified: true,
+    updatedAt: new Date()
+  }, { merge: true });
 
   if (userData.onboardingComplete) {
     window.location.href = "../DASHBOARD_FILES/dashboard.html";

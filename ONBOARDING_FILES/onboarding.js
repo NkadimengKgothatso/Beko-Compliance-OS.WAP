@@ -3,8 +3,7 @@ import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/f
 import {
   doc,
   getDoc,
-  setDoc,
-  updateDoc
+  setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const steps = [...document.querySelectorAll(".step")];
@@ -164,12 +163,12 @@ form.addEventListener("submit", async (event) => {
       updatedAt: new Date()
     });
 
-    await updateDoc(doc(db, "users", currentUser.uid), {
+    await setDoc(doc(db, "users", currentUser.uid), {
       onboardingComplete: true,
       complianceScore,
       companyName: profile.businessName,
       updatedAt: new Date()
-    });
+    }, { merge: true });
 
     window.location.href = "../DASHBOARD_FILES/dashboard.html";
   } catch (error) {

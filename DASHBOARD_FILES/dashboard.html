@@ -10,7 +10,7 @@
 <aside>
     <header>
         <div class="brand">
-            <div class="brand-mark">✓</div>
+            <div class="brand-mark">B</div>
             <div>
                 <h1>Beko</h1>
                 <p>Compliance OS</p>
@@ -21,7 +21,7 @@
     <nav>
         <ul>
             <li><a href="#" class="active">Dashboard</a></li>
-            <li><a href="#">Onboarding</a></li>
+            <li><a href="../ONBOARDING_FILES/onboarding.html">Onboarding</a></li>
             <li><a href="#">Templates</a></li>
             <li><a href="#">Notifications</a></li>
             <li><a href="#">Consultation</a></li>
@@ -41,16 +41,16 @@
         <div>
             <p class="eyebrow">Compliance dashboard</p>
             <h1>Welcome back, <span class="userName"></span></h1>
-            <p><span class="userEmail"></span> · Saturday, 11 April 2026</p>
+            <p><span class="userEmail"></span> | <span id="companyName">Company profile loading</span></p>
         </div>
         <button class="primary-action">Review tasks</button>
     </header>
 
     <section class="stats">
         <article>
-            <h2>70%</h2>
+            <h2 id="scoreStat">--%</h2>
             <p>Compliance score</p>
-            <strong>2 items need attention</strong>
+            <strong id="scoreStatSummary">Building profile</strong>
         </article>
 
         <article>
@@ -68,7 +68,7 @@
         <article>
             <h2>3</h2>
             <p>Actions required</p>
-            <strong>Open checklist</strong>
+            <strong id="actionSummary">Open checklist</strong>
         </article>
     </section>
 
@@ -78,10 +78,10 @@
                 <h2>Compliance Status</h2>
             </header>
 
-            <h3>70%</h3>
-            <p class="status-label">Needs attention</p>
-            <p>2 compliance items require action before penalties apply</p>
-            <progress value="70" max="100">70%</progress>
+            <h3 id="scoreDetail">--%</h3>
+            <p class="status-label" id="scoreStatus">Loading profile</p>
+            <p id="scoreSummary">Your compliance profile is being loaded from Firestore.</p>
+            <progress id="scoreProgress" value="0" max="100">0%</progress>
         </article>
 
         <article>
@@ -117,13 +117,13 @@
 
         <article>
             <header>
-                <h2>Required Actions</h2>
+                <h2>Company Profile</h2>
             </header>
 
-            <ul>
-                <li><span>Submit UIF return</span><strong>High</strong></li>
-                <li><span>File VAT return</span><strong>Medium</strong></li>
-                <li><span>Update company details at CIPC</span><strong>Low</strong></li>
+            <ul id="profileList">
+                <li><span>Business type</span><strong>Loading</strong></li>
+                <li><span>VAT status</span><strong>Loading</strong></li>
+                <li><span>Employees</span><strong>Loading</strong></li>
             </ul>
         </article>
     </section>
