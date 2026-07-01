@@ -17,11 +17,22 @@ const checkButton = document.getElementById("checkVerification");
 const resendButton = document.getElementById("resendVerification");
 const logoutButton = document.getElementById("logoutBtn");
 
+// =======================
+// HELPER FUNCTIONS
+// =======================  
 function setStatus(message, isVerified = false) {
   statusText.textContent = message;
   statusDot.classList.toggle("verified", isVerified);
 }
 
+
+
+// =======================
+// CONTINUE AFTER VERIFICATION
+// =======================
+// After the user has verified their email, we check if they have completed onboarding. 
+// If they have, we redirect them to the dashboard. 
+// If not, we redirect them to the onboarding page.
 async function continueAfterVerification(user) {
   const userRef = doc(db, "users", user.uid);
   const snap = await getDoc(userRef);
@@ -40,6 +51,12 @@ async function continueAfterVerification(user) {
   window.location.href = "../ONBOARDING_FILES/onboarding.html";
 }
 
+
+// =======================
+// AUTH STATE CHANGED
+// =======================  
+// We listen for changes in the user's authentication state. 
+// If the user is not logged in, we redirect them to the login page.
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "../LOGIN_FILES/login.html";
@@ -57,6 +74,11 @@ onAuthStateChanged(auth, async (user) => {
   setStatus("Waiting for verification");
 });
 
+
+// ========================
+// BUTTON EVENT LISTENERS
+// =======================
+// We add event listeners to the buttons on the page. 
 checkButton.addEventListener("click", async () => {
   const user = auth.currentUser;
 
