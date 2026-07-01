@@ -6,7 +6,6 @@ import {
   signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
-  sendEmailVerification,
   updateProfile
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
@@ -20,6 +19,11 @@ import {
 // =======================
 // HELPER FUNCTIONS
 // =======================
+
+// unsuccessful login/signup error messages are displayed in a red box at the top-right corner of the screen, 
+// and disappear after 5 seconds. Successful login/signup messages are displayed in a green box at the top-right corner of the screen, 
+// and disappear after 3 seconds.
+
 function showError(message) {
   const errorDiv = document.createElement("div");
   errorDiv.style.cssText = `
@@ -39,6 +43,7 @@ function showError(message) {
   document.body.appendChild(errorDiv);
   setTimeout(() => errorDiv.remove(), 5000);
 }
+// successful login/signup messages are displayed in a green box at the top-right corner of the screen,
 
 function showSuccess(message) {
   const successDiv = document.createElement("div");
@@ -65,6 +70,9 @@ function showSuccess(message) {
 // the label stuck on "Loading...". We now store the original label on the
 // element itself (dataset) the first time we enter the loading state, and
 // restore from there.
+// =======================
+// BUTTON LOADING STATE
+// =======================
 function setButtonLoading(button, isLoading) {
   if (isLoading) {
     if (button.dataset.originalText === undefined) {
@@ -83,27 +91,6 @@ function setButtonLoading(button, isLoading) {
 function validateEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
-}
-
-function isEmailPasswordUser(user) {
-  return user.providerData.some((profile) => profile.providerId === "password");
-}
-
-async function routeAfterAuth(user) {
-  if (isEmailPasswordUser(user) && !user.emailVerified) {
-    window.location.href = "../VERIFY_FILES/verify-email.html";
-    return;
-  }
-
-  const userSnap = await getDoc(doc(db, "users", user.uid));
-  const userData = userSnap.exists() ? userSnap.data() : {};
-
-  if (userData.onboardingComplete) {
-    window.location.href = "../DASHBOARD_FILES/dashboard.html";
-    return;
-  }
-
-  window.location.href = "../ONBOARDING_FILES/onboarding.html";
 }
 
 
@@ -175,11 +162,12 @@ loginForm.addEventListener("submit", async (e) => {
   setButtonLoading(submitBtn, true);
 
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    await signInWithEmailAndPassword(auth, email, password);
     showSuccess("Login successful! Redirecting...");
-    await routeAfterAuth(userCredential.user);
+    setTimeout(() => {
+      window.location.href = "../DASHBOARD_FILES/dashboard.html";
+    }, 1000);
   } catch (error) {
-    console.error("Login failed:", error);
     setButtonLoading(submitBtn, false);
     const errorMessages = {
       "auth/user-not-found": "No account found with this email",
@@ -249,18 +237,15 @@ signupForm.addEventListener("submit", async (e) => {
       fullName: fullName,
       email: email,
       authProvider: "email",
-      emailVerified: false,
-      onboardingComplete: false,
       createdAt: new Date()
     });
 
-    await sendEmailVerification(user);
-
-    showSuccess("Verification email sent. Please check your inbox.");
-    window.location.href = "../VERIFY_FILES/verify-email.html";
+    showSuccess("Account created successfully! Redirecting...");
+    setTimeout(() => {
+      window.location.href = "../DASHBOARD_FILES/dashboard.html";
+    }, 1000);
 
   } catch (error) {
-    console.error("Signup failed:", error);
     setButtonLoading(submitBtn, false);
     const errorMessages = {
       "auth/email-already-in-use": "This email is already registered",
@@ -285,17 +270,18 @@ async function ensureGoogleUserProfile(user) {
       fullName: user.displayName || "User",
       email: user.email,
       authProvider: "google",
-      emailVerified: user.emailVerified,
-      onboardingComplete: false,
       createdAt: new Date()
     });
   }
 }
 
 async function finishGoogleLogin(user) {
-  await ensureGoogleUserProfile(user);
-  showSuccess("Google login successful!");
-  await routeAfterAuth(user);
+  ensureGoogleUserProfile(user).catch((error) => {
+    console.error("Google profile sync failed:", error);
+  });
+
+  showSuccess("Google login successful! Redirecting...");
+  window.location.href = "../DASHBOARD_FILES/dashboard.html";
 }
 
 getRedirectResult(auth)

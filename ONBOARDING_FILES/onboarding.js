@@ -122,8 +122,22 @@ onAuthStateChanged(auth, async (user) => {
   const userRef = doc(db, "users", user.uid);
   const snap = await getDoc(userRef);
 
+  // Only bounce to the dashboard if onboarding is complete AND a company
+  // profile actually exists. Checking onboardingComplete alone caused an
+  // infinite redirect loop with dashboard.js whenever the two documents
+  // were out of sync (e.g. a previous save that set the flag but never
+  // wrote the profile) — dashboard.js would see no profile and send the
+  // user back here, and this check would immediately send them back to
+  // the dashboard again, forever.
   if (snap.exists() && snap.data().onboardingComplete) {
-    window.location.href = "../DASHBOARD_FILES/dashboard.html";
+    const profileSnap = await getDoc(doc(db, "companyProfiles", user.uid));
+    if (profileSnap.exists()) {
+      window.location.href = "../DASHBOARD_FILES/dashboard.html";
+      return;
+    }
+    // Profile is missing despite the flag being set: clear the stale flag
+    // so the user can complete onboarding again instead of looping.
+    await setDoc(userRef, { onboardingComplete: false }, { merge: true });
   }
 });
 
