@@ -34,21 +34,31 @@ function setStatus(message, isVerified = false) {
 // If they have, we redirect them to the dashboard. 
 // If not, we redirect them to the onboarding page.
 async function continueAfterVerification(user) {
-  const userRef = doc(db, "users", user.uid);
-  const snap = await getDoc(userRef);
-  const userData = snap.exists() ? snap.data() : {};
+  try {
+    console.log("Starting Firestore...");
 
-  await setDoc(userRef, {
-    emailVerified: true,
-    updatedAt: new Date()
-  }, { merge: true });
+    const userRef = doc(db, "users", user.uid);
 
-  if (userData.onboardingComplete) {
-    window.location.href = "../DASHBOARD_FILES/dashboard.html";
-    return;
+    console.log("Getting document...");
+
+    const snap = await getDoc(userRef);
+
+    console.log("Document exists:", snap.exists());
+
+    await setDoc(userRef, {
+      email: user.email,
+      emailVerified: true,
+      onboardingComplete: false,
+      updatedAt: new Date()
+    }, { merge: true });
+
+    console.log("User document created successfully.");
+
+  } catch (error) {
+    console.error("Firestore Error");
+    console.error("Code:", error.code);
+    console.error("Message:", error.message);
   }
-
-  window.location.href = "../ONBOARDING_FILES/onboarding.html";
 }
 
 
