@@ -35,29 +35,33 @@ function setStatus(message, isVerified = false) {
 // If not, we redirect them to the onboarding page.
 async function continueAfterVerification(user) {
   try {
-    console.log("Starting Firestore...");
-
     const userRef = doc(db, "users", user.uid);
-
-    console.log("Getting document...");
-
     const snap = await getDoc(userRef);
 
-    console.log("Document exists:", snap.exists());
+    // Respect onboarding progress that may already exist instead of
+    // always forcing it back to false — only set it on first verification.
+    const alreadyOnboarded = snap.exists() && snap.data().onboardingComplete === true;
 
     await setDoc(userRef, {
       email: user.email,
       emailVerified: true,
-      onboardingComplete: false,
+      onboardingComplete: alreadyOnboarded,
       updatedAt: new Date()
     }, { merge: true });
 
-    console.log("User document created successfully.");
+    // This was missing: the page updated Firestore but never actually
+    // moved the user on, so they were stuck on this screen forever after
+    // verifying. Send returning verified users straight to the dashboard,
+    // everyone else to onboarding.
+    window.location.href = alreadyOnboarded
+      ? "../DASHBOARD_FILES/dashboard.html"
+      : "../ONBOARDING_FILES/onboarding.html";
 
   } catch (error) {
     console.error("Firestore Error");
     console.error("Code:", error.code);
     console.error("Message:", error.message);
+    setStatus("Verified, but we couldn't continue automatically. Please try again.");
   }
 }
 

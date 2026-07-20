@@ -6,13 +6,15 @@ import {
   signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
-  updateProfile
+  updateProfile,
+  sendEmailVerification
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
   doc,
   setDoc,
-  getDoc
+  getDoc,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
@@ -20,8 +22,8 @@ import {
 // HELPER FUNCTIONS
 // =======================
 
-// unsuccessful login/signup error messages are displayed in a red box at the top-right corner of the screen, 
-// and disappear after 5 seconds. Successful login/signup messages are displayed in a green box at the top-right corner of the screen, 
+// unsuccessful login/signup error messages are displayed in a red box at the top-right corner of the screen,
+// and disappear after 5 seconds. Successful login/signup messages are displayed in a green box at the top-right corner of the screen,
 // and disappear after 3 seconds.
 
 function showError(message) {
@@ -43,7 +45,6 @@ function showError(message) {
   document.body.appendChild(errorDiv);
   setTimeout(() => errorDiv.remove(), 5000);
 }
-// successful login/signup messages are displayed in a green box at the top-right corner of the screen,
 
 function showSuccess(message) {
   const successDiv = document.createElement("div");
@@ -65,11 +66,10 @@ function showSuccess(message) {
   setTimeout(() => successDiv.remove(), 3000);
 }
 
-// FIX: previously this captured `button.textContent` *after* it had already
-// been overwritten to "Loading...", so re-enabling the button on error left
-// the label stuck on "Loading...". We now store the original label on the
-// element itself (dataset) the first time we enter the loading state, and
-// restore from there.
+// FIX (kept from your version): store the original label on the element
+// itself the first time we enter the loading state, and restore from
+// there, instead of reading textContent after it's already been
+// overwritten to "Loading...".
 // =======================
 // BUTTON LOADING STATE
 // =======================
@@ -91,6 +91,37 @@ function setButtonLoading(button, isLoading) {
 function validateEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
+}
+
+/* -----------------------------------------------------------
+   Where should a signed-in user land?
+   Mirrors the same check used in onboarding.js and dashboard.js:
+   onboardingComplete AND an actual companyProfiles/{uid} doc, not
+   just the flag, so this file, onboarding.js, and dashboard.js can
+   never disagree and loop on each other. (Previously this checked
+   a companyId field + a "companies" collection that nothing else
+   in the app ever wrote to or had Firestore rules for, so it never
+   matched and every login took an extra bounce through onboarding
+   before onboarding.js's own check sent the user on to the
+   dashboard.)
+------------------------------------------------------------ */
+async function routeAfterAuth(user) {
+  const userRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
+  const userData = userSnap.exists() ? userSnap.data() : null;
+
+  if (userData?.onboardingComplete) {
+    const profileSnap = await getDoc(doc(db, "companyProfiles", user.uid));
+    if (profileSnap.exists()) {
+      window.location.href = "../DASHBOARD_FILES/dashboard.html";
+      return;
+    }
+    // Flag says complete but the company profile doc is missing: clear
+    // it so onboarding.js rebuilds it instead of this page looping forever.
+    await setDoc(userRef, { onboardingComplete: false }, { merge: true });
+  }
+
+  window.location.href = "../ONBOARDING_FILES/onboarding.html";
 }
 
 
@@ -162,11 +193,17 @@ loginForm.addEventListener("submit", async (e) => {
   setButtonLoading(submitBtn, true);
 
   try {
-    await signInWithEmailAndPassword(auth, email, password);
+    const credential = await signInWithEmailAndPassword(auth, email, password);
+
+    if (!credential.user.emailVerified) {
+      showError("Please verify your email before logging in");
+      setButtonLoading(submitBtn, false);
+      window.location.href = "../VERIFY_FILES/verify-email.html";
+      return;
+    }
+
     showSuccess("Login successful! Redirecting...");
-    setTimeout(() => {
-      window.location.href = "../DASHBOARD_FILES/dashboard.html";
-    }, 1000);
+    setTimeout(() => routeAfterAuth(credential.user), 1000);
   } catch (error) {
     setButtonLoading(submitBtn, false);
     const errorMessages = {
@@ -233,17 +270,33 @@ signupForm.addEventListener("submit", async (e) => {
       displayName: fullName
     });
 
+    // companyId/role/onboardingComplete start empty here and get filled
+    // in by onboarding.js once the user finishes the wizard — dashboard.js
+    // and onboarding.js's auth guard both depend on these fields existing.
     await setDoc(doc(db, "users", user.uid), {
       fullName: fullName,
       email: email,
       authProvider: "email",
-      createdAt: new Date()
+      companyId: null,
+      role: null,
+      onboardingComplete: false,
+      createdAt: serverTimestamp()
     });
 
-    showSuccess("Account created successfully! Redirecting...");
+    // Fire-and-forget: the account and profile doc are already created,
+    // which is the part that actually matters for the redirect. Don't
+    // await this — a slow or hung email-send request should never be
+    // able to leave the user stuck on "Loading..." forever. Any failure
+    // is still visible in the console, and verify-email.html has its own
+    // "Resend email" button as a fallback.
+    sendEmailVerification(user).catch((error) => {
+      console.error("Verification email failed to send:", error);
+    });
+
+    showSuccess("Account created! Check your email to verify, then log in.");
     setTimeout(() => {
-      window.location.href = "../DASHBOARD_FILES/dashboard.html";
-    }, 1000);
+      window.location.href = "../VERIFY_FILES/verify-email.html";
+    }, 1500);
 
   } catch (error) {
     setButtonLoading(submitBtn, false);
@@ -270,18 +323,21 @@ async function ensureGoogleUserProfile(user) {
       fullName: user.displayName || "User",
       email: user.email,
       authProvider: "google",
-      createdAt: new Date()
+      companyId: null,
+      role: null,
+      onboardingComplete: false,
+      createdAt: serverTimestamp()
     });
   }
 }
 
 async function finishGoogleLogin(user) {
-  ensureGoogleUserProfile(user).catch((error) => {
+  await ensureGoogleUserProfile(user).catch((error) => {
     console.error("Google profile sync failed:", error);
   });
 
   showSuccess("Google login successful! Redirecting...");
-  window.location.href = "../DASHBOARD_FILES/dashboard.html";
+  await routeAfterAuth(user);
 }
 
 getRedirectResult(auth)
@@ -301,7 +357,7 @@ async function handleGoogleLogin(e) {
 
   try {
     const result = await signInWithPopup(auth, provider);
-    finishGoogleLogin(result.user);
+    await finishGoogleLogin(result.user);
 
   } catch (error) {
     console.error("Google login failed:", error);
