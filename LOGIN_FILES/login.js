@@ -203,7 +203,13 @@ loginForm.addEventListener("submit", async (e) => {
     }
 
     showSuccess("Login successful! Redirecting...");
-    setTimeout(() => routeAfterAuth(credential.user), 1000);
+    setTimeout(() => {
+      routeAfterAuth(credential.user).catch((err) => {
+        console.error("Redirect after login failed:", err);
+        setButtonLoading(submitBtn, false);
+        showError("Signed in, but couldn't load your profile. Check your connection and try again.");
+      });
+    }, 1000);
   } catch (error) {
     setButtonLoading(submitBtn, false);
     const errorMessages = {
@@ -337,18 +343,24 @@ async function finishGoogleLogin(user) {
   });
 
   showSuccess("Google login successful! Redirecting...");
-  await routeAfterAuth(user);
+  // Just log here — callers (popup vs redirect) each show their own
+  // single error message and handle their own button state, so we
+  // don't end up stacking two toasts for the same failure.
+  await routeAfterAuth(user).catch((err) => {
+    console.error("Redirect after Google login failed:", err);
+    throw err;
+  });
 }
 
 getRedirectResult(auth)
   .then((result) => {
     if (result?.user) {
-      finishGoogleLogin(result.user);
+      return finishGoogleLogin(result.user);
     }
   })
   .catch((error) => {
     console.error("Google redirect login failed:", error);
-    showError("Google login failed. Please try again");
+    showError("Signed in, but couldn't load your profile. Check your connection and try again.");
   });
 
 async function handleGoogleLogin(e) {
@@ -368,7 +380,11 @@ async function handleGoogleLogin(e) {
     }
 
     setButtonLoading(button, false);
-    if (error.code !== "auth/popup-closed-by-user") {
+    if (error.code === "auth/popup-closed-by-user") {
+      // user closed it themselves — no error needed
+    } else if (error.message?.includes("offline") || error.code === "unavailable") {
+      showError("Signed in, but couldn't load your profile. Check your connection and try again.");
+    } else {
       showError("Google login failed. Please try again");
     }
   }
