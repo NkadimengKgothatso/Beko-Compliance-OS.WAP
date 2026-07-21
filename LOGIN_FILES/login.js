@@ -195,14 +195,12 @@ loginForm.addEventListener("submit", async (e) => {
   try {
     const credential = await signInWithEmailAndPassword(auth, email, password);
 
-    // TEMPORARILY DISABLED: email verification gate. Re-enable by
-    // uncommenting this block once verify-email.html is back in the flow.
-    // if (!credential.user.emailVerified) {
-    //   showError("Please verify your email before logging in");
-    //   setButtonLoading(submitBtn, false);
-    //   window.location.href = "../VERIFY_FILES/verify-email.html";
-    //   return;
-    // }
+    if (!credential.user.emailVerified) {
+      showError("Please verify your email before logging in");
+      setButtonLoading(submitBtn, false);
+      window.location.href = "../VERIFY_FILES/verify-email.html";
+      return;
+    }
 
     showSuccess("Login successful! Redirecting...");
     setTimeout(() => {
@@ -290,17 +288,19 @@ signupForm.addEventListener("submit", async (e) => {
       createdAt: serverTimestamp()
     });
 
-    // TEMPORARILY DISABLED: verification email send + redirect to
-    // verify-email.html. Re-enable both together when verification comes
-    // back — sending the email with nowhere to verify it would be
-    // confusing, so they're commented out as a pair.
-    // sendEmailVerification(user).catch((error) => {
-    //   console.error("Verification email failed to send:", error);
-    // });
+    // Fire-and-forget: the account and profile doc are already created,
+    // which is the part that actually matters for the redirect. Don't
+    // await this — a slow or hung email-send request should never be
+    // able to leave the user stuck on "Loading..." forever. Any failure
+    // is still visible in the console, and verify-email.html has its own
+    // "Resend email" button as a fallback.
+    sendEmailVerification(user).catch((error) => {
+      console.error("Verification email failed to send:", error);
+    });
 
-    showSuccess("Account created! Redirecting...");
+    showSuccess("Account created! Check your email to verify, then log in.");
     setTimeout(() => {
-      window.location.href = "../ONBOARDING_FILES/onboarding.html";
+      window.location.href = "../VERIFY_FILES/verify-email.html";
     }, 1500);
 
   } catch (error) {
