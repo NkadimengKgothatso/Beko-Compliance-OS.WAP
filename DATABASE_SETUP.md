@@ -16,13 +16,18 @@ Fields:
 
 - `fullName`
 - `email`
-- `authProvider`
-- `emailVerified`
+- `authProvider` (`"email"` or `"google"`)
 - `onboardingComplete`
-- `companyName`
-- `complianceScore`
 - `createdAt`
-- `updatedAt`
+- `complianceScore` (set once onboarding is completed)
+- `companyName` (set once onboarding is completed)
+- `updatedAt` (set once onboarding is completed)
+
+Note: `emailVerified` is intentionally NOT stored here — it's read live off
+the Firebase Auth user object (`user.emailVerified`) instead, so it can
+never go stale. `companyId` and `role` were removed (Jul 2026) as unused
+fields; re-add them if multi-user companies or role-based permissions get
+built.
 
 ### `companyProfiles`
 

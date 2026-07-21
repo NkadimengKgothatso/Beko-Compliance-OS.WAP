@@ -276,15 +276,14 @@ signupForm.addEventListener("submit", async (e) => {
       displayName: fullName
     });
 
-    // companyId/role/onboardingComplete start empty here and get filled
-    // in by onboarding.js once the user finishes the wizard — dashboard.js
-    // and onboarding.js's auth guard both depend on these fields existing.
+    // companyId/role removed: nothing in the app reads them yet (no
+    // multi-user companies or role-based permissions exist). Add them
+    // back if/when that's actually built, so the schema doesn't carry
+    // fields nothing uses.
     await setDoc(doc(db, "users", user.uid), {
       fullName: fullName,
       email: email,
       authProvider: "email",
-      companyId: null,
-      role: null,
       onboardingComplete: false,
       createdAt: serverTimestamp()
     });
@@ -329,8 +328,6 @@ async function ensureGoogleUserProfile(user) {
       fullName: user.displayName || "User",
       email: user.email,
       authProvider: "google",
-      companyId: null,
-      role: null,
       onboardingComplete: false,
       createdAt: serverTimestamp()
     });
