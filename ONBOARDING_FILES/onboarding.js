@@ -113,10 +113,16 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  if (isEmailPasswordUser(user) && !user.emailVerified) {
-    window.location.href = "../VERIFY_FILES/verify-email.html";
-    return;
-  }
+  // TEMPORARILY DISABLED: email verification gate (paired with the same
+  // change in login.js). Re-enable when verification comes back — this
+  // was the actual reason onboarding was unreachable after signup: every
+  // new email/password user is unverified by definition, so this line
+  // bounced them straight back out to verify-email.html before the
+  // wizard could ever render.
+  // if (isEmailPasswordUser(user) && !user.emailVerified) {
+  //   window.location.href = "../VERIFY_FILES/verify-email.html";
+  //   return;
+  // }
 
   currentUser = user;
   const userRef = doc(db, "users", user.uid);

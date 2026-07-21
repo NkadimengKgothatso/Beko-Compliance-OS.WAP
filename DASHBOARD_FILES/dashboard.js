@@ -61,10 +61,13 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  if (isEmailPasswordUser(user) && !user.emailVerified) {
-    window.location.href = "../VERIFY_FILES/verify-email.html";
-    return;
-  }
+  // TEMPORARILY DISABLED: email verification gate (paired with login.js
+  // and onboarding.js). Re-enable all three together when verification
+  // comes back into the flow.
+  // if (isEmailPasswordUser(user) && !user.emailVerified) {
+  //   window.location.href = "../VERIFY_FILES/verify-email.html";
+  //   return;
+  // }
 
   const userSnap = await getDoc(doc(db, "users", user.uid));
   const userData = userSnap.exists() ? userSnap.data() : {};
