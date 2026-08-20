@@ -39,6 +39,21 @@ import {
 
 
 // ═══════════════════════════════════════════════
+// CUSTOM EMAIL ACTION URL
+// ═══════════════════════════════════════════════
+
+/**
+ * Build the action-handler URL on the current domain.
+ * This ensures email links go to YOUR branded page instead of
+ * Firebase's generic handler.
+ */
+const ACTION_HANDLER_URL = (() => {
+  const base = window.location.origin; // e.g. https://bekocompliance.co.za
+  return `${base}/emails/action-handler.html`;
+})();
+
+
+// ═══════════════════════════════════════════════
 // DOM REFERENCES
 // ═══════════════════════════════════════════════
 const loginForm     = document.getElementById("loginForm");
@@ -204,7 +219,10 @@ signupForm.addEventListener("submit", async (e) => {
     // Fire-and-forget verification email — a slow or failed send should
     // never leave the user stuck on "Loading…". The verify-email page
     // has its own "Resend" button as a fallback.
-    sendEmailVerification(user).catch((err) => {
+    sendEmailVerification(user, {
+      url: `${ACTION_HANDLER_URL}?mode=verifyEmail`,
+      handleCodeInApp: false,
+    }).catch((err) => {
       console.error("Verification email failed to send:", err);
     });
 
@@ -247,7 +265,10 @@ resetForm.addEventListener("submit", async (e) => {
   setButtonLoading(submitBtn, true);
 
   try {
-    await sendPasswordResetEmail(auth, email);
+    await sendPasswordResetEmail(auth, email, {
+      url: `${ACTION_HANDLER_URL}?mode=resetPassword`,
+      handleCodeInApp: false,
+    });
     showSuccess("Password reset email sent! Check your inbox.");
     setButtonLoading(submitBtn, false);
 

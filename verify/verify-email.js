@@ -27,6 +27,15 @@ import {
 
 
 // ═══════════════════════════════════════════════
+// CUSTOM EMAIL ACTION URL
+// ═══════════════════════════════════════════════
+const ACTION_HANDLER_URL = (() => {
+  const base = window.location.origin;
+  return `${base}/emails/action-handler.html`;
+})();
+
+
+// ═══════════════════════════════════════════════
 // DOM REFERENCES
 // ═══════════════════════════════════════════════
 const userEmail    = document.getElementById("userEmail");
@@ -125,7 +134,10 @@ resendButton.addEventListener("click", async () => {
   resendButton.textContent = "Sending...";
 
   try {
-    await sendEmailVerification(user);
+    await sendEmailVerification(user, {
+      url: `${ACTION_HANDLER_URL}?mode=verifyEmail`,
+      handleCodeInApp: false,
+    });
     setStatus("Verification email resent. Please check your inbox.");
   } catch (error) {
     console.error("Resend verification failed:", error);

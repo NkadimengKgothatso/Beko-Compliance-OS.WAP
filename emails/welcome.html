@@ -1,0 +1,113 @@
+<!--
+  Beko ComplianceOS — Welcome Email Template
+  
+  Sent after a user verifies their email and completes onboarding.
+  All styles are inline for email client compatibility.
+  
+  Replace {{DISPLAY_NAME}} with the user's name.
+  Replace {{COMPANY_NAME}} with their business name.
+  Replace {{COMPLIANCE_SCORE}} with their score.
+  Replace {{APP_DOMAIN}} with your app domain.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Beko ComplianceOS</title>
+</head>
+<body style="margin:0; padding:0; background-color:#F4F6FA; font-family:'Segoe UI',system-ui,-apple-system,sans-serif; -webkit-font-smoothing:antialiased;">
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#F4F6FA; padding:40px 20px;">
+        <tr>
+            <td align="center">
+
+                <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background-color:#FFFFFF; border-radius:12px; overflow:hidden; box-shadow:0 2px 12px rgba(27,42,92,0.06);">
+
+                    <!-- Header -->
+                    <tr>
+                        <td style="background:linear-gradient(135deg, #1B2A5C 0%, #1E3A6E 50%, #1B5A5C 100%); padding:36px 40px; text-align:center;">
+                            <img src="https://{{APP_DOMAIN}}/bg.jpeg" alt="Beko ComplianceOS" width="220" style="display:block; margin:0 auto 16px; filter:brightness(1.15);" />
+                            <p style="margin:0; color:rgba(255,255,255,0.8); font-size:14px; font-weight:500;">Compliance guidance made simple</p>
+                        </td>
+                    </tr>
+
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding:40px;">
+                            <h1 style="margin:0 0 8px; color:#1B2A5C; font-size:24px; font-weight:700;">Welcome, {{DISPLAY_NAME}}!</h1>
+                            <p style="margin:0 0 24px; color:#6B7280; font-size:15px; line-height:1.6;">
+                                Your compliance dashboard for <strong style="color:#374151;">{{COMPANY_NAME}}</strong> is ready. Here's your starting compliance score:
+                            </p>
+
+                            <!-- Score card -->
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#F0FAF0; border:1.5px solid #D4EDDA; border-radius:12px; margin-bottom:28px;">
+                                <tr>
+                                    <td style="padding:28px; text-align:center;">
+                                        <p style="margin:0 0 4px; color:#6B7280; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.06em;">Your Compliance Score</p>
+                                        <p style="margin:0; color:#1B2A5C; font-size:48px; font-weight:800; line-height:1;">{{COMPLIANCE_SCORE}}%</p>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- CTA Button -->
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td align="center" style="padding:0 0 28px;">
+                                        <a href="https://{{APP_DOMAIN}}/dashboard/dashboard.html" style="display:inline-block; background-color:#1B2A5C; color:#FFFFFF; text-decoration:none; font-size:16px; font-weight:600; padding:14px 36px; border-radius:8px; box-shadow:0 2px 8px rgba(27,42,92,0.2);">
+                                            Open Dashboard
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- What you can do -->
+                            <p style="margin:0 0 16px; color:#374151; font-size:14px; font-weight:600;">Your dashboard includes:</p>
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td style="padding:8px 0; color:#6B7280; font-size:13px; line-height:1.5;">
+                                        ✓&nbsp;&nbsp;Upcoming SARS, CIPC, and UIF deadlines
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:8px 0; color:#6B7280; font-size:13px; line-height:1.5;">
+                                        ✓&nbsp;&nbsp;Automated compliance reminders
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:8px 0; color:#6B7280; font-size:13px; line-height:1.5;">
+                                        ✓&nbsp;&nbsp;Step-by-step guidance for each obligation
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:8px 0; color:#6B7280; font-size:13px; line-height:1.5;">
+                                        ✓&nbsp;&nbsp;Legal templates and business documents
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color:#F9FAFB; padding:24px 40px; text-align:center; border-top:1px solid #E5E7EB;">
+                            <p style="margin:0 0 8px; color:#1B2A5C; font-size:13px; font-weight:600;">Beko ComplianceOS</p>
+                            <p style="margin:0; color:#9CA3AF; font-size:12px; line-height:1.5;">
+                                Simplifying compliance for South African SMEs, startups, and sole proprietors.
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+
+                <p style="margin:24px 0 0; color:#9CA3AF; font-size:11px; text-align:center; line-height:1.5;">
+                    This email was sent to you by Beko ComplianceOS.<br>
+                    Please do not reply to this email.
+                </p>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>
