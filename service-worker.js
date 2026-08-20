@@ -1,13 +1,26 @@
-const CACHE_NAME = "beko-cache-v2";
+const CACHE_NAME = "beko-cache-v3";
 const urlsToCache = [
   "./index.html",
   "./index.css",
   "./index.js",
   "./bg.jpeg",
   "./manifest.json",
-  "./LOGIN_FILES/login.html",
-  "./LOGIN_FILES/login.css",
-  "./LOGIN_FILES/login.js"
+  "./login/login.html",
+  "./login/login.css",
+  "./login/login.js",
+  "./verify/verify-email.html",
+  "./verify/verify-email.css",
+  "./verify/verify-email.js",
+  "./onboarding/onboarding.html",
+  "./onboarding/onboarding.css",
+  "./onboarding/onboarding.js",
+  "./dashboard/dashboard.html",
+  "./dashboard/dashboard.css",
+  "./dashboard/dashboard.js",
+  "./shared/auth-router.js",
+  "./shared/toast.js",
+  "./shared/loading.js",
+  "./shared/validators.js"
 ];
 
 // Install: pre-cache the core app shell.

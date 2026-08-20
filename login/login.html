@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beko ComplianceOS - Login</title>
+
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<main class="login-page">
+
+    <!-- ─── WELCOME / INFO PANEL ─── -->
+    <section class="welcome-panel">
+
+        <header>
+            <h1>Beko ComplianceOS</h1>
+            <p class="tagline">
+                Simplifying compliance for South African SMEs,
+                startups and sole proprietors.
+            </p>
+        </header>
+
+        <article>
+            <h2>About the Platform</h2>
+            <p>
+                Beko ComplianceOS is a South African legal-tech platform built to
+                help businesses navigate their regulatory responsibilities with
+                SARS, CIPC, and other relevant authorities. Our mission is to cut
+                through the complexity of compliance by clearly showing users
+                what's required, when it's due, and how to get it done right.
+            </p>
+        </article>
+
+        <article>
+            <h2>What We Offer</h2>
+            <ul>
+                <li>Monitoring of compliance obligations and key deadlines</li>
+                <li>Automated reminders via SMS, email, and in-app notifications</li>
+                <li>Clear, step-by-step guidance for completing compliance tasks</li>
+                <li>Access to legal templates and essential business documents</li>
+                <li>Plain-language legal and tax education for business owners</li>
+            </ul>
+        </article>
+
+    </section>
+
+    <!-- ─── LOGIN PANEL ─── -->
+    <section class="login-panel">
+
+        <header>
+            <h1>Welcome</h1>
+            <p>Sign in to continue managing your business compliance.</p>
+        </header>
+
+        <div class="form-wrapper">
+
+            <!-- ════ LOGIN FORM ════ -->
+            <form id="loginForm">
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email"
+                           placeholder="Enter your email address" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password"
+                           placeholder="Enter your password" required>
+                </div>
+
+                <p class="form-link">
+                    <a href="#" id="showReset">Forgot password?</a>
+                </p>
+
+                <div class="button-group">
+                    <button type="submit">Sign In</button>
+                    <button type="button" id="googleLogin">
+                        <i class="fab fa-google"></i> Continue with Google
+                    </button>
+                </div>
+
+                <p>
+                    Don't have an account?
+                    <a href="#" id="showSignup">Create Account</a>
+                </p>
+
+            </form>
+
+            <!-- ════ SIGNUP FORM (hidden by default) ════ -->
+            <form id="signupForm" style="display: none;">
+
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" name="fullName"
+                           placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="signupEmail">Email Address</label>
+                    <input type="email" id="signupEmail" name="signupEmail"
+                           placeholder="Enter your email address" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" name="signupPassword"
+                           placeholder="Create a password" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword"
+                           placeholder="Confirm your password" required>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit">Create Account</button>
+                    <button type="button" id="googleSignup">
+                        <i class="fab fa-google"></i> Sign Up with Google
+                    </button>
+                </div>
+
+                <p>
+                    Already have an account?
+                    <a href="#" id="showLogin">Sign In</a>
+                </p>
+
+            </form>
+
+            <!-- ════ PASSWORD RESET FORM (hidden by default) ════ -->
+            <form id="resetForm" style="display: none;">
+
+                <p class="form-description">
+                    Enter the email address associated with your account
+                    and we'll send you a link to reset your password.
+                </p>
+
+                <div class="form-group">
+                    <label for="resetEmail">Email Address</label>
+                    <input type="email" id="resetEmail" name="resetEmail"
+                           placeholder="Enter your email address" required>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit">Send Reset Link</button>
+                </div>
+
+                <p>
+                    Remember your password?
+                    <a href="#" id="backToLogin">Back to Sign In</a>
+                </p>
+
+            </form>
+
+        </div>
+
+        <footer>
+            <p>Compliance guidance made simple.</p>
+        </footer>
+
+    </section>
+
+</main>
+<script type="module" src="login.js"></script>
+</body>
+</html>
