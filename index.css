@@ -1,5 +1,13 @@
-/* Reset */
-* {
+/**
+ * index.css — Splash / welcome screen for Beko ComplianceOS.
+ *
+ * Displays the logo centered on a clean, professional background with
+ * a subtle branded gradient. The logo fades in, holds, then fades out
+ * before the JS redirects to the login page.
+ */
+
+/* ── Reset ── */
+*, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -8,82 +16,103 @@
 html, body {
     height: 100%;
     width: 100%;
-    margin: 0;
-    padding: 0;
+    overflow: hidden;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    overflow: hidden;
-    background: white;
     min-height: 100vh;
+    background: #f4f6fa;
+    position: relative;
 }
 
-/* Logo styling */
-.logo-container {
+/* Subtle branded radial gradient behind the logo */
+body::before {
+    content: "";
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    opacity: 0;
-    animation: logoFade 2s ease-in forwards, logoFadeOut 1s ease-in forwards;
-    animation-delay: 0s, 3s;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 50% 40%, rgba(44, 181, 184, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 30% 80%, rgba(76, 175, 80, 0.05) 0%, transparent 50%);
+    pointer-events: none;
 }
 
-.logo-container img {
-    max-width: 800px;
-    width: 90%;
+/* ── Logo container ── */
+.splash {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    opacity: 0;
+    animation: fadeIn 1.2s ease-out 0.3s forwards,
+               fadeOut 0.8s ease-in 4.5s forwards;
+}
+
+.splash-logo {
+    width: 420px;
+    max-width: 85vw;
     height: auto;
     display: block;
-    border-radius: 10px;
-    
+    filter: drop-shadow(0 8px 32px rgba(27, 42, 92, 0.1));
 }
 
-
-
-
-
-/* Responsive design */
-@media (max-width: 768px) {
-    .text-container h1 {
-        font-size: 2.5rem;
-    }
+/* Tagline below the logo */
+.splash-tagline {
+    color: #6b7280;
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 
+/* Thin loading bar beneath the tagline */
+.splash-bar {
+    width: 200px;
+    height: 3px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.splash-bar::after {
+    content: "";
+    display: block;
+    width: 40%;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #2cb5b8, #4caf50);
+    animation: barSlide 2s ease-in-out infinite;
+}
+
+/* ── Keyframes ── */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+
+@keyframes barSlide {
+    0%   { transform: translateX(-100%); }
+    50%  { transform: translateX(250%); }
+    100% { transform: translateX(-100%); }
+}
+
+/* ── Responsive ── */
 @media (max-width: 480px) {
-    .text-container h1 {
-        font-size: 1.8rem;
+    .splash-logo {
+        width: 280px;
     }
-}
-
-/* Keyframes */
-@keyframes logoFade {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-}
-
-@keyframes logoFadeOut {
-    0% { opacity: 1; }
-    100% { opacity: 0; }
-}
-
-@keyframes showText {
-    0% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.95);
+    .splash-tagline {
+        font-size: 0.85rem;
     }
-    100% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-    }
-}
-
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
 }

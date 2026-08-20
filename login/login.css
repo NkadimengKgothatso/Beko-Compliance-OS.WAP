@@ -1,310 +1,413 @@
-:root{
-    --primary-blue:#0B145C;
-    --secondary-blue:#0F6CCB;
-    --primary-green:#57C84D;
-    --secondary-green:#2FAE7D;
-    --white:#FFFFFF;
-    --light-bg:#F5F8F7;
-    --text-dark:#1F2937;
-    --text-light:#6B7280;
+/**
+ * login.css — Login / signup / password-reset page for Beko ComplianceOS.
+ *
+ * Brand palette (extracted from the logo):
+ *   Navy   #1B2A5C   headings, primary buttons
+ *   Green  #4CAF50   accents, success, links
+ *   Teal   #2CB5B8   highlights, focus rings
+ *   Blue   #3B7DD8   secondary, hover states
+ */
+
+/* ── Brand tokens ── */
+:root {
+    --navy:      #1B2A5C;
+    --navy-hover:#2E4A8E;
+    --green:     #4CAF50;
+    --teal:      #2CB5B8;
+    --blue:      #3B7DD8;
+    --surface:   #FFFFFF;
+    --page:      #F4F6FA;
+    --ink:       #1B2A5C;
+    --text:      #374151;
+    --muted:     #6B7280;
+    --border:    #E5E7EB;
+    --radius:    12px;
+    --shadow:    0 4px 24px rgba(27, 42, 92, 0.06);
+    --shadow-lg: 0 12px 40px rgba(27, 42, 92, 0.1);
 }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* ── Reset ── */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-body{
-    background:var(--light-bg);
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--page);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
 }
 
-.login-page{
-    min-height:100vh;
-    display:grid;
-    grid-template-columns:1fr 1fr;
+/* ── Layout: two-column grid ── */
+.login-page {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
 }
 
-/* WELCOME PANEL */
-
-.welcome-panel{
-    background:linear-gradient(
-        135deg,
-        var(--primary-blue),
-        var(--secondary-blue),
-        var(--secondary-green)
-    );
-    color:var(--white);
-    padding:4rem;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    gap:2rem;
+/* ═══════════════════════════════════════════════
+   WELCOME / BRAND PANEL (left side)
+   ═══════════════════════════════════════════════ */
+.welcome-panel {
+    background: linear-gradient(160deg, #1B2A5C 0%, #1E3A6E 40%, #1B5A5C 100%);
+    color: #fff;
+    padding: 4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2.5rem;
+    position: relative;
+    overflow: hidden;
 }
 
-.welcome-panel h1{
-    font-size:3rem;
-    font-weight:700;
+/* Subtle circuit-pattern overlay to echo the logo's circuit nodes */
+.welcome-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 80% 20%, rgba(44, 181, 184, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 20% 80%, rgba(76, 175, 80, 0.1) 0%, transparent 40%);
+    pointer-events: none;
 }
 
-.welcome-panel h2{
-    margin-bottom:1rem;
-    color:#ffffff;
+.welcome-panel > * {
+    position: relative;
+    z-index: 1;
 }
 
-.welcome-panel p{
-    line-height:1.7;
-    font-size:1rem;
+/* Logo at top of brand panel */
+.brand-logo {
+    width: 260px;
+    max-width: 100%;
+    height: auto;
+    filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.2)) brightness(1.15);
 }
 
-.welcome-panel ul{
-    margin-left:1.5rem;
-    line-height:2;
+.welcome-panel h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
 }
 
-/* LOGIN PANEL */
-
-.login-panel{
-    background:var(--white);
-    padding:4rem;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
+.welcome-panel h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: rgba(255, 255, 255, 0.95);
 }
 
-.login-panel header{
-    text-align:center;
-    margin-bottom:2rem;
+.welcome-panel p {
+    line-height: 1.75;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.82);
 }
 
-.login-panel h1{
-    color:var(--primary-blue);
-    margin-bottom:0.5rem;
+.welcome-panel .tagline {
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
 }
 
-.login-panel p{
-    color:var(--text-light);
+.welcome-panel ul {
+    list-style: none;
+    display: grid;
+    gap: 0.75rem;
 }
 
-/* FORM */
-
-form{
-    width:100%;
-    max-width:450px;
-    display:flex;
-    flex-direction:column;
-    gap:1.25rem;
-    background:var(--white);
-    padding:2rem;
-    border-radius:20px;
-    box-shadow:0 10px 30px rgba(11,20,92,0.08);
+.welcome-panel li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.5;
 }
 
-/* Groups a label with its input so the two sit close together,
-   while still getting full breathing room from the next field. */
-.form-group{
-    display:flex;
-    flex-direction:column;
-    align-items:stretch;
-    gap:0.5rem;
+.welcome-panel li::before {
+    content: "✓";
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    background: rgba(76, 175, 80, 0.25);
+    border-radius: 50%;
+    font-size: 0.7rem;
+    color: #8FE393;
+    margin-top: 2px;
 }
 
-label{
-    color:var(--text-dark);
-    font-weight:600;
-    font-size:0.95rem;
+/* ═══════════════════════════════════════════════
+   LOGIN PANEL (right side)
+   ═══════════════════════════════════════════════ */
+.login-panel {
+    background: var(--surface);
+    padding: 4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-input{
-    width:100%;
-    padding:1rem;
-    border:1px solid #d1d5db;
-    border-radius:10px;
-    font-size:1rem;
-    transition:0.3s;
+.login-panel header {
+    text-align: center;
+    margin-bottom: 2rem;
 }
 
-input:focus{
-    outline:none;
-    border-color:var(--secondary-green);
-    box-shadow:0 0 0 3px rgba(47,174,125,0.15);
+.login-panel h1 {
+    color: var(--navy);
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
 }
 
-button{
-    width:100%;
-    padding:1rem;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-    font-size:1rem;
-    font-weight:600;
-    text-align:center;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    transition:0.3s;
+.login-panel > header > p {
+    color: var(--muted);
+    font-size: 0.95rem;
 }
 
-/* Groups the two action buttons (submit + Google) tightly together,
-   separating them from the fields above and the link below. */
-.button-group{
-    display:flex;
-    flex-direction:column;
-    gap:0.75rem;
-    margin-top:0.25rem;
-}
-
-/* SIGN IN BUTTON */
-
-button[type="submit"]{
-    background:var(--primary-blue);
-    color:white;
-}
-
-button[type="submit"]:hover{
-    background:var(--secondary-blue);
-}
-
-/* GOOGLE BUTTON */
-
-#googleLogin,
-#googleSignup{
-    background:white;
-    color:var(--text-dark);
-    border:1px solid #d1d5db;
-    gap:0.5rem;
-}
-
-#googleLogin:hover,
-#googleSignup:hover{
-    background:#f9fafb;
-}
-
-/* LINKS */
-
-a{
-    color:var(--secondary-green);
-    text-decoration:none;
-    font-weight:600;
-}
-
-a:hover{
-    text-decoration:underline;
-}
-
-form > p{
-    text-align:center;
-    color:var(--text-light);
-    font-size:0.95rem;
-}
-
-/* FOOTER */
-
-footer{
-    margin-top:2rem;
-    text-align:center;
-    color:var(--text-light);
-}
-
-/* RESPONSIVE */
-
-@media (max-width: 900px){
-
-    .login-page{
-        grid-template-columns:1fr;
-    }
-
-    .welcome-panel{
-        padding:2rem;
-    }
-
-    .login-panel{
-        padding:2rem;
-    }
-
-    .welcome-panel h1{
-        font-size:2.2rem;
-    }
-}
-
-.welcome-panel img{
-    width:250px;
-    margin-bottom:2rem;
-}
-
-/* FORM SWITCHING */
-
-.form-wrapper{
-    width:100%;
-    max-width:450px;
-    position:relative;
+/* ── Form wrapper ── */
+.form-wrapper {
+    width: 100%;
+    max-width: 440px;
+    position: relative;
 }
 
 #loginForm,
 #signupForm,
-#resetForm{
-    width:100%;
+#resetForm {
+    width: 100%;
 }
 
 #signupForm,
-#resetForm{
-    display:none;
+#resetForm {
+    display: none;
 }
 
-/* SELECT */
-
-select{
-    width:100%;
-    padding:1rem;
-    border:1px solid #d1d5db;
-    border-radius:10px;
-    font-size:1rem;
-    background:white;
+/* ── Form card ── */
+form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    background: var(--surface);
+    padding: 2rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
 }
 
-select:focus{
-    outline:none;
-    border-color:var(--secondary-green);
-    box-shadow:0 0 0 3px rgba(47,174,125,0.15);
+/* ── Form groups ── */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
-/* ANIMATIONS */
-
-@keyframes slideIn {
-    from {
-        transform: translateX(400px);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
+label {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 0.875rem;
 }
 
-button:disabled{
+input, select {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: var(--text);
+    background: #FAFBFC;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(44, 181, 184, 0.12);
+    background: var(--surface);
+}
+
+input::placeholder {
+    color: #9CA3AF;
+}
+
+/* ── Buttons ── */
+button {
+    width: 100%;
+    padding: 0.875rem 1.25rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+}
+
+button:active {
+    transform: scale(0.99);
+}
+
+button:disabled {
     cursor: not-allowed;
+    opacity: 0.6;
 }
 
-button:disabled:hover{
+button:disabled:hover {
     background: inherit;
 }
 
-/* FORGOT PASSWORD LINK */
-
-.form-link{
-    text-align:right;
-    margin-top:-0.5rem;
-    font-size:0.9rem;
+/* Primary button */
+button[type="submit"] {
+    background: var(--navy);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(27, 42, 92, 0.2);
 }
 
-/* RESET FORM DESCRIPTION */
+button[type="submit"]:hover:not(:disabled) {
+    background: var(--navy-hover);
+    box-shadow: 0 4px 16px rgba(27, 42, 92, 0.25);
+}
 
-.form-description{
-    color:var(--text-light);
-    font-size:0.95rem;
-    line-height:1.6;
-    text-align:center;
-    margin-bottom:0.5rem;
+/* Google button */
+#googleLogin,
+#googleSignup {
+    background: var(--surface);
+    color: var(--text);
+    border: 1.5px solid var(--border);
+    font-weight: 500;
+}
+
+#googleLogin:hover,
+#googleSignup:hover {
+    background: #F9FAFB;
+    border-color: #D1D5DB;
+}
+
+/* ── Button group ── */
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+/* ── Links ── */
+a {
+    color: var(--green);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.15s;
+}
+
+a:hover {
+    color: #3D8B40;
+    text-decoration: underline;
+}
+
+/* ── Form footer text ── */
+form > p {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+/* ── Forgot password link ── */
+.form-link {
+    text-align: right;
+    margin-top: -0.5rem;
+    font-size: 0.875rem;
+}
+
+/* ── Reset form description ── */
+.form-description {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+/* ── Divider between Google and email ── */
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+/* ── Footer ── */
+.login-panel > footer {
+    margin-top: 2rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+/* ── Animations ── */
+@keyframes slideIn {
+    from { transform: translateX(400px); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════ */
+@media (max-width: 900px) {
+    .login-page {
+        grid-template-columns: 1fr;
+    }
+
+    .welcome-panel {
+        padding: 2.5rem 2rem;
+        gap: 1.5rem;
+    }
+
+    .welcome-panel h1 {
+        font-size: 2rem;
+    }
+
+    .brand-logo {
+        width: 200px;
+    }
+
+    .login-panel {
+        padding: 2.5rem 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .welcome-panel {
+        padding: 2rem 1.5rem;
+    }
+
+    .welcome-panel h1 {
+        font-size: 1.75rem;
+    }
+
+    .login-panel {
+        padding: 2rem 1.25rem;
+    }
+
+    form {
+        padding: 1.5rem;
+    }
 }
