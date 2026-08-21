@@ -94,7 +94,9 @@ Consultation requests are inserted into `consultations` and the page refreshes t
 - `login/login.html` — add confirm password field with live match feedback and form validation
 - `assets/mobile-nav.css` + `assets/mobile-nav.js` — shared responsive mobile navigation for all sidebar pages
 - All sidebar pages (`dashboard`, `templates`, `education`, `tenders`, `aml`, `notifications`, `consultation`, `profile`) — include shared mobile nav and improved small-screen stacking
-- `docs/supabase-schema.sql` — full v3 schema with new tables
+- `docs/supabase-schema.sql` — full v3 schema with new tables and robust auth trigger (`ON CONFLICT DO NOTHING` + exception handler)
+- `docs/supabase-migration-v3.sql` — now also creates `profiles`/`company_profiles` and the auth trigger if missing, fixing "database error saving user"
+- `README.md` — added live site links, updated features, project structure, and database docs
 
 ### Already existed from previous work
 - `templates/templates.html`

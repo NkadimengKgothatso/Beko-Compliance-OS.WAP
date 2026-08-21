@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════
--- Beko ComplianceOS — Supabase Database Schema v2
+-- Beko ComplianceOS — Supabase Database Schema v3
 -- Run this in: Supabase Dashboard → SQL Editor → New Query → Run
 -- WARNING: This drops existing tables. Only run in development/testing.
 -- ═══════════════════════════════════════════════════════

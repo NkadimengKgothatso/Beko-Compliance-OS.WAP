@@ -2,6 +2,10 @@
 
 > A South African legal-tech platform that helps SMEs, startups, and sole proprietors manage their compliance obligations with SARS, CIPC, and other regulators.
 
+**Live site:** [https://www.bekocompliance.co.za](https://www.bekocompliance.co.za)
+
+**Vercel preview:** [https://beko-compliance-os-azhgta1e7-nkadimengkgothatsos-projects.vercel.app](https://beko-compliance-os-azhgta1e7-nkadimengkgothatsos-projects.vercel.app)
+
 ---
 
 ## Table of Contents
@@ -20,12 +24,19 @@
 ## Features
 
 - **Email/password & Google authentication** via Supabase Auth
-- **Password reset** via Supabase Auth
+- **Password reset** and confirm-password validation
 - **Multi-step onboarding wizard** that collects business profile data
 - **Compliance score calculator** (0–100) based on business profile
 - **Protected dashboard** with company profile, score, alerts, and deadlines
+- **Template library** — generate branded, professional PDFs with the Beko logo
+- **Legal education hub** — searchable compliance articles and guides
+- **Tender notifications** — browse tenders, create alerts, and track opportunities
+- **AML risk screener** — FICA-style risk questionnaire with history
+- **Consultation booking** — request help from partner law firms
+- **Notifications centre** — compliance reminders and read/unread state
 - **Demo data** — one-click fill on onboarding and one-click load on dashboard
 - **Row Level Security** — users can only read/write their own data
+- **Responsive design** — works on desktop, tablet, and mobile
 
 ---
 
@@ -64,13 +75,40 @@ Beko-Compliance-OS.WAP/
 ├── dashboard/                ← Protected compliance dashboard
 │   └── dashboard.html        ← Self-contained page
 │
+├── assets/                   ← Shared CSS/JS used by multiple pages
+│   ├── mobile-nav.css
+│   └── mobile-nav.js
+│
+├── templates/                ← Downloadable legal/compliance templates
+│   └── templates.html
+│
+├── education/                ← Legal education hub
+│   └── education.html
+│
+├── tenders/                  ← Tender listings, alerts, and tracking
+│   └── tenders.html
+│
+├── aml/                      ← AML/FICA risk screener
+│   └── aml.html
+│
+├── notifications/            ← In-app notifications
+│   └── notifications.html
+│
+├── consultation/             ← Book legal consultations
+│   └── consultation.html
+│
+├── profile/                  ← User profile and settings
+│   └── profile.html
+│
 ├── emails/                   ← Branded email HTML templates
 │   ├── verify-email.html
 │   ├── password-reset.html
 │   └── welcome.html
 │
 └── docs/                     ← Project documentation
-    ├── supabase-schema.sql   ← Database schema
+    ├── supabase-schema.sql   ← Full database schema (clean slate)
+    ├── supabase-migration-v3.sql ← Non-destructive migration
+    ├── implementation-summary.md
     └── beko_complianceos_desktop_portal.html
 ```
 
@@ -94,9 +132,19 @@ Beko-Compliance-OS.WAP/
 
 ### 2. Run the database schema
 
+Choose one option based on whether you already have data in Supabase:
+
+**Option A — Fresh project (no existing data)**
 1. In Supabase, go to **SQL Editor → New Query**
 2. Open [docs/supabase-schema.sql](docs/supabase-schema.sql) and copy the contents
 3. Click **Run**
+
+**Option B — Existing project with users/data**
+1. In Supabase, go to **SQL Editor → New Query**
+2. Open [docs/supabase-migration-v3.sql](docs/supabase-migration-v3.sql) and copy the contents
+3. Click **Run**
+
+> The migration adds all new tables **and** ensures the auth trigger that creates a `profiles` row on sign-up is present. If you see "database error saving user" during signup, re-run the migration.
 
 ### 3. Run Locally
 
@@ -151,12 +199,19 @@ Splash screen  ──►  Login page
 
 ## Database
 
-The app uses **Supabase PostgreSQL** with two tables:
+The app uses **Supabase PostgreSQL** with Row Level Security enabled:
 
 - **`profiles`** — User profile (name, email, auth provider, onboarding status, company link)
 - **`company_profiles`** — Business profile (25+ fields including compliance score)
+- **`consultations`** — Consultation bookings
+- **`notifications`** — In-app notification messages
+- **`tenders`** — Tender opportunity listings
+- **`tender_alerts`** — User-created keyword/province alerts
+- **`tender_tracks`** — Tenders a user is tracking
+- **`aml_screenings`** — AML screening results
 
-Full schema: [docs/supabase-schema.sql](docs/supabase-schema.sql)
+Full schema: [docs/supabase-schema.sql](docs/supabase-schema.sql)  
+Non-destructive migration: [docs/supabase-migration-v3.sql](docs/supabase-migration-v3.sql)
 
 Row Level Security policies ensure each user can only access their own rows.
 
@@ -186,7 +241,9 @@ Upload the project folder to Netlify, Cloudflare Pages, GitHub Pages, or any sta
 
 | Document | Description |
 |---|---|
-| [docs/supabase-schema.sql](docs/supabase-schema.sql) | PostgreSQL schema for profiles and company_profiles |
+| [docs/supabase-schema.sql](docs/supabase-schema.sql) | Full PostgreSQL schema (clean slate) |
+| [docs/supabase-migration-v3.sql](docs/supabase-migration-v3.sql) | Non-destructive migration for existing projects |
+| [docs/implementation-summary.md](docs/implementation-summary.md) | Build notes, features, and deployment log |
 | [docs/beko_complianceos_desktop_portal.html](docs/beko_complianceos_desktop_portal.html) | Desktop portal mockup |
 
 ---
