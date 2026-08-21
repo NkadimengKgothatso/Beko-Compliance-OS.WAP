@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Template Library — Beko ComplianceOS</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root{--navy:#1B2A5C;--green:#4CAF50;--teal:#2CB5B8;--bg:#F4F6FA;--text:#374151;--muted:#6B7280;--border:#E5E7EB;--danger:#DC2626;--warn:#D97706}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -128,15 +129,39 @@ function generateDoc(template) {
 
 function download(template) {
     const content = generateDoc(template);
-    const blob = new Blob([content], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${template.id}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Header
+    doc.setFontSize(18);
+    doc.setTextColor(27, 42, 92);
+    doc.text(template.name, 14, 20);
+
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Beko ComplianceOS · Generated ${new Date().toLocaleDateString("en-ZA")}`, 14, 28);
+
+    // Body
+    doc.setFontSize(11);
+    doc.setTextColor(0, 0, 0);
+    const lines = content.split("\n");
+    let y = 40;
+    const lineHeight = 6;
+    const pageHeight = 280;
+    const margin = 14;
+    const maxWidth = 180;
+
+    lines.forEach(line => {
+        if (y > pageHeight) {
+            doc.addPage();
+            y = margin;
+        }
+        const wrapped = doc.splitTextToSize(line, maxWidth);
+        doc.text(wrapped, margin, y);
+        y += wrapped.length * lineHeight + (line.trim() === "" ? 2 : 4);
+    });
+
+    doc.save(`${template.id}.pdf`);
     toast(`Downloaded ${template.name}`);
 }
 

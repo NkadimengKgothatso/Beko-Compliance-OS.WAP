@@ -13,7 +13,7 @@ The following missing features from the business report and desktop portal mocku
 
 | Feature | File | What it does |
 |---------|------|--------------|
-| **Template Library** | `templates/templates.html` | 12 downloadable legal/compliance document templates (contracts, HR, legal, tax). Filter by category, search by name/description, and download as `.txt`. |
+| **Template Library** | `templates/templates.html` | 12 downloadable legal/compliance document templates (contracts, HR, legal, tax). Filter by category, search by name/description, and download as `.pdf` using jsPDF. |
 | **Notifications / Reminders** | `notifications/notifications.html` | Loads compliance alerts from Supabase with read/unread state. Includes channel toggles for WhatsApp, Email, and SMS. Seeds sample notifications for new users. |
 | **Consultation Booking** | `consultation/consultation.html` | Form to book a consultation with partner law firms. Saves requests to a `consultations` table in Supabase and displays the user’s consultation history. |
 | **Profile & Settings** | `profile/profile.html` | Displays business details from `company_profiles`, allows editing full name/phone/website, and shows notification preferences and document status. |
@@ -51,7 +51,7 @@ If a user reaches the dashboard but has no `company_profiles` row, the dashboard
 The demo loader writes to both `profiles` (sets `onboarding_complete: true`) and `company_profiles` so the dashboard can render immediately.
 
 ### 2.4 Template downloads
-Templates are stored as plain JavaScript objects. When a user clicks **Download**, the app generates a text document in memory, creates a Blob, and triggers a browser download of a `.txt` file. No server-side processing is required.
+Templates are stored as plain JavaScript objects. When a user clicks **Download**, the app uses [jsPDF](https://parall.ax/products/jspdf) to generate a formatted PDF with the template name, Beko ComplianceOS header, and generated document body. The PDF is saved directly in the browser; no server-side processing is required.
 
 ### 2.5 AML risk scoring
 The AML page uses a simple weighted score:
@@ -90,6 +90,7 @@ Consultation requests are inserted into `consultations` and the page refreshes t
 - `tenders/tenders.html` — backend-driven tenders, tracking, and alerts
 - `aml/aml.html` — save screenings and show history
 - `consultation/consultation.html` — display consultation history
+- `templates/templates.html` — generate PDF downloads instead of `.txt`
 - `docs/supabase-schema.sql` — full v3 schema with new tables
 
 ### Already existed from previous work
