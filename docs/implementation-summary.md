@@ -91,6 +91,8 @@ Consultation requests are inserted into `consultations` and the page refreshes t
 - `aml/aml.html` — save screenings and show history
 - `consultation/consultation.html` — display consultation history
 - `templates/templates.html` — generate PDF downloads instead of `.txt`
+- `assets/mobile-nav.css` + `assets/mobile-nav.js` — shared responsive mobile navigation for all sidebar pages
+- All sidebar pages (`dashboard`, `templates`, `education`, `tenders`, `aml`, `notifications`, `consultation`, `profile`) — include shared mobile nav and improved small-screen stacking
 - `docs/supabase-schema.sql` — full v3 schema with new tables
 
 ### Already existed from previous work
