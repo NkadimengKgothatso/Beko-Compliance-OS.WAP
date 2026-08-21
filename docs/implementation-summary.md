@@ -90,7 +90,8 @@ Consultation requests are inserted into `consultations` and the page refreshes t
 - `tenders/tenders.html` — backend-driven tenders, tracking, and alerts
 - `aml/aml.html` — save screenings and show history
 - `consultation/consultation.html` — display consultation history
-- `templates/templates.html` — generate PDF downloads instead of `.txt`
+- `templates/templates.html` — generate professional PDF downloads instead of `.txt`, including the Beko logo, branded header/footer, section styling, and legal disclaimer
+- `login/login.html` — add confirm password field with live match feedback and form validation
 - `assets/mobile-nav.css` + `assets/mobile-nav.js` — shared responsive mobile navigation for all sidebar pages
 - All sidebar pages (`dashboard`, `templates`, `education`, `tenders`, `aml`, `notifications`, `consultation`, `profile`) — include shared mobile nav and improved small-screen stacking
 - `docs/supabase-schema.sql` — full v3 schema with new tables

@@ -135,3 +135,99 @@ VALUES
     ('TND-2026-0433', 'Agricultural training programme', 'Department of Agriculture', 'Free State', 'Education / Training', '2026-09-30', 'open', 'Facilitation of a 6-month smallholder farmer training programme.', ARRAY['Accredited training', 'B-BBEE', 'CIPC']),
     ('TND-2026-0418', 'Cloud software subscription', 'Financial Services Firm', 'Gauteng', 'IT / Technology', '2026-09-12', 'open', 'SaaS platform for document management and compliance tracking.', ARRAY['ISO 27001', 'B-BBEE', 'POPIA compliant'])
 ON CONFLICT (tender_id) DO NOTHING;
+
+-- ═══════════════════════════════════════════════════════
+-- 9. Ensure auth trigger creates a profile row on sign-up
+-- This prevents "database error saving user" when the trigger
+-- is missing, the profiles table is absent, or a duplicate
+-- insert is attempted.
+-- ═══════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS profiles (
+    id          UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    full_name   TEXT,
+    email       TEXT,
+    auth_provider TEXT DEFAULT 'email',
+    onboarding_complete BOOLEAN DEFAULT FALSE,
+    compliance_score    INTEGER DEFAULT 0,
+    company_id          UUID,
+    company_name        TEXT,
+    phone               TEXT,
+    role                TEXT DEFAULT 'owner',
+    created_at  TIMESTAMPTZ DEFAULT NOW(),
+    updated_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS company_profiles (
+    id                  UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    business_name       TEXT,
+    business_type       TEXT,
+    registration_number TEXT,
+    registration_date   DATE,
+    tax_number          TEXT,
+    uif_number          TEXT,
+    province            TEXT,
+    city                TEXT,
+    address             TEXT,
+    website             TEXT,
+    vat_registered      TEXT DEFAULT 'no',
+    employees           INTEGER DEFAULT 0,
+    directors           INTEGER DEFAULT 1,
+    industry            TEXT,
+    industry_subsector  TEXT,
+    monthly_revenue     TEXT,
+    accounting_software TEXT,
+    payroll_system      TEXT,
+    last_tax_filing     TEXT DEFAULT 'never',
+    cipc_annual_return  TEXT DEFAULT 'not-filed',
+    has_records         BOOLEAN DEFAULT FALSE,
+    has_business_plan   BOOLEAN DEFAULT FALSE,
+    has_contracts       BOOLEAN DEFAULT FALSE,
+    bbbee_level         TEXT,
+    coida_registered    BOOLEAN DEFAULT FALSE,
+    sdl_registered      BOOLEAN DEFAULT FALSE,
+    compliance_score    INTEGER DEFAULT 0,
+    score_summary       TEXT,
+    created_at          TIMESTAMPTZ DEFAULT NOW(),
+    updated_at          TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE company_profiles ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users can view own profile" ON profiles;
+DROP POLICY IF EXISTS "Users can insert own profile" ON profiles;
+DROP POLICY IF EXISTS "Users can update own profile" ON profiles;
+CREATE POLICY "Users can view own profile" ON profiles FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Users can insert own profile" ON profiles FOR INSERT WITH CHECK (auth.uid() = id);
+CREATE POLICY "Users can update own profile" ON profiles FOR UPDATE USING (auth.uid() = id);
+
+DROP POLICY IF EXISTS "Users can view own company" ON company_profiles;
+DROP POLICY IF EXISTS "Users can insert own company" ON company_profiles;
+DROP POLICY IF EXISTS "Users can update own company" ON company_profiles;
+CREATE POLICY "Users can view own company" ON company_profiles FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Users can insert own company" ON company_profiles FOR INSERT WITH CHECK (auth.uid() = id);
+CREATE POLICY "Users can update own company" ON company_profiles FOR UPDATE USING (auth.uid() = id);
+
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO public.profiles (id, full_name, email, auth_provider)
+    VALUES (
+        NEW.id,
+        COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', ''),
+        NEW.email,
+        CASE WHEN NEW.app_metadata->>'provider' = 'google' THEN 'google' ELSE 'email' END
+    )
+    ON CONFLICT (id) DO NOTHING;
+    RETURN NEW;
+EXCEPTION WHEN OTHERS THEN
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+    AFTER INSERT ON auth.users
+    FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+

@@ -129,43 +129,164 @@ function generateDoc(template) {
     return docs[template.id] || `${template.name.toUpperCase()}\n\nDate: ${date}\n\n[This is a template placeholder. Replace with your business details.]\n\n[Company name]\n[Registration number]\n[Address]`;
 }
 
-function download(template) {
+let logoDataUrl = null;
+
+function loadLogo() {
+    if (logoDataUrl) return Promise.resolve(logoDataUrl);
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+            try {
+                const canvas = document.createElement("canvas");
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0);
+                logoDataUrl = canvas.toDataURL("image/jpeg", 0.9);
+            } catch (e) {
+                logoDataUrl = null;
+            }
+            resolve(logoDataUrl);
+        };
+        img.onerror = () => resolve(null);
+        img.src = "/bg.jpeg";
+    });
+}
+
+function isHeading(line) {
+    const text = line.trim();
+    if (!text) return false;
+    // "1. INTRODUCTION" or "ARTICLE 1" style
+    if (/^(\d+\.\s+[A-Z]|ARTICLE\s+\d+|SECTION\s+\d+|CLAUSE\s+\d+)/i.test(text)) return true;
+    // Short all-caps lines like "INTRODUCTION" or "PAYMENT"
+    if (text.length <= 40 && text === text.toUpperCase() && !text.startsWith("[") && !text.includes("R0")) return true;
+    return false;
+}
+
+async function download(template) {
+    await loadLogo();
     const content = generateDoc(template);
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
+    const pageW = doc.internal.pageSize.getWidth();
+    const margin = 16;
+    const maxWidth = pageW - margin * 2;
+    const navy = [27, 42, 92];
+    const teal = [44, 181, 184];
 
-    // Header
-    doc.setFontSize(18);
-    doc.setTextColor(27, 42, 92);
-    doc.text(template.name, 14, 20);
+    function drawHeader() {
+        // Logo
+        if (logoDataUrl) {
+            try {
+                doc.addImage(logoDataUrl, "JPEG", margin, 12, 28, 14);
+            } catch (e) {
+                // Ignore logo errors
+            }
+        }
+
+        // Brand text
+        doc.setFontSize(9);
+        doc.setTextColor(...navy);
+        doc.setFont("helvetica", "bold");
+        doc.text("BEKO COMPLIANCEOS", pageW - margin, 18, { align: "right" });
+
+        doc.setFontSize(8);
+        doc.setTextColor(120, 120, 120);
+        doc.setFont("helvetica", "normal");
+        doc.text("South African SME compliance tools", pageW - margin, 23, { align: "right" });
+
+        // Accent rule
+        doc.setDrawColor(...teal);
+        doc.setLineWidth(1);
+        doc.line(margin, 30, pageW - margin, 30);
+    }
+
+    function drawFooter(pageNum, totalPages) {
+        const y = doc.internal.pageSize.getHeight() - 14;
+        doc.setDrawColor(220, 220, 220);
+        doc.setLineWidth(0.3);
+        doc.line(margin, y - 4, pageW - margin, y - 4);
+
+        doc.setFontSize(8);
+        doc.setTextColor(130, 130, 130);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Generated ${new Date().toLocaleDateString("en-ZA")} · For guidance only. Seek professional legal advice before use.`, margin, y);
+        doc.text(`${pageNum} / ${totalPages}`, pageW - margin, y, { align: "right" });
+    }
+
+    function addPage() {
+        doc.addPage();
+        drawHeader();
+    }
+
+    // Title page / first page header
+    drawHeader();
+
+    // Document title block
+    let y = 42;
+    doc.setFontSize(20);
+    doc.setTextColor(...navy);
+    doc.setFont("helvetica", "bold");
+    doc.text(template.name.toUpperCase(), margin, y);
+    y += 8;
 
     doc.setFontSize(10);
     doc.setTextColor(100, 100, 100);
-    doc.text(`Beko ComplianceOS · Generated ${new Date().toLocaleDateString("en-ZA")}`, 14, 28);
+    doc.setFont("helvetica", "italic");
+    doc.text(`Template reference: ${template.id} · Category: ${template.cat.toUpperCase()}`, margin, y);
+    y += 14;
 
     // Body
-    doc.setFontSize(11);
-    doc.setTextColor(0, 0, 0);
     const lines = content.split("\n");
-    let y = 40;
-    const lineHeight = 6;
-    const pageHeight = 280;
-    const margin = 14;
-    const maxWidth = 180;
+    const lineHeight = 5.5;
+    const pageH = doc.internal.pageSize.getHeight();
+    const contentBottom = pageH - 22;
 
     lines.forEach(line => {
-        if (y > pageHeight) {
-            doc.addPage();
-            y = margin;
+        if (y > contentBottom) {
+            addPage();
+            y = 42;
         }
-        const wrapped = doc.splitTextToSize(line, maxWidth);
-        doc.text(wrapped, margin, y);
-        y += wrapped.length * lineHeight + (line.trim() === "" ? 2 : 4);
+
+        const trimmed = line.trim();
+        const heading = isHeading(line);
+
+        if (heading) {
+            // Section heading
+            y += 3;
+            doc.setFontSize(11);
+            doc.setTextColor(...teal);
+            doc.setFont("helvetica", "bold");
+            const wrapped = doc.splitTextToSize(trimmed, maxWidth);
+            doc.text(wrapped, margin, y);
+            y += wrapped.length * lineHeight + 3;
+        } else if (trimmed === "") {
+            y += 3;
+        } else {
+            // Normal paragraph / list item
+            doc.setFontSize(10);
+            doc.setTextColor(30, 30, 30);
+            doc.setFont("helvetica", "normal");
+            const wrapped = doc.splitTextToSize(line, maxWidth);
+            doc.text(wrapped, margin, y);
+            y += wrapped.length * lineHeight + 1.5;
+        }
     });
+
+    // Footer on every page
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        drawFooter(i, totalPages);
+    }
 
     doc.save(`${template.id}.pdf`);
     toast(`Downloaded ${template.name}`);
 }
+
+// Preload logo as soon as the page loads
+loadLogo();
 
 function toast(message) {
     const el = document.createElement("div");

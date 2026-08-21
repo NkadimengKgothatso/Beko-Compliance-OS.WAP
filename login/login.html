@@ -38,6 +38,9 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
 .form-footer{text-align:center;margin-top:20px;font-size:.85rem;color:var(--muted)}
 .form-footer a{color:var(--navy);font-weight:600;text-decoration:none}
 .hide{display:none!important}
+.match-msg{font-size:.82rem;margin:-8px 0 14px;font-weight:500;min-height:18px}
+.match-msg.error{color:var(--danger)}
+.match-msg.success{color:var(--green)}
 .toast{position:fixed;top:20px;right:20px;padding:14px 20px;border-radius:8px;font-size:.9rem;font-weight:500;z-index:9999;transform:translateX(120%);transition:transform .3s ease}
 .toast.show{transform:translateX(0)}
 .toast-error{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA}
@@ -84,6 +87,8 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
             <div class="form-group"><label>Full Name</label><input type="text" id="fullName" placeholder="Your full name" required></div>
             <div class="form-group"><label>Email</label><input type="email" id="signupEmail" placeholder="you@company.co.za" required></div>
             <div class="form-group"><label>Password</label><input type="password" id="signupPass" placeholder="Minimum 6 characters" minlength="6" required></div>
+            <div class="form-group"><label>Confirm Password</label><input type="password" id="signupConfirmPass" placeholder="Re-enter your password" minlength="6" required></div>
+            <p id="passMatchMsg" class="match-msg"></p>
             <button type="submit" class="btn btn-primary">Create Account</button>
             <div class="divider">or</div>
             <button type="button" class="btn btn-google" id="googleSignup"><i class="fab fa-google"></i> Sign Up with Google</button>
@@ -145,6 +150,25 @@ $("loginForm").onsubmit = async e => {
     await routeUser("/login/login.html");
 };
 
+// Confirm password live feedback
+function updateMatchMsg() {
+    const pass = $("signupPass").value;
+    const confirm = $("signupConfirmPass").value;
+    const msg = $("passMatchMsg");
+    if (!confirm) {
+        msg.textContent = "";
+        msg.className = "match-msg";
+    } else if (pass !== confirm) {
+        msg.textContent = "Passwords do not match";
+        msg.className = "match-msg error";
+    } else {
+        msg.textContent = "Passwords match";
+        msg.className = "match-msg success";
+    }
+}
+$("signupPass").oninput = updateMatchMsg;
+$("signupConfirmPass").oninput = updateMatchMsg;
+
 // Signup
 $("signupForm").onsubmit = async e => {
     e.preventDefault();
@@ -152,8 +176,10 @@ $("signupForm").onsubmit = async e => {
     const name  = $("fullName").value.trim();
     const email = $("signupEmail").value.trim();
     const pass  = $("signupPass").value;
-    if (!name || !email || !pass) return toast("Fill in all fields");
+    const confirm = $("signupConfirmPass").value;
+    if (!name || !email || !pass || !confirm) return toast("Fill in all fields");
     if (pass.length < 6) return toast("Password must be at least 6 characters");
+    if (pass !== confirm) return toast("Passwords do not match");
     loading(btn, true);
     const { error } = await supabase.auth.signUp({
         email, password: pass,
