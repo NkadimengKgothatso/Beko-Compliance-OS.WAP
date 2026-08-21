@@ -3,6 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1B2A5C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/bg.jpeg">
 <title>Dashboard — Beko ComplianceOS</title>
 <link rel="stylesheet" href="/assets/mobile-nav.css">
 <script src="/assets/mobile-nav.js" defer></script>
@@ -67,6 +72,11 @@ progress::-webkit-progress-value{background:linear-gradient(90deg,var(--teal),va
 .toast-success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0}
 @media(max-width:1024px){body{grid-template-columns:1fr}aside{display:none}.stats{grid-template-columns:repeat(2,1fr)}.score-section,.bottom{grid-template-columns:1fr}}
 @media(max-width:480px){.stats{grid-template-columns:1fr}main{padding:24px 16px}}
+.pwa-banner{display:none;align-items:center;justify-content:space-between;gap:16px;background:#EFF8F0;border:1px solid #A7F3D0;border-radius:12px;padding:14px 18px;margin-bottom:24px}
+.pwa-banner.show{display:flex}
+.pwa-banner strong{color:var(--navy)}
+.pwa-close{background:transparent;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer}
+@media(max-width:480px){.pwa-banner{flex-direction:column;align-items:flex-start}}
 </style>
 </head>
 <body>
@@ -97,6 +107,14 @@ progress::-webkit-progress-value{background:linear-gradient(90deg,var(--teal),va
         <p class="eyebrow">Compliance dashboard</p>
         <h1>Welcome back, <span id="displayName">User</span></h1>
         <p id="companyName">Loading your profile...</p>
+    </div>
+
+    <div id="pwaInstall" class="pwa-banner">
+        <div><strong>Install Beko ComplianceOS</strong> — Add to your home screen for quick access.</div>
+        <div style="display:flex;gap:10px;align-items:center">
+            <button class="btn btn-green" id="pwaInstallBtn" style="padding:8px 16px;font-size:.85rem">Install</button>
+            <button class="pwa-close" id="pwaDismiss">&times;</button>
+        </div>
     </div>
 
     <div id="dashboardContent">
@@ -266,6 +284,33 @@ async function loadDashboard() {
 document.getElementById("logoutBtn").onclick = async () => {
     await supabase.auth.signOut();
     window.location.href = "/login/login.html";
+};
+
+// PWA install prompt
+let deferredPrompt = null;
+const pwaBanner = document.getElementById("pwaInstall");
+const pwaInstallBtn = document.getElementById("pwaInstallBtn");
+const pwaDismiss = document.getElementById("pwaDismiss");
+
+window.addEventListener("beforeinstallprompt", e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (localStorage.getItem("pwaDismissed") !== "1") {
+        pwaBanner.classList.add("show");
+    }
+});
+
+pwaInstallBtn.onclick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === "accepted") pwaBanner.classList.remove("show");
+    deferredPrompt = null;
+};
+
+pwaDismiss.onclick = () => {
+    pwaBanner.classList.remove("show");
+    localStorage.setItem("pwaDismissed", "1");
 };
 
 loadDashboard();

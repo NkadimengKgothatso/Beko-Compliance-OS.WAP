@@ -84,6 +84,8 @@ Consultation requests are inserted into `consultations` and the page refreshes t
 - `aml/aml.html`
 - `tenders/tenders.html`
 - `compliance/compliance.html`
+- `manifest.json`
+- `service-worker.js`
 - `docs/supabase-migration-v3.sql`
 - `docs/supabase-migration-v4.sql`
 - `docs/implementation-summary.md`
@@ -113,6 +115,10 @@ Consultation requests are inserted into `consultations` and the page refreshes t
 - `docs/supabase-migration-v4.sql` — non-destructive migration adding compliance tables, storage bucket, and admin policies
 - All sidebar pages (`dashboard`, `templates`, `education`, `tenders`, `aml`, `notifications`, `consultation`, `compliance`, `profile`, `admin`) — added Compliance navigation link
 - `README.md` — updated features, project structure, database tables, and migration instructions
+- `assets/mobile-nav.js` — registers the PWA service worker on all sidebar pages
+- `dashboard/dashboard.html` — added install banner with `beforeinstallprompt` handling
+- `index.html`, `login/login.html`, `verify/verify-email.html`, `onboarding/onboarding.html` — register service worker and link manifest
+- All app pages — added PWA manifest, theme-color, and Apple mobile web app meta tags
 
 ### Already existed from previous work
 - `templates/templates.html`
@@ -172,4 +178,5 @@ git push
 3. **Run the v4 migration** in Supabase to create the new compliance tables and storage bucket.
 4. **Replace sample tenders** with real tender data from the South African eTenderPortal or National Treasury API.
 5. **Expand admin UI** to manage tax deadlines and view uploaded documents.
-6. **Print this summary to PDF** from any browser or Markdown viewer if a PDF copy is required.
+6. **Test PWA install** on a mobile browser — the dashboard will show an "Install" banner when the browser supports it.
+7. **Print this summary to PDF** from any browser or Markdown viewer if a PDF copy is required.

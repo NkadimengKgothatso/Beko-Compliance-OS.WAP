@@ -37,6 +37,7 @@
 - **Row Level Security** — users can only read/write their own data
 - **Compliance centre** — POPIA readiness checklist, SARS tax calendar, CIPC annual-return reminders, and a document vault with Supabase Storage
 - **Admin panel** — manage tenders, broadcast notifications, and update consultation statuses
+- **Progressive Web App (PWA)** — install on mobile home screen, offline app shell caching, themed status bar
 - **Responsive design** — works on desktop, tablet, and mobile
 
 ---
@@ -58,6 +59,8 @@
 Beko-Compliance-OS.WAP/
 ├── supabase.js               ← Supabase init (URL + anon key)
 ├── index.html                ← Splash / welcome screen
+├── manifest.json             ← PWA manifest
+├── service-worker.js         ← PWA service worker (offline caching)
 ├── bg.jpeg                   ← Logo image
 │
 ├── shared/                   ← Shared utility modules
@@ -259,6 +262,8 @@ Upload the project folder to Netlify, Cloudflare Pages, GitHub Pages, or any sta
 | [docs/supabase-schema.sql](docs/supabase-schema.sql) | Full PostgreSQL schema (clean slate) |
 | [docs/supabase-migration-v3.sql](docs/supabase-migration-v3.sql) | Adds is_admin flag to existing projects |
 | [docs/supabase-migration-v4.sql](docs/supabase-migration-v4.sql) | Adds compliance tables, storage bucket, and admin policies |
+| [manifest.json](manifest.json) | PWA manifest for mobile install |
+| [service-worker.js](service-worker.js) | Service worker that caches the app shell for offline use |
 | [docs/implementation-summary.md](docs/implementation-summary.md) | Build notes, features, and deployment log |
 | [docs/beko_complianceos_desktop_portal.html](docs/beko_complianceos_desktop_portal.html) | Desktop portal mockup |
 
