@@ -1,159 +1,199 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beko ComplianceOS - Login</title>
-
-    <link rel="stylesheet" href="login.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — Beko ComplianceOS</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--navy:#1B2A5C;--green:#4CAF50;--teal:#2CB5B8;--bg:#F4F6FA;--text:#374151;--muted:#6B7280;--border:#E5E7EB}
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg)}
+.brand-panel{background:linear-gradient(160deg,#1B2A5C 0%,#1E3A6E 50%,#1B5A5C 100%);padding:60px 48px;display:flex;flex-direction:column;justify-content:center;color:#fff;position:relative;overflow:hidden}
+.brand-panel::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(44,181,184,.12) 0%,transparent 50%)}
+.brand-panel img{width:240px;margin-bottom:32px;filter:brightness(1.15);position:relative;background:rgba(255,255,255,.12);padding:18px 24px;border-radius:18px;backdrop-filter:blur(4px)}
+.brand-panel h1{font-size:1.8rem;margin-bottom:12px;position:relative}
+.brand-panel p{opacity:.8;line-height:1.6;position:relative}
+.brand-panel ul{list-style:none;margin-top:24px;position:relative}
+.brand-panel li{padding:6px 0;font-size:.9rem;opacity:.85}
+.brand-panel li::before{content:'✓';color:var(--green);margin-right:10px;font-weight:700}
+.form-panel{padding:60px 48px;display:flex;flex-direction:column;justify-content:center;max-width:520px;margin:0 auto;width:100%}
+.form-panel h2{color:var(--navy);font-size:1.6rem;margin-bottom:6px}
+.sub{color:var(--muted);font-size:.9rem;margin-bottom:32px}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-weight:600;font-size:.82rem;color:var(--text);margin-bottom:6px}
+.form-group input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:.95rem;background:#FAFBFC;transition:border .2s,box-shadow .2s}
+.form-group input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(44,181,184,.1);background:#fff}
+.btn{width:100%;padding:13px;border:none;border-radius:8px;font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;transition:background .2s}
+.btn-primary{background:var(--navy);color:#fff;margin-bottom:12px}
+.btn-primary:hover{background:#2E4A8E}
+.btn-google{background:#fff;color:var(--text);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-google:hover{background:#F9FAFB}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.divider{text-align:center;margin:20px 0;color:var(--muted);font-size:.8rem;position:relative}
+.divider::before,.divider::after{content:'';position:absolute;top:50%;width:40%;height:1px;background:var(--border)}
+.divider::before{left:0}.divider::after{right:0}
+.link{color:var(--teal);text-decoration:none;font-size:.85rem;font-weight:500}
+.link:hover{text-decoration:underline}
+.form-footer{text-align:center;margin-top:20px;font-size:.85rem;color:var(--muted)}
+.form-footer a{color:var(--navy);font-weight:600;text-decoration:none}
+.hide{display:none!important}
+.toast{position:fixed;top:20px;right:20px;padding:14px 20px;border-radius:8px;font-size:.9rem;font-weight:500;z-index:9999;transform:translateX(120%);transition:transform .3s ease}
+.toast.show{transform:translateX(0)}
+.toast-error{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA}
+.toast-success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0}
+@media(max-width:768px){body{grid-template-columns:1fr}.brand-panel{display:none}.form-panel{padding:32px 20px}}
+</style>
 </head>
 <body>
 
-<main class="login-page">
+<section class="brand-panel">
+    <img src="/bg.jpeg" alt="Beko ComplianceOS">
+    <h1>Simplify your business compliance</h1>
+    <p>Navigate SARS, CIPC, and regulatory responsibilities with clear guidance and automated reminders.</p>
+    <ul>
+        <li>Monitor compliance obligations and deadlines</li>
+        <li>Automated reminders via email and in-app</li>
+        <li>Step-by-step guidance for each task</li>
+        <li>Legal templates and business documents</li>
+    </ul>
+</section>
 
-    <!-- ─── BRAND / INFO PANEL ─── -->
-    <section class="welcome-panel">
+<section class="form-panel">
 
-        <img class="brand-logo" src="../bg.jpeg" alt="Beko ComplianceOS">
+    <!-- LOGIN -->
+    <div id="loginView">
+        <h2>Welcome back</h2>
+        <p class="sub">Sign in to manage your compliance dashboard.</p>
+        <form id="loginForm">
+            <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="you@company.co.za" required></div>
+            <div class="form-group"><label>Password</label><input type="password" id="loginPass" placeholder="Enter your password" required></div>
+            <p style="text-align:right;margin-bottom:16px"><a href="#" class="link" id="showReset">Forgot password?</a></p>
+            <button type="submit" class="btn btn-primary">Sign In</button>
+            <div class="divider">or</div>
+            <button type="button" class="btn btn-google" id="googleLogin"><i class="fab fa-google"></i> Continue with Google</button>
+        </form>
+        <p class="form-footer">No account? <a href="#" id="showSignup">Create one</a></p>
+    </div>
 
-        <header>
-            <h1>Simplify your business compliance</h1>
-        </header>
+    <!-- SIGNUP -->
+    <div id="signupView" class="hide">
+        <h2>Create your account</h2>
+        <p class="sub">Get started with your compliance journey.</p>
+        <form id="signupForm">
+            <div class="form-group"><label>Full Name</label><input type="text" id="fullName" placeholder="Your full name" required></div>
+            <div class="form-group"><label>Email</label><input type="email" id="signupEmail" placeholder="you@company.co.za" required></div>
+            <div class="form-group"><label>Password</label><input type="password" id="signupPass" placeholder="Minimum 6 characters" minlength="6" required></div>
+            <button type="submit" class="btn btn-primary">Create Account</button>
+            <div class="divider">or</div>
+            <button type="button" class="btn btn-google" id="googleSignup"><i class="fab fa-google"></i> Sign Up with Google</button>
+        </form>
+        <p class="form-footer">Have an account? <a href="#" id="showLogin">Sign in</a></p>
+    </div>
 
-        <p class="tagline">
-            Navigate SARS, CIPC, and regulatory responsibilities with
-            clear guidance, automated reminders, and actionable insights.
-        </p>
+    <!-- RESET -->
+    <div id="resetView" class="hide">
+        <h2>Reset password</h2>
+        <p class="sub">Enter your email and we'll send a reset link.</p>
+        <form id="resetForm">
+            <div class="form-group"><label>Email</label><input type="email" id="resetEmail" placeholder="you@company.co.za" required></div>
+            <button type="submit" class="btn btn-primary">Send Reset Link</button>
+        </form>
+        <p class="form-footer"><a href="#" id="backLogin">← Back to sign in</a></p>
+    </div>
 
-        <ul>
-            <li>Monitor compliance obligations and key deadlines</li>
-            <li>Automated reminders via SMS, email, and in-app notifications</li>
-            <li>Step-by-step guidance for completing compliance tasks</li>
-            <li>Access to legal templates and essential business documents</li>
-            <li>Plain-language legal and tax education</li>
-        </ul>
+</section>
 
-    </section>
+<script type="module">
+import { supabase } from "/supabase.js";
+import { routeUser } from "/shared/router.js";
+import { toast, loading } from "/shared/ui.js";
 
-    <!-- ─── LOGIN PANEL ─── -->
-    <section class="login-panel">
+// Unregister any old service worker so stale cached files don't interfere
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
+}
 
-        <header>
-            <h1>Welcome back</h1>
-            <p>Sign in to continue managing your business compliance.</p>
-        </header>
+const $ = id => document.getElementById(id);
+const views = { login: $("loginView"), signup: $("signupView"), reset: $("resetView") };
+function show(name) { Object.values(views).forEach(v => v.classList.add("hide")); views[name].classList.remove("hide"); }
 
-        <div class="form-wrapper">
+$("showSignup").onclick = e => { e.preventDefault(); show("signup"); };
+$("showLogin").onclick  = e => { e.preventDefault(); show("login"); };
+$("showReset").onclick  = e => { e.preventDefault(); show("reset"); };
+$("backLogin").onclick  = e => { e.preventDefault(); show("login"); };
 
-            <!-- ════ LOGIN FORM ════ -->
-            <form id="loginForm">
+// Check if already logged in
+const { data: { session } } = await supabase.auth.getSession();
+if (session) await routeUser("/login/login.html");
 
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email"
-                           placeholder="you@company.co.za" required>
-                </div>
+// Login
+$("loginForm").onsubmit = async e => {
+    e.preventDefault();
+    const btn = e.target.querySelector("button[type=submit]");
+    const email = $("loginEmail").value.trim();
+    const pass  = $("loginPass").value;
+    if (!email || !pass) return toast("Fill in all fields");
+    loading(btn, true);
+    const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+    if (error) {
+        toast(error.message.includes("Invalid") ? "Invalid email or password" : error.message);
+        loading(btn, false);
+        return;
+    }
+    toast("Welcome back!", "success");
+    await routeUser("/login/login.html");
+};
 
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password"
-                           placeholder="Enter your password" required>
-                </div>
+// Signup
+$("signupForm").onsubmit = async e => {
+    e.preventDefault();
+    const btn = e.target.querySelector("button[type=submit]");
+    const name  = $("fullName").value.trim();
+    const email = $("signupEmail").value.trim();
+    const pass  = $("signupPass").value;
+    if (!name || !email || !pass) return toast("Fill in all fields");
+    if (pass.length < 6) return toast("Password must be at least 6 characters");
+    loading(btn, true);
+    const { error } = await supabase.auth.signUp({
+        email, password: pass,
+        options: { data: { full_name: name } }
+    });
+    if (error) {
+        toast(error.message);
+        loading(btn, false);
+        return;
+    }
+    toast("Account created! Redirecting...", "success");
+    await routeUser("/login/login.html");
+};
 
-                <p class="form-link">
-                    <a href="#" id="showReset">Forgot password?</a>
-                </p>
+// Google
+async function googleLogin() {
+    const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: window.location.origin + "/login/login.html" }
+    });
+    if (error) toast("Google sign-in failed.");
+}
+$("googleLogin").onclick = googleLogin;
+$("googleSignup").onclick = googleLogin;
 
-                <div class="button-group">
-                    <button type="submit">Sign In</button>
-                    <button type="button" id="googleLogin">
-                        <i class="fab fa-google"></i> Continue with Google
-                    </button>
-                </div>
-
-                <p>
-                    Don't have an account?
-                    <a href="#" id="showSignup">Create Account</a>
-                </p>
-
-            </form>
-
-            <!-- ════ SIGNUP FORM (hidden by default) ════ -->
-            <form id="signupForm" style="display: none;">
-
-                <div class="form-group">
-                    <label for="fullName">Full Name</label>
-                    <input type="text" id="fullName" name="fullName"
-                           placeholder="Enter your full name" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="signupEmail">Email Address</label>
-                    <input type="email" id="signupEmail" name="signupEmail"
-                           placeholder="you@company.co.za" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="signupPassword">Password</label>
-                    <input type="password" id="signupPassword" name="signupPassword"
-                           placeholder="Minimum 6 characters" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword"
-                           placeholder="Confirm your password" required>
-                </div>
-
-                <div class="button-group">
-                    <button type="submit">Create Account</button>
-                    <button type="button" id="googleSignup">
-                        <i class="fab fa-google"></i> Sign Up with Google
-                    </button>
-                </div>
-
-                <p>
-                    Already have an account?
-                    <a href="#" id="showLogin">Sign In</a>
-                </p>
-
-            </form>
-
-            <!-- ════ PASSWORD RESET FORM (hidden by default) ════ -->
-            <form id="resetForm" style="display: none;">
-
-                <p class="form-description">
-                    Enter the email address associated with your account
-                    and we'll send you a link to reset your password.
-                </p>
-
-                <div class="form-group">
-                    <label for="resetEmail">Email Address</label>
-                    <input type="email" id="resetEmail" name="resetEmail"
-                           placeholder="you@company.co.za" required>
-                </div>
-
-                <div class="button-group">
-                    <button type="submit">Send Reset Link</button>
-                </div>
-
-                <p>
-                    Remember your password?
-                    <a href="#" id="backToLogin">Back to Sign In</a>
-                </p>
-
-            </form>
-
-        </div>
-
-        <footer>
-            <p>Beko ComplianceOS &mdash; Compliance guidance made simple.</p>
-        </footer>
-
-    </section>
-
-</main>
-<script type="module" src="login.js"></script>
+// Password reset
+$("resetForm").onsubmit = async e => {
+    e.preventDefault();
+    const btn = e.target.querySelector("button[type=submit]");
+    const email = $("resetEmail").value.trim();
+    if (!email) return toast("Enter your email");
+    loading(btn, true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + "/login/login.html"
+    });
+    if (error) { toast(error.message); loading(btn, false); return; }
+    toast("Reset email sent! Check your inbox.", "success");
+    setTimeout(() => show("login"), 2000);
+    loading(btn, false);
+};
+</script>
 </body>
 </html>

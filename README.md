@@ -19,13 +19,13 @@
 
 ## Features
 
-- **Email/password & Google authentication** with email verification
-- **Password reset** via Firebase Auth
+- **Email/password & Google authentication** via Supabase Auth
+- **Password reset** via Supabase Auth
 - **Multi-step onboarding wizard** that collects business profile data
 - **Compliance score calculator** (0–100) based on business profile
 - **Protected dashboard** with company profile, score, alerts, and deadlines
-- **PWA support** — installable, offline-capable via service worker
-- **Firestore security rules** — owner-only read/write, no client-side deletes
+- **Demo data** — one-click fill on onboarding and one-click load on dashboard
+- **Row Level Security** — users can only read/write their own data
 
 ---
 
@@ -34,10 +34,9 @@
 | Layer | Technology |
 |---|---|
 | Frontend | Vanilla HTML / CSS / JavaScript (ES Modules) |
-| Auth | Firebase Authentication (v10.12.2) |
-| Database | Cloud Firestore |
-| Hosting | Firebase Hosting |
-| PWA | Service Worker + Web App Manifest |
+| Auth | Supabase Authentication |
+| Database | Supabase PostgreSQL |
+| Hosting | Vercel / static host |
 
 ---
 
@@ -45,50 +44,34 @@
 
 ```
 Beko-Compliance-OS.WAP/
-├── firebase.js              ← Firebase init (Auth + Firestore config)
-├── firebase.json             ← Firebase CLI / hosting config
-├── firestore.rules           ← Firestore security rules
+├── supabase.js               ← Supabase init (URL + anon key)
 ├── index.html                ← Splash / welcome screen
-├── index.css                 ← Splash styles
-├── index.js                  ← Splash logic + SW registration
-├── manifest.json             ← PWA manifest
-├── service-worker.js         ← Offline cache strategy
-├── bg.jpeg                   ← Background / logo image
+├── bg.jpeg                   ← Logo image
 │
 ├── shared/                   ← Shared utility modules
-│   ├── auth-router.js        ← Unified routing (verify → onboard → dashboard)
-│   ├── toast.js              ← Toast notifications (error / success)
-│   ├── loading.js            ← Button loading-state helper
-│   └── validators.js         ← Email, password, and input validators
+│   ├── router.js             ← Auth routing (verify → onboard → dashboard)
+│   └── ui.js                 ← Toast + loading helpers
 │
 ├── login/                    ← Login, signup, and password reset
-│   ├── login.html
-│   ├── login.css
-│   └── login.js
+│   └── login.html            ← Self-contained page
 │
 ├── verify/                   ← Email verification
-│   ├── verify-email.html
-│   ├── verify-email.css
-│   └── verify-email.js
+│   └── verify-email.html     ← Self-contained page
 │
 ├── onboarding/               ← Multi-step onboarding wizard
-│   ├── onboarding.html
-│   ├── onboarding.css
-│   └── onboarding.js
+│   └── onboarding.html       ← Self-contained page
 │
 ├── dashboard/                ← Protected compliance dashboard
-│   ├── dashboard.html
-│   ├── dashboard.css
-│   └── dashboard.js
+│   └── dashboard.html        ← Self-contained page
 │
-├── pwa/                      ← Duplicate PWA assets (alt. manifest + SW)
-│   ├── manifest.json
-│   └── service-worker.js
+├── emails/                   ← Branded email HTML templates
+│   ├── verify-email.html
+│   ├── password-reset.html
+│   └── welcome.html
 │
 └── docs/                     ← Project documentation
-    ├── DATABASE_SCHEMA.md    ← Full database schema, ERD, and relations
-    ├── DATABASE_SETUP.md     ← Original Firestore setup notes
-    └── structure.md          ← Original folder structure notes
+    ├── supabase-schema.sql   ← Database schema
+    └── beko_complianceos_desktop_portal.html
 ```
 
 ---
@@ -98,28 +81,35 @@ Beko-Compliance-OS.WAP/
 ### Prerequisites
 
 - A modern browser (Chrome, Firefox, Edge)
-- A local HTTP server (Firebase CLI, Live Server, or `python -m http.server`)
+- A local HTTP server (`http-server`, Live Server, or `python -m http.server`)
+- A Supabase project (free tier is fine)
 
-### Run Locally
+### 1. Configure Supabase
 
-1. **Clone the repo:**
-   ```bash
-   git clone https://github.com/NkadimengKgothatso/Beko-Compliance-OS.WAP.git
-   cd Beko-Compliance-OS.WAP
-   ```
+1. Create a project at [supabase.com](https://supabase.com)
+2. Go to **Settings → API** and copy:
+   - Project URL
+   - `anon` public key
+3. Paste them into `supabase.js`
 
-2. **Start a local server** (ES Modules require HTTP, not `file://`):
-   ```bash
-   # Option A: Firebase emulator
-   firebase serve
+### 2. Run the database schema
 
-   # Option B: Python
-   python -m http.server 8080
+1. In Supabase, go to **SQL Editor → New Query**
+2. Open [docs/supabase-schema.sql](docs/supabase-schema.sql) and copy the contents
+3. Click **Run**
 
-   # Option C: VS Code Live Server extension
-   ```
+### 3. Run Locally
 
-3. **Open** `http://localhost:8080` (or the port your server uses).
+```bash
+# Install http-server globally (once)
+npm install -g http-server
+
+# Start server
+cd Beko-Compliance-OS.WAP
+http-server -p 3000 -c-1
+```
+
+Open `http://localhost:3000`.
 
 ---
 
@@ -129,74 +119,66 @@ Beko-Compliance-OS.WAP/
 User opens app
   │
   ▼
-Splash screen (7s)  ──►  Login page
-                            │
-              ┌─────────────┼─────────────┐
-              ▼             ▼             ▼
-         Email Login    Email Signup   Google Login
-              │             │             │
-              │             ▼             │
-              │     Verify Email ────────►│
-              │             │             │
-              └──────┬──────┘             │
-                     ▼                    │
-              Onboarding Wizard ◄─────────┘
-              (6-step business profile)
-                     │
-                     ▼
-              Compliance Dashboard
+Splash screen  ──►  Login page
+                      │
+        ┌─────────────┼─────────────┐
+        ▼             ▼             ▼
+   Email Login    Email Signup   Google Login
+        │             │             │
+        │             ▼             │
+        │     Verify Email ────────►│
+        │             │             │
+        └──────┬──────┘             │
+               ▼                    │
+        Onboarding Wizard ◄─────────┘
+        (6-step business profile)
+               │
+               ▼
+        Compliance Dashboard
 ```
 
-### Routing Rules (enforced by `shared/auth-router.js`)
+### Routing Rules (enforced by `shared/router.js`)
 
 | Condition | Redirect |
 |---|---|
 | Not signed in | → Login |
-| Email user, email not verified | → Verify Email |
-| `onboardingComplete = false` | → Onboarding |
-| `onboardingComplete = true` but no company profile doc | → Onboarding (flag cleared) |
-| `onboardingComplete = true` + company profile exists | → Dashboard |
+| Email user, email not verified (TEST_MODE = false) | → Verify Email |
+| `onboarding_complete = false` | → Onboarding |
+| `onboarding_complete = true` but no company profile | → Onboarding (flag cleared) |
+| `onboarding_complete = true` + company profile exists | → Dashboard |
 
 ---
 
 ## Database
 
-The app uses **Cloud Firestore** with two collections:
+The app uses **Supabase PostgreSQL** with two tables:
 
-- **`users/{uid}`** — User profile (name, email, auth provider, onboarding status)
-- **`companyProfiles/{uid}`** — Business profile (15 fields including compliance score)
+- **`profiles`** — User profile (name, email, auth provider, onboarding status, company link)
+- **`company_profiles`** — Business profile (25+ fields including compliance score)
 
-Full schema documentation: [docs/DATABASE_SCHEMA.md](docs/DATABASE_SCHEMA.md)
+Full schema: [docs/supabase-schema.sql](docs/supabase-schema.sql)
 
-### Deploy Firestore Rules
-
-```bash
-firebase login
-firebase deploy --only firestore:rules
-```
+Row Level Security policies ensure each user can only access their own rows.
 
 ---
 
 ## Deployment
 
-### Firebase Hosting
+This is a static frontend. Deploy the project folder to any static host:
+
+### Vercel
 
 ```bash
-# Install Firebase CLI
-npm install -g firebase-tools
-
-# Login
-firebase login
+# Install Vercel CLI
+npm install -g vercel
 
 # Deploy
-firebase deploy
+vercel --prod
 ```
 
-### Firebase Configuration
+### Manual
 
-The Firebase project config is in `firebase.js`:
-- **Project ID:** `beko-compliance-os`
-- **Auth Domain:** `beko-compliance-os.firebaseapp.com`
+Upload the project folder to Netlify, Cloudflare Pages, GitHub Pages, or any static host.
 
 ---
 
@@ -204,8 +186,8 @@ The Firebase project config is in `firebase.js`:
 
 | Document | Description |
 |---|---|
-| [DATABASE_SCHEMA.md](docs/DATABASE_SCHEMA.md) | Full database schema, ERD, field descriptions, score calculation |
-| [DATABASE_SETUP.md](docs/DATABASE_SETUP.md) | Original Firestore setup notes |
+| [docs/supabase-schema.sql](docs/supabase-schema.sql) | PostgreSQL schema for profiles and company_profiles |
+| [docs/beko_complianceos_desktop_portal.html](docs/beko_complianceos_desktop_portal.html) | Desktop portal mockup |
 
 ---
 

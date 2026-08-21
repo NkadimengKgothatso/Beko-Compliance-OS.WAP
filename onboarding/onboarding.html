@@ -1,163 +1,362 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Business Onboarding - Beko ComplianceOS</title>
-    <link rel="stylesheet" href="onboarding.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onboarding — Beko ComplianceOS</title>
+<style>
+:root{--navy:#1B2A5C;--green:#4CAF50;--teal:#2CB5B8;--bg:#F4F6FA;--text:#374151;--muted:#6B7280;--border:#E5E7EB}
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;display:grid;grid-template-columns:340px 1fr;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg)}
+.sidebar{background:linear-gradient(160deg,#1B2A5C 0%,#1E3A6E 50%,#1B5A5C 100%);padding:40px 32px;color:#fff;display:flex;flex-direction:column}
+.sidebar img{width:180px;margin-bottom:32px;filter:brightness(1.15);background:rgba(255,255,255,.12);padding:14px 18px;border-radius:14px;backdrop-filter:blur(4px)}
+.sidebar h2{font-size:1.3rem;margin-bottom:8px}
+.sidebar p{font-size:.85rem;opacity:.75;line-height:1.5;margin-bottom:24px}
+.journey{list-style:none;counter-reset:step}
+.journey li{counter-increment:step;padding:10px 0;font-size:.85rem;opacity:.5;display:flex;align-items:center;gap:12px;transition:opacity .3s}
+.journey li::before{content:counter(step);width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.3);display:grid;place-items:center;font-size:.7rem;font-weight:700;flex-shrink:0}
+.journey li.active{opacity:1}
+.journey li.active::before{background:var(--green);border-color:var(--green)}
+.main{padding:40px 48px;max-width:720px}
+.progress-bar{display:flex;align-items:center;gap:12px;margin-bottom:32px}
+.progress-bar p{font-size:.8rem;color:var(--muted);white-space:nowrap}
+.track{flex:1;height:4px;background:var(--border);border-radius:4px;overflow:hidden}
+.fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--green));border-radius:4px;transition:width .3s}
+.step{display:none}.step.active{display:block}
+.step h3{color:var(--navy);font-size:1.3rem;margin-bottom:20px}
+.field{margin-bottom:18px}
+.field label{display:block;font-weight:600;font-size:.82rem;color:var(--text);margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:.95rem;background:#FAFBFC;transition:border .2s;font-family:inherit}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(44,181,184,.1);background:#fff}
+.field textarea{min-height:80px;resize:vertical}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.checkbox-row{display:flex;align-items:center;gap:10px;margin-top:12px}
+.checkbox-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--teal)}
+.checkbox-row label{font-size:.9rem;color:var(--text)}
+.nav{display:flex;gap:12px;margin-top:32px;align-items:center}
+.btn{padding:13px 28px;border:none;border-radius:8px;font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;transition:background .2s}
+.btn-back{background:#F3F4F6;color:var(--text)}.btn-back:hover{background:#E5E7EB}
+.btn-next{background:var(--navy);color:#fff}.btn-next:hover{background:#2E4A8E}
+.btn-finish{background:var(--green);color:#fff}.btn-finish:hover{background:#3D8B40}
+.btn-demo{background:#fff;color:var(--navy);border:1.5px solid var(--navy)}
+.btn-demo:hover{background:#F0F4FF}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.score-card{background:linear-gradient(135deg,#EFF8F0,#E8F5E9);border:1.5px solid #C8E6C9;border-radius:16px;padding:36px;text-align:center}
+.score-card p{color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:8px}
+.score-card strong{color:var(--navy);font-size:3.2rem;font-weight:800}
+.score-card span{display:block;margin-top:12px;color:var(--text);font-size:.9rem}
+.toast{position:fixed;top:20px;right:20px;padding:14px 20px;border-radius:8px;font-size:.9rem;z-index:9999;transform:translateX(120%);transition:transform .3s}
+.toast.show{transform:translateX(0)}
+.toast-error{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA}
+.toast-success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0}
+@media(max-width:768px){body{grid-template-columns:1fr}.sidebar{display:none}.main{padding:24px 20px}.field-row{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-<main class="onboarding-shell">
-    <aside class="intro-panel">
-        <div class="brand">
-            <img src="../bg.jpeg" alt="Beko ComplianceOS">
-        </div>
 
-        <p class="eyebrow">Welcome to Beko ComplianceOS</p>
-        <h2>Let us understand your business first.</h2>
-        <p>
-            Your answers create the company profile, initial compliance score,
-            and the first dashboard priorities.
-        </p>
+<aside class="sidebar">
+    <img src="/bg.jpeg" alt="Beko ComplianceOS">
+    <h2>Business onboarding</h2>
+    <p>Your answers create your company profile, compliance score, and dashboard priorities.</p>
+    <ol class="journey" id="journey">
+        <li class="active">Business identity</li>
+        <li>Registration & tax</li>
+        <li>Location & contact</li>
+        <li>Operations</li>
+        <li>Compliance habits</li>
+        <li>Your score</li>
+    </ol>
+</aside>
 
-        <ol class="journey">
-            <li class="active">Business identity</li>
-            <li>Registration details</li>
-            <li>Tax and payroll</li>
-            <li>Operations</li>
-            <li>Compliance habits</li>
-            <li>Initial score</li>
-        </ol>
-    </aside>
-
-    <section class="form-panel">
-        <div class="progress-header">
-            <p id="stepLabel">Step 1 of 6</p>
-            <div class="progress-track"><span id="progressBar"></span></div>
-        </div>
-
-        <form id="onboardingForm">
-            <section class="step active" data-step="0">
-                <h3>Business identity</h3>
-                <label>
-                    Registered business name
-                    <input id="businessName" name="businessName" type="text" placeholder="Example: Beko Trading Pty Ltd" required>
-                </label>
-                <label>
-                    Business type
-                    <select id="businessType" name="businessType" required>
-                        <option value="">Select business type</option>
-                        <option value="sole-proprietor">Sole proprietor</option>
-                        <option value="private-company">Private company</option>
-                        <option value="non-profit">Non-profit company</option>
-                        <option value="partnership">Partnership</option>
-                    </select>
-                </label>
-            </section>
-
-            <section class="step" data-step="1">
-                <h3>Registration details</h3>
-                <label>
-                    CIPC registration number
-                    <input id="registrationNumber" name="registrationNumber" type="text" placeholder="Optional if sole proprietor">
-                </label>
-                <label>
-                    Province
-                    <select id="province" name="province" required>
-                        <option value="">Select province</option>
-                        <option>Eastern Cape</option>
-                        <option>Free State</option>
-                        <option>Gauteng</option>
-                        <option>KwaZulu-Natal</option>
-                        <option>Limpopo</option>
-                        <option>Mpumalanga</option>
-                        <option>Northern Cape</option>
-                        <option>North West</option>
-                        <option>Western Cape</option>
-                    </select>
-                </label>
-            </section>
-
-            <section class="step" data-step="2">
-                <h3>Tax and payroll</h3>
-                <label>
-                    Are you registered for VAT?
-                    <select id="vatRegistered" name="vatRegistered" required>
-                        <option value="">Select answer</option>
-                        <option value="yes">Yes</option>
-                        <option value="no">No</option>
-                        <option value="unsure">Not sure</option>
-                    </select>
-                </label>
-                <label>
-                    Number of employees
-                    <input id="employees" name="employees" type="number" min="0" value="0" required>
-                </label>
-            </section>
-
-            <section class="step" data-step="3">
-                <h3>Operations</h3>
-                <label>
-                    Primary industry
-                    <select id="industry" name="industry" required>
-                        <option value="">Select industry</option>
-                        <option>Retail</option>
-                        <option>Services</option>
-                        <option>Technology</option>
-                        <option>Manufacturing</option>
-                        <option>Construction</option>
-                        <option>Hospitality</option>
-                        <option>Other</option>
-                    </select>
-                </label>
-                <label>
-                    Estimated monthly revenue
-                    <select id="monthlyRevenue" name="monthlyRevenue" required>
-                        <option value="">Select range</option>
-                        <option value="under-50k">Under R50,000</option>
-                        <option value="50k-100k">R50,000 - R100,000</option>
-                        <option value="100k-500k">R100,000 - R500,000</option>
-                        <option value="over-500k">Over R500,000</option>
-                    </select>
-                </label>
-            </section>
-
-            <section class="step" data-step="4">
-                <h3>Compliance habits</h3>
-                <label>
-                    When did you last file a SARS return?
-                    <select id="lastTaxFiling" name="lastTaxFiling" required>
-                        <option value="">Select timeframe</option>
-                        <option value="current">Within the last 3 months</option>
-                        <option value="recent">Within the last year</option>
-                        <option value="late">More than a year ago</option>
-                        <option value="never">Never / unsure</option>
-                    </select>
-                </label>
-                <label class="checkbox-row">
-                    <input id="hasRecords" name="hasRecords" type="checkbox">
-                    I keep invoices, payroll records, and tax documents organised.
-                </label>
-            </section>
-
-            <section class="step" data-step="5">
-                <h3>Initial compliance score</h3>
-                <div class="score-card">
-                    <p>Your starting score</p>
-                    <strong id="scorePreview">--%</strong>
-                    <span id="scoreSummary">Complete the questions to generate your profile.</span>
-                </div>
-            </section>
-
-            <div class="form-actions">
-                <button id="backBtn" type="button">Back</button>
-                <button id="nextBtn" type="button">Next</button>
-                <button id="finishBtn" type="submit">Generate dashboard</button>
+<section class="main">
+    <div class="progress-bar">
+        <p id="stepLabel">Step 1 of 6</p>
+        <div class="track"><div class="fill" id="progressFill" style="width:16.6%"></div></div>
+    </div>
+    <form id="form">
+        <!-- Step 1: Business identity -->
+        <div class="step active">
+            <h3>Business identity</h3>
+            <div class="field"><label>Registered business name</label><input id="businessName" placeholder="e.g. Beko Trading Pty Ltd" required></div>
+            <div class="field-row">
+                <div class="field"><label>Business type</label><select id="businessType" required><option value="">Select type</option><option value="sole-proprietor">Sole proprietor</option><option value="private-company">Private company</option><option value="non-profit">Non-profit company</option><option value="partnership">Partnership</option></select></div>
+                <div class="field"><label>Industry</label><select id="industry" required><option value="">Select industry</option><option>Retail</option><option>Services</option><option>Technology</option><option>Manufacturing</option><option>Construction</option><option>Hospitality</option><option>Transport</option><option>Agriculture</option><option>Other</option></select></div>
             </div>
-        </form>
-    </section>
-</main>
+            <div class="field"><label>Industry sub-sector</label><input id="industrySubsector" placeholder="e.g. Software development, Restaurant chain"></div>
+        </div>
 
-<script type="module" src="onboarding.js"></script>
+        <!-- Step 2: Registration & tax -->
+        <div class="step">
+            <h3>Registration & tax details</h3>
+            <div class="field-row">
+                <div class="field"><label>CIPC registration number</label><input id="regNumber" placeholder="Optional for sole proprietors"></div>
+                <div class="field"><label>Registration date</label><input id="regDate" type="date"></div>
+            </div>
+            <div class="field-row">
+                <div class="field"><label>SARS tax number</label><input id="taxNumber" placeholder="10-digit tax number"></div>
+                <div class="field"><label>UIF number</label><input id="uifNumber" placeholder="If registered"></div>
+            </div>
+            <div class="field-row">
+                <div class="field"><label>VAT registered?</label><select id="vat" required><option value="">Select</option><option value="yes">Yes</option><option value="no">No</option><option value="unsure">Not sure</option></select></div>
+                <div class="field"><label>CIPC annual return</label><select id="cipcReturn"><option value="">Select</option><option value="current">Filed current year</option><option value="recent">Filed recently</option><option value="overdue">Overdue</option><option value="not-filed">Not filed yet</option></select></div>
+            </div>
+        </div>
+
+        <!-- Step 3: Location & contact -->
+        <div class="step">
+            <h3>Location & contact</h3>
+            <div class="field-row">
+                <div class="field"><label>Province</label><select id="province" required><option value="">Select province</option><option>Eastern Cape</option><option>Free State</option><option>Gauteng</option><option>KwaZulu-Natal</option><option>Limpopo</option><option>Mpumalanga</option><option>Northern Cape</option><option>North West</option><option>Western Cape</option></select></div>
+                <div class="field"><label>City</label><input id="city" placeholder="e.g. Johannesburg"></div>
+            </div>
+            <div class="field"><label>Physical address</label><textarea id="address" placeholder="Street address"></textarea></div>
+            <div class="field-row">
+                <div class="field"><label>Website</label><input id="website" placeholder="www.company.co.za"></div>
+                <div class="field"><label>Your phone number</label><input id="phone" placeholder="+27 12 345 6789"></div>
+            </div>
+        </div>
+
+        <!-- Step 4: Operations -->
+        <div class="step">
+            <h3>Operations</h3>
+            <div class="field-row">
+                <div class="field"><label>Number of employees</label><input id="employees" type="number" min="0" value="0" required></div>
+                <div class="field"><label>Number of directors</label><input id="directors" type="number" min="1" value="1"></div>
+            </div>
+            <div class="field"><label>Estimated monthly revenue</label><select id="revenue" required><option value="">Select range</option><option value="under-50k">Under R50,000</option><option value="50k-100k">R50,000 – R100,000</option><option value="100k-500k">R100,000 – R500,000</option><option value="over-500k">Over R500,000</option></select></div>
+            <div class="field-row">
+                <div class="field"><label>Accounting software</label><select id="accounting"><option value="">Select</option><option value="sage">Sage</option><option value="xero">Xero</option><option value="quickbooks">QuickBooks</option><option value="pastel">Pastel</option><option value="excel">Excel / spreadsheets</option><option value="other">Other</option><option value="none">None</option></select></div>
+                <div class="field"><label>Payroll system</label><select id="payroll"><option value="">Select</option><option value="sage-payroll">Sage Payroll</option><option value="payspace">PaySpace</option><option value="simplepay">SimplePay</option><option value="excel">Excel</option><option value="other">Other</option><option value="none">None</option></select></div>
+            </div>
+        </div>
+
+        <!-- Step 5: Compliance habits -->
+        <div class="step">
+            <h3>Compliance habits</h3>
+            <div class="field"><label>When did you last file a SARS return?</label><select id="taxFiling" required><option value="">Select</option><option value="current">Within the last 3 months</option><option value="recent">Within the last year</option><option value="late">More than a year ago</option><option value="never">Never / unsure</option></select></div>
+            <div class="field-row">
+                <div class="field"><label>B-BBEE level (if known)</label><select id="bbbeeLevel"><option value="">Select</option><option value="1">Level 1</option><option value="2">Level 2</option><option value="3">Level 3</option><option value="4">Level 4</option><option value="non-compliant">Non-compliant</option><option value="exempt">Exempt (EME/QSE)</option></select></div>
+                <div class="field"><label>COIDA registered?</label><select id="coida"><option value="">Select</option><option value="yes">Yes</option><option value="no">No</option><option value="unsure">Not sure</option></select></div>
+            </div>
+            <div class="checkbox-row"><input type="checkbox" id="sdlRegistered"><label for="sdlRegistered">We are registered for Skills Development Levy (SDL).</label></div>
+            <div class="checkbox-row"><input type="checkbox" id="hasRecords"><label for="hasRecords">I keep invoices, payroll records, and tax documents organised.</label></div>
+            <div class="checkbox-row"><input type="checkbox" id="hasBusinessPlan"><label for="hasBusinessPlan">I have an up-to-date business plan.</label></div>
+            <div class="checkbox-row"><input type="checkbox" id="hasContracts"><label for="hasContracts">I use written contracts with clients and suppliers.</label></div>
+        </div>
+
+        <!-- Step 6: Score -->
+        <div class="step">
+            <h3>Your initial compliance score</h3>
+            <div class="score-card"><p>Starting score</p><strong id="scoreVal">--%</strong><span id="scoreMsg">Complete the steps to generate your score.</span></div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav">
+            <button type="button" class="btn btn-back" id="backBtn">Back</button>
+            <button type="button" class="btn btn-next" id="nextBtn">Next</button>
+            <button type="submit" class="btn btn-finish" id="finishBtn" style="display:none">Generate Dashboard</button>
+            <button type="button" class="btn btn-demo" id="demoBtn">Fill demo data</button>
+        </div>
+    </form>
+</section>
+
+<script type="module">
+import { supabase } from "/supabase.js";
+import { routeUser } from "/shared/router.js";
+import { toast, loading } from "/shared/ui.js";
+
+const steps = document.querySelectorAll(".step");
+const journeyItems = document.querySelectorAll("#journey li");
+const TOTAL = steps.length;
+let current = 0;
+
+// Auth check
+const { data: { user } } = await supabase.auth.getUser();
+if (!user) window.location.href = "/login/login.html";
+else await routeUser("/onboarding/onboarding.html");
+
+function goTo(idx) {
+    current = idx;
+    steps.forEach((s, i) => s.classList.toggle("active", i === current));
+    journeyItems.forEach((li, i) => li.classList.toggle("active", i <= current));
+    document.getElementById("stepLabel").textContent = `Step ${current + 1} of ${TOTAL}`;
+    document.getElementById("progressFill").style.width = `${((current + 1) / TOTAL) * 100}%`;
+    document.getElementById("backBtn").disabled = current === 0;
+    document.getElementById("nextBtn").style.display = current === TOTAL - 1 ? "none" : "inline-block";
+    document.getElementById("finishBtn").style.display = current === TOTAL - 1 ? "inline-block" : "none";
+    document.getElementById("demoBtn").style.display = current === TOTAL - 1 ? "none" : "inline-block";
+    if (current === TOTAL - 1) calcScore();
+}
+
+function validate() {
+    const fields = steps[current].querySelectorAll("input[required], select[required]");
+    for (const f of fields) { if (!f.checkValidity()) { f.reportValidity(); return false; } }
+    return true;
+}
+
+document.getElementById("nextBtn").onclick = () => { if (validate()) goTo(current + 1); };
+document.getElementById("backBtn").onclick = () => goTo(Math.max(0, current - 1));
+
+function calcScore() {
+    const g = id => document.getElementById(id).value;
+    let s = 45;
+    if (g("businessName")) s += 5;
+    if (g("businessType")) s += 5;
+    if (g("businessType") === "sole-proprietor" || g("regNumber")) s += 8;
+    if (g("province")) s += 5;
+    if (g("industry")) s += 3;
+    if (g("industrySubsector")) s += 2;
+    if (g("vat") === "yes") s += 7;
+    if (g("vat") === "unsure") s -= 5;
+    if (g("taxNumber")) s += 5;
+    if (g("uifNumber")) s += 3;
+    if (g("cipcReturn") === "current") s += 5;
+    if (g("cipcReturn") === "overdue") s -= 5;
+    if (Number(g("employees")) > 0) s += 5;
+    if (Number(g("directors")) >= 1) s += 2;
+    if (g("industry")) s += 5;
+    if (g("revenue")) s += 5;
+    if (g("accounting") && g("accounting") !== "none") s += 5;
+    if (g("payroll") && g("payroll") !== "none") s += 5;
+    if (g("taxFiling") === "current") s += 10;
+    if (g("taxFiling") === "recent") s += 5;
+    if (g("taxFiling") === "late") s -= 8;
+    if (g("taxFiling") === "never") s -= 12;
+    if (document.getElementById("hasRecords").checked) s += 5;
+    if (document.getElementById("hasBusinessPlan").checked) s += 3;
+    if (document.getElementById("hasContracts").checked) s += 2;
+    if (g("bbbeeLevel") && g("bbbeeLevel") !== "non-compliant") s += 4;
+    if (g("coida") === "yes") s += 3;
+    if (document.getElementById("sdlRegistered").checked) s += 2;
+    s = Math.max(0, Math.min(100, s));
+    document.getElementById("scoreVal").textContent = `${s}%`;
+    const msgs = [[80,"Strong start! Your dashboard will focus on upcoming deadlines."],[60,"Good foundation. A few gaps to address."],[40,"Moderate risk. Your dashboard starts with urgent basics."],[0,"High risk. We'll focus on stabilising core obligations."]];
+    document.getElementById("scoreMsg").textContent = msgs.find(([t]) => s >= t)?.[1] || "";
+    return s;
+}
+
+function setValue(id, val) { const el = document.getElementById(id); if (el) el.value = val; }
+function setChecked(id, val) { const el = document.getElementById(id); if (el) el.checked = val; }
+
+// Demo data fill
+document.getElementById("demoBtn").onclick = () => {
+    setValue("businessName", "Beko Compliance Solutions Pty Ltd");
+    setValue("businessType", "private-company");
+    setValue("industry", "Technology");
+    setValue("industrySubsector", "Legal-tech compliance software");
+    setValue("regNumber", "2024/123456/07");
+    setValue("regDate", "2024-01-15");
+    setValue("taxNumber", "9123456789");
+    setValue("uifNumber", "UIF-1234567");
+    setValue("vat", "yes");
+    setValue("cipcReturn", "current");
+    setValue("province", "Gauteng");
+    setValue("city", "Johannesburg");
+    setValue("address", "123 Commissioner Street, Sandton");
+    setValue("website", "www.bekocompliance.co.za");
+    setValue("phone", "+27 11 123 4567");
+    setValue("employees", "12");
+    setValue("directors", "2");
+    setValue("revenue", "100k-500k");
+    setValue("accounting", "xero");
+    setValue("payroll", "simplepay");
+    setValue("taxFiling", "current");
+    setValue("bbbeeLevel", "2");
+    setValue("coida", "yes");
+    setChecked("sdlRegistered", true);
+    setChecked("hasRecords", true);
+    setChecked("hasBusinessPlan", true);
+    setChecked("hasContracts", true);
+    toast("Demo data filled!", "success");
+};
+
+document.getElementById("form").onsubmit = async e => {
+    e.preventDefault();
+    if (!user) return toast("Not signed in. Please log in again.");
+    const btn = document.getElementById("finishBtn");
+    loading(btn, true);
+    console.log("Onboarding: starting save for user", user.id);
+
+    const g = id => document.getElementById(id).value;
+    const profile = {
+        id: user.id,
+        business_name: g("businessName"), business_type: g("businessType"),
+        registration_number: g("regNumber") || null,
+        registration_date: g("regDate") || null,
+        tax_number: g("taxNumber") || null,
+        uif_number: g("uifNumber") || null,
+        province: g("province"), city: g("city") || null,
+        address: g("address") || null, website: g("website") || null,
+        vat_registered: g("vat"), employees: Number(g("employees")),
+        directors: Number(g("directors") || 1),
+        industry: g("industry"), industry_subsector: g("industrySubsector") || null,
+        monthly_revenue: g("revenue"), accounting_software: g("accounting") || null,
+        payroll_system: g("payroll") || null,
+        last_tax_filing: g("taxFiling"), cipc_annual_return: g("cipcReturn") || "not-filed",
+        bbbee_level: g("bbbeeLevel") || null,
+        coida_registered: g("coida") === "yes",
+        sdl_registered: document.getElementById("sdlRegistered").checked,
+        has_records: document.getElementById("hasRecords").checked,
+        has_business_plan: document.getElementById("hasBusinessPlan").checked,
+        has_contracts: document.getElementById("hasContracts").checked,
+    };
+    const score = calcScore();
+    const summary = score >= 80 ? "Strong position" : score >= 60 ? "Needs attention" : score >= 40 ? "Moderate risk" : "High risk";
+
+    try {
+        // Ensure profile row exists then update it (fixes users who signed up before trigger)
+        const { error: profileUpsertErr } = await supabase.from("profiles").upsert({
+            id: user.id,
+            full_name: user.user_metadata?.full_name || null,
+            email: user.email,
+            onboarding_complete: true,
+            compliance_score: score,
+            company_id: user.id,
+            company_name: profile.business_name,
+            phone: g("phone") || null
+        });
+        if (profileUpsertErr) {
+            console.error("Onboarding: profile upsert error:", profileUpsertErr);
+            throw profileUpsertErr;
+        }
+        console.log("Onboarding: profile upsert OK");
+
+        // Save company profile
+        const { error: companyErr } = await supabase.from("company_profiles").upsert({
+            ...profile, compliance_score: score, score_summary: summary
+        });
+        if (companyErr) {
+            console.error("Onboarding: company upsert error:", companyErr);
+            throw companyErr;
+        }
+        console.log("Onboarding: company upsert OK");
+
+        // Verify the row is readable before leaving
+        const { data: verify, error: verifyErr } = await supabase
+            .from("company_profiles")
+            .select("id")
+            .eq("id", user.id)
+            .maybeSingle();
+        if (verifyErr) {
+            console.error("Onboarding: verify read error:", verifyErr);
+            throw verifyErr;
+        }
+        if (!verify) {
+            console.warn("Onboarding: save reported OK but row not readable yet");
+        } else {
+            console.log("Onboarding: verified company row exists");
+        }
+
+        toast("Profile saved! Loading dashboard...", "success");
+        setTimeout(() => { window.location.href = "/dashboard/dashboard.html"; }, 600);
+    } catch (err) {
+        console.error("Save failed:", err);
+        toast(`Save failed: ${err.message}. Try again.`);
+        loading(btn, false);
+    }
+};
+
+goTo(0);
+</script>
 </body>
 </html>
