@@ -4,8 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Legal Education Hub — Beko ComplianceOS</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="/assets/mobile-nav.css">
 <script src="/assets/mobile-nav.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root{--navy:#1B2A5C;--green:#4CAF50;--teal:#2CB5B8;--bg:#F4F6FA;--text:#374151;--muted:#6B7280;--border:#E5E7EB;--danger:#DC2626;--warn:#D97706}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -42,6 +44,9 @@ main{padding:40px 48px}
 .modal-content p{margin-bottom:14px;line-height:1.6;color:var(--text)}
 .modal-content ul{margin-left:20px;margin-bottom:14px;color:var(--text)}
 .modal-content li{margin-bottom:6px}
+.slide-action{display:flex;justify-content:flex-end;margin-bottom:16px}
+.btn-slide{padding:10px 16px;border:none;border-radius:8px;background:var(--navy);color:#fff;font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.btn-slide:hover{background:#2E4A8E}
 @media(max-width:1024px){body{grid-template-columns:1fr}aside{display:none}main{padding:24px 16px}}
 </style>
 </head>
@@ -57,6 +62,7 @@ main{padding:40px 48px}
         <a href="/aml/aml.html">AML Screener</a>
         <a href="/notifications/notifications.html">Notifications</a>
         <a href="/consultation/consultation.html">Consultation</a>
+        <a href="/compliance/compliance.html">Compliance</a>
         <a href="/profile/profile.html">Profile</a>
         <a href="/admin/admin.html">Admin</a>
     </nav>
@@ -200,6 +206,100 @@ const articles = [
             </ul>
             <p>Use the Tenders page to see sample opportunities.</p>
         `
+    },
+    {
+        id: "popia", tag: "POPIA", title: "POPIA basics for SMEs", read: "4 min",
+        summary: "Understand lawful processing, consent, data subject rights, and security safeguards.",
+        body: `
+            <h2>POPIA basics for SMEs</h2>
+            <p>The Protection of Personal Information Act applies to anyone who processes personal information in South Africa.</p>
+            <ul>
+                <li>Only collect information you really need.</li>
+                <li>Get consent where required and tell people why you process their data.</li>
+                <li>Keep information accurate and secure.</li>
+                <li>Respond to requests to access, correct, or delete personal information.</li>
+                <li>Report serious data breaches to the Information Regulator.</li>
+            </ul>
+            <p>Use the Compliance page to run the POPIA readiness checklist.</p>
+        `
+    },
+    {
+        id: "sarselfiling", tag: "SARS", title: "SARS eFiling for business", read: "4 min",
+        summary: "How to register for eFiling, link your tax types, and submit returns online.",
+        body: `
+            <h2>SARS eFiling for business</h2>
+            <p>SARS eFiling lets businesses submit returns, make payments, and track correspondence online.</p>
+            <ul>
+                <li>Register your business profile at sarsefiling.co.za.</li>
+                <li>Request each tax type you are registered for.</li>
+                <li>Keep login credentials safe and update contact details.</li>
+                <li>Submit returns before midnight on the due date.</li>
+                <li>Keep supporting documents for at least five years.</li>
+            </ul>
+            <p>Late submissions attract penalties and interest.</p>
+        `
+    },
+    {
+        id: "coida", tag: "COIDA", title: "COIDA registration and claims", read: "4 min",
+        summary: "Why employers must register with the Compensation Fund and what happens after an injury.",
+        body: `
+            <h2>COIDA registration and claims</h2>
+            <p>The Compensation for Occupational Injuries and Diseases Act requires most employers to register and pay annual assessments.</p>
+            <ul>
+                <li>Register with the Compensation Fund if you employ anyone.</li>
+                <li>Submit the annual return of earnings by 31 March.</li>
+                <li>Report workplace injuries within the required timeframes.</li>
+                <li>Keep medical reports and incident records.</li>
+            </ul>
+            <p>Non-registration can lead to fines and personal liability.</p>
+        `
+    },
+    {
+        id: "ip-basics", tag: "IP", title: "Protecting your intellectual property", read: "4 min",
+        summary: "Trademarks, copyrights, patents, and trade secrets explained for small business.",
+        body: `
+            <h2>Protecting your intellectual property</h2>
+            <p>Intellectual property can be one of your business's most valuable assets.</p>
+            <ul>
+                <li><strong>Trademarks:</strong> Protect names, logos, and slogans through CIPC.</li>
+                <li><strong>Copyright:</strong> Automatically protects original creative work.</li>
+                <li><strong>Patents:</strong> Protect new inventions for up to 20 years.</li>
+                <li><strong>Trade secrets:</strong> Protect through confidentiality clauses and NDAs.</li>
+            </ul>
+            <p>Use NDAs before sharing sensitive business information.</p>
+        `
+    },
+    {
+        id: "sars-audit", tag: "SARS", title: "How to handle a SARS audit", read: "5 min",
+        summary: "What to do when SARS requests information, and how to prepare supporting documents.",
+        body: `
+            <h2>How to handle a SARS audit</h2>
+            <p>A SARS audit or verification can be stressful, but preparation reduces risk.</p>
+            <ul>
+                <li>Read the letter carefully and note the deadline.</li>
+                <li>Gather the specific documents requested.</li>
+                <li>Reconcile your accounting records to your tax returns.</li>
+                <li>Respond through eFiling or the channel SARS specifies.</li>
+                <li>Consider involving your accountant or tax practitioner.</li>
+            </ul>
+            <p>Keep all communication and proof of submission.</p>
+        `
+    },
+    {
+        id: "ohs", tag: "OHS", title: "Workplace health and safety essentials", read: "4 min",
+        summary: "Basic duties under the Occupational Health and Safety Act for small employers.",
+        body: `
+            <h2>Workplace health and safety essentials</h2>
+            <p>Employers must provide a workplace that is safe and without risk to health, as far as reasonably practicable.</p>
+            <ul>
+                <li>Identify hazards and assess risks regularly.</li>
+                <li>Provide information, instructions, and training.</li>
+                <li>Maintain equipment and safety equipment.</li>
+                <li>Keep an incident register and report serious incidents.</li>
+                <li>Display evacuation plans and first-aid facilities.</li>
+            </ul>
+            <p>Templates include a health and safety policy you can adapt.</p>
+        `
     }
 ];
 
@@ -217,8 +317,151 @@ function render(searchTerm = "") {
 }
 
 function openModal(a) {
-    document.getElementById("modalBody").innerHTML = a.body;
+    window.currentArticle = a;
+    document.getElementById("modalBody").innerHTML = `
+        <div class="slide-action">
+            <button class="btn-slide" onclick="downloadSlides()"><i class="fas fa-file-pdf"></i> Download slides (PDF)</button>
+        </div>
+        ${a.body}
+    `;
     document.getElementById("modal").classList.add("active");
+}
+
+let logoDataUrl = null;
+function loadLogo() {
+    if (logoDataUrl) return Promise.resolve(logoDataUrl);
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+            try {
+                const canvas = document.createElement("canvas");
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0);
+                logoDataUrl = canvas.toDataURL("image/jpeg", 0.9);
+            } catch (e) { logoDataUrl = null; }
+            resolve(logoDataUrl);
+        };
+        img.onerror = () => resolve(null);
+        img.src = "/bg.jpeg";
+    });
+}
+
+function parseArticleSlides(html) {
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    const slides = [];
+    let current = { title: "", bullets: [] };
+    Array.from(div.children).forEach(node => {
+        const tag = node.tagName;
+        if (tag === "H2") {
+            if (current.title || current.bullets.length) slides.push(current);
+            current = { title: node.textContent.trim(), bullets: [] };
+        } else if (tag === "P") {
+            const txt = node.textContent.trim();
+            if (txt) current.bullets.push(txt);
+        } else if (tag === "UL" || tag === "OL") {
+            Array.from(node.querySelectorAll("li")).forEach(li => {
+                const t = li.textContent.trim();
+                if (t) current.bullets.push(t);
+            });
+        }
+    });
+    if (current.title || current.bullets.length) slides.push(current);
+    return slides;
+}
+
+async function downloadSlides() {
+    const a = window.currentArticle;
+    if (!a) return;
+    await loadLogo();
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF("landscape", "mm", "a4");
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const margin = 20;
+    const navy = [27, 42, 92];
+    const teal = [44, 181, 184];
+
+    function drawHeader() {
+        if (logoDataUrl) {
+            try { doc.addImage(logoDataUrl, "JPEG", margin, 10, 20, 10); } catch (e) {}
+        }
+        doc.setFontSize(8);
+        doc.setTextColor(...navy);
+        doc.setFont("helvetica", "bold");
+        doc.text("BEKO COMPLIANCEOS", pageW - margin, 14, { align: "right" });
+        doc.setFontSize(7);
+        doc.setTextColor(120, 120, 120);
+        doc.setFont("helvetica", "normal");
+        doc.text("South African SME compliance tools", pageW - margin, 18, { align: "right" });
+        doc.setDrawColor(...teal);
+        doc.setLineWidth(0.5);
+        doc.line(margin, 22, pageW - margin, 22);
+    }
+    function drawFooter(pg, total) {
+        const y = pageH - 10;
+        doc.setDrawColor(200, 200, 200);
+        doc.setLineWidth(0.2);
+        doc.line(margin, y - 3, pageW - margin, y - 3);
+        doc.setFontSize(7);
+        doc.setTextColor(120, 120, 120);
+        doc.text("For educational guidance only. Seek professional advice.", margin, y);
+        doc.text(`${pg} / ${total}`, pageW - margin, y, { align: "right" });
+    }
+    function addPage() { doc.addPage(); drawHeader(); }
+
+    drawHeader();
+    let y = 35;
+    doc.setFontSize(22);
+    doc.setTextColor(...navy);
+    doc.setFont("helvetica", "bold");
+    doc.text(a.title, margin, y);
+    y += 10;
+    doc.setFontSize(11);
+    doc.setTextColor(...teal);
+    doc.setFont("helvetica", "italic");
+    doc.text(`${a.tag} · ${a.read} read`, margin, y);
+    y += 16;
+    doc.setFontSize(10);
+    doc.setTextColor(60, 60, 60);
+    doc.setFont("helvetica", "normal");
+    const summaryLines = doc.splitTextToSize(a.summary, pageW - margin * 2);
+    doc.text(summaryLines, margin, y);
+    y += summaryLines.length * 5 + 10;
+    doc.setFontSize(9);
+    doc.setTextColor(120, 120, 120);
+    doc.text("Generated by Beko ComplianceOS", margin, y);
+
+    const slides = parseArticleSlides(a.body);
+    slides.forEach((slide) => {
+        addPage();
+        y = 35;
+        doc.setFontSize(16);
+        doc.setTextColor(...teal);
+        doc.setFont("helvetica", "bold");
+        doc.text(slide.title || "Key points", margin, y);
+        y += 12;
+        doc.setFontSize(11);
+        doc.setTextColor(30, 30, 30);
+        doc.setFont("helvetica", "normal");
+        slide.bullets.forEach(bullet => {
+            if (y > pageH - 30) { addPage(); y = 35; }
+            const wrapped = doc.splitTextToSize(bullet, pageW - margin * 2 - 8);
+            doc.text("•", margin, y);
+            doc.text(wrapped, margin + 6, y);
+            y += wrapped.length * 5 + 5;
+        });
+    });
+
+    const total = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= total; i++) {
+        doc.setPage(i);
+        drawFooter(i, total);
+    }
+    doc.save(`${a.id}-slides.pdf`);
 }
 
 document.getElementById("search").oninput = e => render(e.target.value);

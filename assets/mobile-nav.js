@@ -1,5 +1,11 @@
 /* Mobile navigation injection for Beko ComplianceOS sidebar pages */
 (function () {
+  // Register PWA service worker on all sidebar pages
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+      .catch(err => console.error('Service worker registration failed:', err));
+  }
+
   const aside = document.querySelector('aside');
   if (!aside) return;
 

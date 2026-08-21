@@ -13,14 +13,16 @@ The following missing features from the business report and desktop portal mocku
 
 | Feature | File | What it does |
 |---------|------|--------------|
-| **Template Library** | `templates/templates.html` | 12 downloadable legal/compliance document templates (contracts, HR, legal, tax). Filter by category, search by name/description, and download as `.pdf` using jsPDF. |
+| **Template Library** | `templates/templates.html` | 22 downloadable legal/compliance document templates across contracts, HR, legal, tax, corporate governance, and workplace policies. Filter by category, search by name/description, and download as branded `.pdf` using jsPDF. |
+| **Legal Education Hub** | `education/education.html` | Searchable library of plain-language South African compliance articles (CIPC, SARS, UIF, B-BBEE, tenders, contracts, record keeping, POPIA, COIDA, IP, OHS). Click any card to open a modal with full content and download the article as a slide-style PDF. |
 | **Notifications / Reminders** | `notifications/notifications.html` | Loads compliance alerts from Supabase with read/unread state. Includes channel toggles for WhatsApp, Email, and SMS. Seeds sample notifications for new users. |
 | **Consultation Booking** | `consultation/consultation.html` | Form to book a consultation with partner law firms. Saves requests to a `consultations` table in Supabase and displays the user’s consultation history. |
 | **Profile & Settings** | `profile/profile.html` | Displays business details from `company_profiles`, allows editing full name/phone/website, and shows notification preferences and document status. |
-| **Legal Education Hub** | `education/education.html` | Searchable library of plain-language South African compliance articles (CIPC, SARS, UIF, B-BBEE, tenders, contracts, record keeping). Click any card to open a modal with full content. |
+| **Legal Education Hub** | `education/education.html` | Searchable library of plain-language South African compliance articles (CIPC, SARS, UIF, B-BBEE, tenders, contracts, record keeping, POPIA, COIDA, IP, OHS). Click any card to open a modal with full content and download the article as a slide-style PDF. |
 | **AML Risk Screener** | `aml/aml.html` | Interactive FICA/AML risk questionnaire. Calculates a risk score, displays a circular score ring, labels the risk level, and lists recommended controls. Saves results to Supabase and shows screening history. |
 | **Tender Notifications** | `tenders/tenders.html` | Government/corporate tender opportunities with search, province, and industry filters. Users can track tenders and create keyword alerts, persisted in Supabase. Falls back to sample data if the backend table is not ready. |
-| **Dashboard Sidebar** | `dashboard/dashboard.html` | Updated the old placeholder sidebar to link to all 8 app sections: Dashboard, Templates, Education Hub, Tenders, AML Screener, Notifications, Consultation, Profile. |
+| **Compliance Centre** | `compliance/compliance.html` | New page with POPIA readiness checklist, SARS tax calendar, CIPC annual-return reminder, and a document vault backed by Supabase Storage. |
+| **Dashboard Sidebar** | `dashboard/dashboard.html` | Sidebar now links to all 10 app sections including the new Compliance page. |
 
 ---
 
@@ -81,7 +83,9 @@ Consultation requests are inserted into `consultations` and the page refreshes t
 ### Created
 - `aml/aml.html`
 - `tenders/tenders.html`
+- `compliance/compliance.html`
 - `docs/supabase-migration-v3.sql`
+- `docs/supabase-migration-v4.sql`
 - `docs/implementation-summary.md`
 
 ### Updated
@@ -102,6 +106,13 @@ Consultation requests are inserted into `consultations` and the page refreshes t
 - `admin/admin.html` — new admin panel to manage tenders, send notifications to users, and update consultation statuses
 - All sidebar pages — added Admin navigation link
 - `docs/supabase-schema.sql` + `docs/supabase-migration-v3.sql` — added `is_admin` column, `is_admin()` helper function, and admin RLS policies; fixed function creation order so policies can reference it
+- `templates/templates.html` — added 10 new templates across corporate governance and workplace policy categories
+- `education/education.html` — added new articles and a slide-style PDF download option for each article
+- `compliance/compliance.html` — new compliance centre with POPIA checklist, SARS calendar, CIPC reminders, and document vault
+- `docs/supabase-schema.sql` — full v4 schema with new compliance tables and Supabase Storage policies
+- `docs/supabase-migration-v4.sql` — non-destructive migration adding compliance tables, storage bucket, and admin policies
+- All sidebar pages (`dashboard`, `templates`, `education`, `tenders`, `aml`, `notifications`, `consultation`, `compliance`, `profile`, `admin`) — added Compliance navigation link
+- `README.md` — updated features, project structure, database tables, and migration instructions
 
 ### Already existed from previous work
 - `templates/templates.html`
@@ -158,6 +169,7 @@ git push
 
 1. **Push the changes** using the commands above.
 2. **Resume Vercel deployment** if a live URL is still needed.
-3. **Replace sample tenders** with real tender data from the South African eTenderPortal or National Treasury API.
-4. **Add admin UI** for managing tenders and notifications without writing SQL.
-5. **Print this summary to PDF** from any browser or Markdown viewer if a PDF copy is required.
+3. **Run the v4 migration** in Supabase to create the new compliance tables and storage bucket.
+4. **Replace sample tenders** with real tender data from the South African eTenderPortal or National Treasury API.
+5. **Expand admin UI** to manage tax deadlines and view uploaded documents.
+6. **Print this summary to PDF** from any browser or Markdown viewer if a PDF copy is required.

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compliance — Beko ComplianceOS</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/assets/mobile-nav.css">
+<script src="/assets/mobile-nav.js" defer></script>
+<style>
+:root{--navy:#1B2A5C;--green:#4CAF50;--teal:#2CB5B8;--bg:#F4F6FA;--text:#374151;--muted:#6B7280;--border:#E5E7EB;--danger:#DC2626;--warn:#D97706}
+*{margin:0;padding:0;box-sizing:border-box}
+body{display:grid;grid-template-columns:240px 1fr;min-height:100vh;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg)}
+aside{background:#fff;border-right:1px solid var(--border);padding:32px 24px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+aside img{width:160px;margin-bottom:32px;filter:brightness(1.15);background:rgba(27,42,92,.04);padding:12px 16px;border-radius:12px}
+aside nav{flex:1}
+aside nav a{display:block;padding:10px 14px;border-radius:8px;text-decoration:none;color:var(--text);font-size:.88rem;font-weight:500;margin-bottom:4px;transition:background .2s}
+aside nav a:hover{background:#F3F4F6}
+aside nav a.active{background:#EFF8F0;color:var(--navy);font-weight:600;box-shadow:inset 3px 0 0 var(--green)}
+.user-box{border-top:1px solid var(--border);padding-top:16px}
+.user-box .name{font-weight:600;font-size:.85rem;color:var(--navy)}
+.user-box .email{font-size:.75rem;color:var(--muted);margin-bottom:12px;overflow:hidden;text-overflow:ellipsis}
+.logout{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--text);font:inherit;font-size:.82rem;cursor:pointer;transition:background .2s}
+.logout:hover{background:#FEE2E2;color:var(--danger);border-color:#FECACA}
+main{padding:40px 48px;max-width:1200px;width:100%}
+.header{margin-bottom:28px}
+.header h1{color:var(--navy);font-size:1.6rem;margin-bottom:4px}
+.header p{color:var(--muted);font-size:.88rem}
+.tabs{display:flex;gap:8px;margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:12px;flex-wrap:wrap}
+.tab{padding:10px 18px;border:none;border-radius:8px;background:#fff;color:var(--text);font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid var(--border)}
+.tab:hover{border-color:var(--teal)}
+.tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.panel{display:none;background:#fff;border-radius:12px;padding:24px;border:1px solid var(--border)}
+.panel.active{display:block}
+.toolbar{display:flex;gap:12px;margin-bottom:16px;align-items:center;flex-wrap:wrap}
+.btn{padding:10px 18px;border:none;border-radius:8px;font:inherit;font-weight:600;font-size:.85rem;cursor:pointer;transition:background .2s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:var(--navy);color:#fff}.btn-primary:hover{background:#2E4A8E}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#3D8B40}
+.btn-secondary{background:#F3F4F6;color:var(--text)}.btn-secondary:hover{background:#E5E7EB}
+.btn-danger{background:var(--danger);color:#fff}.btn-danger:hover{background:#B91C1C}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.search{padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font:inherit;font-size:.9rem;min-width:240px}
+.search:focus{outline:none;border-color:var(--teal)}
+.progress-wrap{margin-bottom:20px}
+.progress-label{display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted);margin-bottom:6px}
+progress{width:100%;height:10px;border-radius:5px;appearance:none}
+progress::-webkit-progress-bar{background:var(--border);border-radius:5px}
+progress::-webkit-progress-value{background:linear-gradient(90deg,var(--teal),var(--green));border-radius:5px}
+.checklist-group{margin-bottom:20px}
+.checklist-group h3{font-size:.9rem;color:var(--navy);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;background:#FAFBFC;cursor:pointer}
+.check-item:hover{border-color:var(--teal);background:#F9FAFB}
+.check-item input{margin-top:2px}
+.check-item span{font-size:.88rem;color:var(--text)}
+.check-item.checked{background:#F0FDF4;border-color:#A7F3D0}
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{padding:12px;text-align:left;border-bottom:1px solid var(--border)}
+th{color:var(--navy);font-weight:600;background:#FAFBFC}
+tr:hover{background:#F9FAFB}
+.badge{font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase}
+.badge-overdue{background:#FEE2E2;color:#991B1B}
+.badge-soon{background:#FFFBEB;color:#92400E}
+.badge-upcoming{background:#E0F2F1;color:#0F4C4F}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:16px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font:inherit;font-size:.9rem;background:#FAFBFC}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--teal);background:#fff}
+.field textarea{resize:vertical;min-height:80px}
+.field.full{grid-column:1/-1}
+.file-drop{border:2px dashed var(--border);border-radius:12px;padding:32px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s}
+.file-drop:hover{border-color:var(--teal);background:#F9FAFB}
+.file-drop i{font-size:2rem;color:var(--teal);margin-bottom:10px}
+.file-list{display:grid;gap:10px;margin-top:16px}
+.file-row{display:flex;align-items:center;justify-content:space-between;padding:12px;border:1px solid var(--border);border-radius:8px;background:#FAFBFC}
+.file-row .meta{display:flex;flex-direction:column;gap:2px}
+.file-row .name{font-weight:600;font-size:.88rem;color:var(--navy)}
+.file-row .size{font-size:.75rem;color:var(--muted)}
+.file-row .actions{display:flex;gap:8px}
+.toast{position:fixed;top:20px;right:20px;padding:14px 20px;border-radius:8px;font-size:.9rem;z-index:9999;transform:translateX(120%);transition:transform .3s}
+.toast.show{transform:translateX(0)}
+.toast-error{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA}
+.toast-success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0}
+@media(max-width:1024px){body{grid-template-columns:1fr}aside{display:none}main{padding:24px 16px}.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<aside>
+    <img src="/bg.jpeg" alt="Beko ComplianceOS">
+    <nav>
+        <a href="/dashboard/dashboard.html">Dashboard</a>
+        <a href="/templates/templates.html">Templates</a>
+        <a href="/education/education.html">Education Hub</a>
+        <a href="/tenders/tenders.html">Tenders</a>
+        <a href="/aml/aml.html">AML Screener</a>
+        <a href="/notifications/notifications.html">Notifications</a>
+        <a href="/consultation/consultation.html">Consultation</a>
+        <a href="/compliance/compliance.html" class="active">Compliance</a>
+        <a href="/profile/profile.html">Profile</a>
+        <a href="/admin/admin.html">Admin</a>
+    </nav>
+    <div class="user-box">
+        <div class="name" id="userName">User</div>
+        <div class="email" id="userEmail">—</div>
+        <button class="logout" id="logoutBtn">Logout</button>
+    </div>
+</aside>
+
+<main>
+    <div class="header">
+        <h1>Compliance centre</h1>
+        <p>Track POPIA readiness, SARS deadlines, CIPC annual returns, and store compliance documents.</p>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" data-tab="popia">POPIA Checklist</button>
+        <button class="tab" data-tab="sars">SARS Tax Calendar</button>
+        <button class="tab" data-tab="cipc">CIPC Reminder</button>
+        <button class="tab" data-tab="documents">Document Vault</button>
+    </div>
+
+    <!-- POPIA Checklist -->
+    <div class="panel active" id="popiaPanel">
+        <div class="progress-wrap">
+            <div class="progress-label"><span>POPIA readiness</span><span id="popiaPercent">0%</span></div>
+            <progress id="popiaProgress" value="0" max="100"></progress>
+        </div>
+        <div id="popiaChecklist">Loading checklist...</div>
+    </div>
+
+    <!-- SARS Calendar -->
+    <div class="panel" id="sarsPanel">
+        <div class="toolbar">
+            <select class="search" id="sarsFilter">
+                <option value="all">All deadlines</option>
+                <option value="PAYE/UIF">PAYE / UIF</option>
+                <option value="VAT">VAT</option>
+                <option value="Provisional tax">Provisional tax</option>
+                <option value="CIPC/Annual">CIPC / Annual</option>
+            </select>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>Deadline</th><th>Category</th><th>Description</th><th>Status</th></tr>
+                </thead>
+                <tbody id="sarsBody"></tbody>
+            </table>
+        </div>
+        <div id="sarsEmpty" class="empty hidden">No deadlines found.</div>
+    </div>
+
+    <!-- CIPC Reminder -->
+    <div class="panel" id="cipcPanel">
+        <div class="form-grid" style="max-width:720px">
+            <div class="field">
+                <label>Company registration date</label>
+                <input type="date" id="cipcRegDate">
+            </div>
+            <div class="field">
+                <label>Remind me before due date (days)</label>
+                <input type="number" id="cipcReminderDays" value="30" min="1" max="365">
+            </div>
+            <div class="field full">
+                <label>Notes</label>
+                <textarea id="cipcNotes" placeholder="Company registration details, service provider, etc."></textarea>
+            </div>
+        </div>
+        <button class="btn btn-primary" id="saveCipcBtn"><i class="fas fa-save"></i> Save reminder</button>
+
+        <div id="cipcStatus" style="margin-top:24px;padding:20px;background:#F9FAFB;border-radius:12px;border:1px solid var(--border)">
+            <h3 style="font-size:1rem;color:var(--navy);margin-bottom:8px">Next annual return</h3>
+            <p id="cipcNextDue" style="font-size:.9rem;color:var(--muted)">Enter your registration date to calculate the next due date.</p>
+        </div>
+    </div>
+
+    <!-- Document Vault -->
+    <div class="panel" id="documentsPanel">
+        <div class="file-drop" id="fileDrop">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <div style="font-weight:600;color:var(--navy)">Click or drag files here to upload</div>
+            <div style="font-size:.8rem;color:var(--muted);margin-top:4px">PDFs, images, spreadsheets, or Word docs</div>
+            <input type="file" id="fileInput" multiple style="display:none">
+        </div>
+        <div class="file-list" id="fileList"></div>
+        <div id="filesEmpty" class="empty hidden">No documents uploaded yet.</div>
+    </div>
+</main>
+
+<script type="module">
+import { supabase } from "/supabase.js";
+
+let currentUser = null;
+let popiaRow = null;
+
+const popiaItems = [
+    { id: "accountability", group: "Accountability", text: "Appoint an information officer responsible for POPIA compliance" },
+    { id: "processing-limitation", group: "Processing limitation", text: "Only collect personal information for a specific, lawful purpose" },
+    { id: "purpose", group: "Purpose specification", text: "Document why each type of personal information is processed" },
+    { id: "information-quality", group: "Information quality", text: "Keep personal information accurate, complete, and up to date" },
+    { id: "openness", group: "Openness", text: "Publish a privacy notice or policy explaining data processing" },
+    { id: "security", group: "Security safeguards", text: "Implement reasonable technical and organisational security measures" },
+    { id: "access", group: "Data subject participation", text: "Have a process to handle access, correction, and deletion requests" },
+    { id: "consent", group: "Consent", text: "Obtain valid consent where required and keep records of consent" },
+    { id: "contracts", group: "Operator agreements", text: "Have written agreements with any third parties processing personal information" },
+    { id: "breach", group: "Breach response", text: "Have a data breach notification process and response plan" },
+    { id: "retention", group: "Retention", text: "Define retention periods and securely destroy information when no longer needed" },
+    { id: "training", group: "Training", text: "Train staff who handle personal information on POPIA obligations" }
+];
+
+function toast(message, type = "error") {
+    const el = document.createElement("div");
+    el.className = `toast toast-${type}`;
+    el.textContent = message;
+    document.body.appendChild(el);
+    requestAnimationFrame(() => el.classList.add("show"));
+    setTimeout(() => { el.classList.remove("show"); setTimeout(() => el.remove(), 300); }, type === "error" ? 5000 : 3000);
+}
+
+function formatDate(d) {
+    if (!d) return "—";
+    return new Date(d).toLocaleDateString("en-ZA");
+}
+
+function daysUntil(d) {
+    const today = new Date(); today.setHours(0,0,0,0);
+    const target = new Date(d); target.setHours(0,0,0,0);
+    return Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+}
+
+// Tabs
+const tabs = document.querySelectorAll(".tab");
+const panels = document.querySelectorAll(".panel");
+tabs.forEach(t => {
+    t.onclick = () => {
+        tabs.forEach(x => x.classList.remove("active"));
+        panels.forEach(x => x.classList.remove("active"));
+        t.classList.add("active");
+        document.getElementById(t.dataset.tab + "Panel").classList.add("active");
+    };
+});
+
+async function init() {
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error || !user) {
+        window.location.href = "/login/login.html";
+        return;
+    }
+    currentUser = user;
+    document.getElementById("userEmail").textContent = user.email;
+    document.getElementById("userName").textContent = user.user_metadata?.full_name || "User";
+
+    loadPopia();
+    loadSarsCalendar();
+    loadCipcReminder();
+    loadDocuments();
+}
+
+document.getElementById("logoutBtn").onclick = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/login/login.html";
+};
+
+// POPIA
+async function loadPopia() {
+    const { data, error } = await supabase.from("popia_checklists").select("*").eq("user_id", currentUser.id).maybeSingle();
+    if (error) return toast("Failed to load POPIA checklist: " + error.message);
+    if (data) {
+        popiaRow = data;
+    } else {
+        const defaultItems = {};
+        popiaItems.forEach(i => defaultItems[i.id] = false);
+        const { data: created, error: createErr } = await supabase.from("popia_checklists").insert({ user_id: currentUser.id, items: defaultItems }).select().single();
+        if (createErr) return toast("Failed to create checklist: " + createErr.message);
+        popiaRow = created;
+    }
+    renderPopia();
+}
+
+function renderPopia() {
+    const items = popiaRow?.items || {};
+    const groups = {};
+    popiaItems.forEach(i => {
+        if (!groups[i.group]) groups[i.group] = [];
+        groups[i.group].push(i);
+    });
+
+    const container = document.getElementById("popiaChecklist");
+    container.innerHTML = "";
+    Object.entries(groups).forEach(([group, list]) => {
+        const div = document.createElement("div");
+        div.className = "checklist-group";
+        div.innerHTML = `<h3>${group}</h3>`;
+        list.forEach(i => {
+            const checked = items[i.id] ? "checked" : "";
+            const row = document.createElement("label");
+            row.className = "check-item " + (items[i.id] ? "checked" : "");
+            row.innerHTML = `<input type="checkbox" data-id="${i.id}" ${checked}> <span>${i.text}</span>`;
+            row.querySelector("input").onchange = async (e) => {
+                const updated = { ...items, [i.id]: e.target.checked };
+                const { error } = await supabase.from("popia_checklists").update({ items: updated }).eq("id", popiaRow.id);
+                if (error) return toast("Update failed: " + error.message);
+                popiaRow.items = updated;
+                row.classList.toggle("checked", e.target.checked);
+                updatePopiaProgress();
+                toast("Progress saved", "success");
+            };
+            div.appendChild(row);
+        });
+        container.appendChild(div);
+    });
+    updatePopiaProgress();
+}
+
+function updatePopiaProgress() {
+    const items = popiaRow?.items || {};
+    const total = popiaItems.length;
+    const done = popiaItems.filter(i => items[i.id]).length;
+    const pct = Math.round((done / total) * 100);
+    document.getElementById("popiaProgress").value = pct;
+    document.getElementById("popiaPercent").textContent = `${pct}% (${done}/${total})`;
+}
+
+// SARS Calendar
+async function loadSarsCalendar() {
+    const { data, error } = await supabase.from("tax_deadlines").select("*").order("due_date", { ascending: true });
+    if (error) return toast("Failed to load tax deadlines: " + error.message);
+    renderSars(data || []);
+}
+
+function renderSars(data) {
+    const filter = document.getElementById("sarsFilter").value;
+    const rows = filter === "all" ? data : data.filter(d => d.category === filter);
+    const tbody = document.getElementById("sarsBody");
+    tbody.innerHTML = "";
+    document.getElementById("sarsEmpty").classList.toggle("hidden", rows.length > 0);
+
+    rows.forEach(d => {
+        const days = daysUntil(d.due_date);
+        let status, badgeClass;
+        if (days < 0) { status = "Overdue"; badgeClass = "badge-overdue"; }
+        else if (days <= 7) { status = "Due soon"; badgeClass = "badge-soon"; }
+        else { status = "Upcoming"; badgeClass = "badge-upcoming"; }
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${formatDate(d.due_date)}</td>
+            <td>${d.category}</td>
+            <td>${d.description}</td>
+            <td><span class="badge ${badgeClass}">${status}</span></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+document.getElementById("sarsFilter").onchange = loadSarsCalendar;
+
+// CIPC Reminder
+async function loadCipcReminder() {
+    const [{ data: company }, { data: reminder }] = await Promise.all([
+        supabase.from("company_profiles").select("registration_date").eq("id", currentUser.id).maybeSingle(),
+        supabase.from("cipc_reminders").select("*").eq("user_id", currentUser.id).maybeSingle()
+    ]);
+
+    if (company?.registration_date) {
+        document.getElementById("cipcRegDate").value = company.registration_date;
+    }
+    if (reminder) {
+        if (reminder.reminder_days) document.getElementById("cipcReminderDays").value = reminder.reminder_days;
+        if (reminder.notes) document.getElementById("cipcNotes").value = reminder.notes;
+    }
+    updateCipcStatus(company?.registration_date);
+}
+
+function updateCipcStatus(regDate) {
+    const el = document.getElementById("cipcNextDue");
+    if (!regDate) {
+        el.textContent = "Enter your registration date to calculate the next due date.";
+        return;
+    }
+    const today = new Date();
+    const reg = new Date(regDate);
+    let nextDue = new Date(today.getFullYear(), reg.getMonth(), reg.getDate());
+    if (nextDue < today) nextDue.setFullYear(today.getFullYear() + 1);
+    // CIPC annual return is due within 30 days of incorporation anniversary
+    const deadline = new Date(nextDue); deadline.setDate(deadline.getDate() + 30);
+    const days = daysUntil(deadline);
+    const suffix = days < 0 ? "overdue" : days === 0 ? "due today" : `due in ${days} day${days === 1 ? "" : "s"}`;
+    el.innerHTML = `<strong>${formatDate(deadline)}</strong> — your annual return filing window closes ${suffix}.`;
+}
+
+document.getElementById("saveCipcBtn").onclick = async () => {
+    const regDate = document.getElementById("cipcRegDate").value;
+    const reminderDays = parseInt(document.getElementById("cipcReminderDays").value, 10) || 30;
+    const notes = document.getElementById("cipcNotes").value.trim();
+
+    if (regDate) {
+        const { error: compErr } = await supabase.from("company_profiles").update({ registration_date: regDate }).eq("id", currentUser.id);
+        if (compErr) return toast("Failed to save registration date: " + compErr.message);
+    }
+
+    const { data: existing } = await supabase.from("cipc_reminders").select("id").eq("user_id", currentUser.id).maybeSingle();
+    const payload = { user_id: currentUser.id, reminder_days: reminderDays, notes };
+    const { error } = existing
+        ? await supabase.from("cipc_reminders").update(payload).eq("id", existing.id)
+        : await supabase.from("cipc_reminders").insert(payload);
+
+    if (error) return toast("Failed to save reminder: " + error.message);
+    updateCipcStatus(regDate);
+    toast("Reminder saved", "success");
+};
+
+// Document Vault
+const fileDrop = document.getElementById("fileDrop");
+const fileInput = document.getElementById("fileInput");
+
+fileDrop.onclick = () => fileInput.click();
+fileDrop.ondragover = (e) => { e.preventDefault(); fileDrop.style.borderColor = "var(--teal)"; };
+fileDrop.ondragleave = () => { fileDrop.style.borderColor = ""; };
+fileDrop.ondrop = (e) => {
+    e.preventDefault();
+    fileDrop.style.borderColor = "";
+    handleFiles(e.dataTransfer.files);
+};
+fileInput.onchange = (e) => handleFiles(e.target.files);
+
+async function handleFiles(files) {
+    for (const file of files) {
+        await uploadFile(file);
+    }
+    fileInput.value = "";
+}
+
+async function uploadFile(file) {
+    const path = `${currentUser.id}/${Date.now()}_${file.name}`;
+    const { error: upErr } = await supabase.storage.from("documents").upload(path, file);
+    if (upErr) return toast(`Upload failed for ${file.name}: ${upErr.message}`);
+
+    const { error: dbErr } = await supabase.from("documents").insert({
+        user_id: currentUser.id,
+        filename: file.name,
+        storage_path: path,
+        file_type: file.type,
+        size_bytes: file.size
+    });
+    if (dbErr) return toast("Failed to save document record: " + dbErr.message);
+    toast(`${file.name} uploaded`, "success");
+    loadDocuments();
+}
+
+function formatBytes(bytes) {
+    if (bytes === 0) return "0 B";
+    const k = 1024;
+    const sizes = ["B", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
+}
+
+async function loadDocuments() {
+    const { data, error } = await supabase.from("documents").select("*").eq("user_id", currentUser.id).order("created_at", { ascending: false });
+    if (error) return toast("Failed to load documents: " + error.message);
+    const list = document.getElementById("fileList");
+    list.innerHTML = "";
+    document.getElementById("filesEmpty").classList.toggle("hidden", (data || []).length > 0);
+
+    (data || []).forEach(doc => {
+        const row = document.createElement("div");
+        row.className = "file-row";
+        row.innerHTML = `
+            <div class="meta">
+                <span class="name"><i class="fas fa-file"></i> ${doc.filename}</span>
+                <span class="size">${formatBytes(doc.size_bytes || 0)} · ${formatDate(doc.created_at)}</span>
+            </div>
+            <div class="actions">
+                <button class="btn btn-secondary btn-sm" data-download="${doc.id}" style="padding:6px 12px;font-size:.75rem">Download</button>
+                <button class="btn btn-danger btn-sm" data-delete="${doc.id}" style="padding:6px 12px;font-size:.75rem">Delete</button>
+            </div>
+        `;
+        row.querySelector("[data-download]").onclick = () => downloadDocument(doc);
+        row.querySelector("[data-delete]").onclick = () => deleteDocument(doc);
+        list.appendChild(row);
+    });
+}
+
+async function downloadDocument(doc) {
+    const { data, error } = await supabase.storage.from("documents").createSignedUrl(doc.storage_path, 60);
+    if (error) return toast("Download link failed: " + error.message);
+    window.open(data.signedUrl, "_blank");
+}
+
+async function deleteDocument(doc) {
+    if (!confirm(`Delete ${doc.filename}?`)) return;
+    const { error: storageErr } = await supabase.storage.from("documents").remove([doc.storage_path]);
+    if (storageErr) return toast("Delete failed: " + storageErr.message);
+    const { error: dbErr } = await supabase.from("documents").delete().eq("id", doc.id);
+    if (dbErr) return toast("Failed to remove record: " + dbErr.message);
+    toast("Document deleted", "success");
+    loadDocuments();
+}
+
+init();
+</script>
+</body>
+</html>

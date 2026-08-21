@@ -35,6 +35,7 @@
 - **Consultation booking** — request help from partner law firms
 - **Notifications centre** — compliance reminders and read/unread state
 - **Row Level Security** — users can only read/write their own data
+- **Compliance centre** — POPIA readiness checklist, SARS tax calendar, CIPC annual-return reminders, and a document vault with Supabase Storage
 - **Admin panel** — manage tenders, broadcast notifications, and update consultation statuses
 - **Responsive design** — works on desktop, tablet, and mobile
 
@@ -103,6 +104,9 @@ Beko-Compliance-OS.WAP/
 ├── admin/                    ← Admin panel for managing content
 │   └── admin.html
 │
+├── compliance/               ← POPIA, SARS, CIPC, and document vault
+│   └── compliance.html
+│
 ├── emails/                   ← Branded email HTML templates
 │   ├── verify-email.html
 │   ├── password-reset.html
@@ -110,7 +114,8 @@ Beko-Compliance-OS.WAP/
 │
 └── docs/                     ← Project documentation
     ├── supabase-schema.sql   ← Full database schema (clean slate)
-    ├── supabase-migration-v3.sql ← Non-destructive migration
+    ├── supabase-migration-v3.sql ← Adds is_admin flag (legacy)
+    ├── supabase-migration-v4.sql ← Adds compliance tables, storage, and admin policies
     ├── implementation-summary.md
     └── beko_complianceos_desktop_portal.html
 ```
@@ -147,7 +152,7 @@ Choose one option based on whether you already have data in Supabase:
 
 **Option B — Existing project with users/data**
 1. In Supabase, go to **SQL Editor → New Query**
-2. Open [docs/supabase-migration-v3.sql](docs/supabase-migration-v3.sql) and copy the contents
+2. Open [docs/supabase-migration-v4.sql](docs/supabase-migration-v4.sql) and copy the contents
 3. Click **Run**
 
 > The migration adds all new tables **and** ensures the auth trigger that creates a `profiles` row on sign-up is present. If you see "database error saving user" during signup, re-run the migration.
@@ -215,9 +220,13 @@ The app uses **Supabase PostgreSQL** with Row Level Security enabled:
 - **`tender_alerts`** — User-created keyword/province alerts
 - **`tender_tracks`** — Tenders a user is tracking
 - **`aml_screenings`** — AML screening results
+- **`popia_checklists`** — User POPIA readiness checklists
+- **`tax_deadlines`** — SARS/CIPC deadline calendar
+- **`cipc_reminders`** — User CIPC annual-return reminder settings
+- **`documents`** — Document vault metadata (files live in Supabase Storage)
 
 Full schema: [docs/supabase-schema.sql](docs/supabase-schema.sql)  
-Non-destructive migration: [docs/supabase-migration-v3.sql](docs/supabase-migration-v3.sql)
+Non-destructive migration: [docs/supabase-migration-v4.sql](docs/supabase-migration-v4.sql)
 
 Row Level Security policies ensure each user can only access their own rows.
 
@@ -248,7 +257,8 @@ Upload the project folder to Netlify, Cloudflare Pages, GitHub Pages, or any sta
 | Document | Description |
 |---|---|
 | [docs/supabase-schema.sql](docs/supabase-schema.sql) | Full PostgreSQL schema (clean slate) |
-| [docs/supabase-migration-v3.sql](docs/supabase-migration-v3.sql) | Non-destructive migration for existing projects |
+| [docs/supabase-migration-v3.sql](docs/supabase-migration-v3.sql) | Adds is_admin flag to existing projects |
+| [docs/supabase-migration-v4.sql](docs/supabase-migration-v4.sql) | Adds compliance tables, storage bucket, and admin policies |
 | [docs/implementation-summary.md](docs/implementation-summary.md) | Build notes, features, and deployment log |
 | [docs/beko_complianceos_desktop_portal.html](docs/beko_complianceos_desktop_portal.html) | Desktop portal mockup |
 

@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════
--- Beko ComplianceOS — Supabase Database Schema v3
+-- Beko ComplianceOS — Supabase Database Schema v4
 -- Run this in: Supabase Dashboard → SQL Editor → New Query → Run
 -- WARNING: This drops existing tables. Only run in development/testing.
 -- ═══════════════════════════════════════════════════════
@@ -7,6 +7,11 @@
 -- Clean slate (safe for testing)
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 DROP FUNCTION IF EXISTS public.handle_new_user();
+DROP FUNCTION IF EXISTS public.is_admin(UUID);
+DROP TABLE IF EXISTS public.documents;
+DROP TABLE IF EXISTS public.cipc_reminders;
+DROP TABLE IF EXISTS public.tax_deadlines;
+DROP TABLE IF EXISTS public.popia_checklists;
 DROP TABLE IF EXISTS public.tender_tracks;
 DROP TABLE IF EXISTS public.tender_alerts;
 DROP TABLE IF EXISTS public.tenders;
@@ -127,22 +132,6 @@ CREATE POLICY "Users can insert own company"
 CREATE POLICY "Users can update own company"
     ON company_profiles FOR UPDATE USING (auth.uid() = id);
 
--- Admin policies (admins can manage feature tables)
-CREATE POLICY "Admins can manage tenders"
-    ON tenders FOR ALL USING (public.is_admin(auth.uid()));
-
-CREATE POLICY "Admins can view all consultations"
-    ON consultations FOR SELECT USING (public.is_admin(auth.uid()));
-CREATE POLICY "Admins can update any consultation"
-    ON consultations FOR UPDATE USING (public.is_admin(auth.uid()));
-
-CREATE POLICY "Admins can view all notifications"
-    ON notifications FOR SELECT USING (public.is_admin(auth.uid()));
-CREATE POLICY "Admins can insert notifications for any user"
-    ON notifications FOR INSERT WITH CHECK (public.is_admin(auth.uid()));
-CREATE POLICY "Admins can update any notification"
-    ON notifications FOR UPDATE USING (public.is_admin(auth.uid()));
-
 -- ═══════════════════════════════════════════════════════
 -- 5. Feature tables
 -- ═══════════════════════════════════════════════════════
@@ -210,6 +199,46 @@ CREATE TABLE aml_screenings (
     created_at       TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- New compliance tables
+CREATE TABLE popia_checklists (
+    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id    UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    items      JSONB NOT NULL DEFAULT '{}',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(user_id)
+);
+
+CREATE TABLE tax_deadlines (
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    due_date    DATE NOT NULL,
+    category    TEXT NOT NULL,
+    description TEXT NOT NULL,
+    is_recurring BOOLEAN DEFAULT FALSE,
+    created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE cipc_reminders (
+    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id       UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    reminder_days INTEGER DEFAULT 30,
+    notes         TEXT,
+    created_at    TIMESTAMPTZ DEFAULT NOW(),
+    updated_at    TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(user_id)
+);
+
+CREATE TABLE documents (
+    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id      UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    filename     TEXT NOT NULL,
+    storage_path TEXT NOT NULL,
+    file_type    TEXT,
+    size_bytes   INTEGER DEFAULT 0,
+    description  TEXT,
+    created_at   TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- ═══════════════════════════════════════════════════════
 -- 6. Row Level Security for feature tables
 -- ═══════════════════════════════════════════════════════
@@ -220,6 +249,10 @@ ALTER TABLE tenders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE tender_alerts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE tender_tracks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE aml_screenings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE popia_checklists ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tax_deadlines ENABLE ROW LEVEL SECURITY;
+ALTER TABLE cipc_reminders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can view own consultations"
     ON consultations FOR SELECT USING (auth.uid() = user_id);
@@ -257,8 +290,85 @@ CREATE POLICY "Users can view own aml screenings"
 CREATE POLICY "Users can insert own aml screenings"
     ON aml_screenings FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+CREATE POLICY "Users can manage own popia checklist"
+    ON popia_checklists FOR ALL USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can view tax deadlines"
+    ON tax_deadlines FOR SELECT USING (true);
+
+CREATE POLICY "Users can manage own cipc reminders"
+    ON cipc_reminders FOR ALL USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can manage own documents"
+    ON documents FOR ALL USING (auth.uid() = user_id);
+
+-- Admin policies (admins can manage feature tables)
+CREATE POLICY "Admins can manage tenders"
+    ON tenders FOR ALL USING (public.is_admin(auth.uid()));
+
+CREATE POLICY "Admins can view all consultations"
+    ON consultations FOR SELECT USING (public.is_admin(auth.uid()));
+CREATE POLICY "Admins can update any consultation"
+    ON consultations FOR UPDATE USING (public.is_admin(auth.uid()));
+
+CREATE POLICY "Admins can view all notifications"
+    ON notifications FOR SELECT USING (public.is_admin(auth.uid()));
+CREATE POLICY "Admins can insert notifications for any user"
+    ON notifications FOR INSERT WITH CHECK (public.is_admin(auth.uid()));
+CREATE POLICY "Admins can update any notification"
+    ON notifications FOR UPDATE USING (public.is_admin(auth.uid()));
+
+CREATE POLICY "Admins can manage tax deadlines"
+    ON tax_deadlines FOR ALL USING (public.is_admin(auth.uid()));
+
+CREATE POLICY "Admins can view all documents"
+    ON documents FOR SELECT USING (public.is_admin(auth.uid()));
+CREATE POLICY "Admins can delete any document"
+    ON documents FOR DELETE USING (public.is_admin(auth.uid()));
+
+CREATE POLICY "Admins can view all popia checklists"
+    ON popia_checklists FOR SELECT USING (public.is_admin(auth.uid()));
+
+CREATE POLICY "Admins can view all cipc reminders"
+    ON cipc_reminders FOR SELECT USING (public.is_admin(auth.uid()));
+
 -- ═══════════════════════════════════════════════════════
--- 7. Seed sample tenders
+-- 7. Supabase Storage bucket for document vault
+-- ═══════════════════════════════════════════════════════
+
+-- Create bucket if it does not exist
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('documents', 'documents', false)
+ON CONFLICT (id) DO NOTHING;
+
+-- Storage object policies: users can only access files inside their own folder
+CREATE POLICY "Users can upload own documents"
+    ON storage.objects FOR INSERT WITH CHECK (
+        bucket_id = 'documents' AND auth.uid()::text = (storage.foldername(name))[1]
+    );
+
+CREATE POLICY "Users can view own documents"
+    ON storage.objects FOR SELECT USING (
+        bucket_id = 'documents' AND auth.uid()::text = (storage.foldername(name))[1]
+    );
+
+CREATE POLICY "Users can update own documents"
+    ON storage.objects FOR UPDATE USING (
+        bucket_id = 'documents' AND auth.uid()::text = (storage.foldername(name))[1]
+    );
+
+CREATE POLICY "Users can delete own documents"
+    ON storage.objects FOR DELETE USING (
+        bucket_id = 'documents' AND auth.uid()::text = (storage.foldername(name))[1]
+    );
+
+CREATE POLICY "Admins can manage all documents"
+    ON storage.objects FOR ALL USING (
+        bucket_id = 'documents' AND public.is_admin(auth.uid())
+    );
+
+-- ═══════════════════════════════════════════════════════
+-- 8. Seed sample data
 -- ═══════════════════════════════════════════════════════
 
 INSERT INTO tenders (tender_id, title, department, province, industry, closing_date, status, description, tags)
@@ -270,3 +380,21 @@ VALUES
     ('TND-2026-0420', 'Supply and delivery of PPE', 'Department of Public Works', 'KwaZulu-Natal', 'Healthcare', '2026-09-18', 'open', 'Bulk supply of personal protective equipment for government buildings.', ARRAY['SABS approved', 'Tax clearance', 'B-BBEE']),
     ('TND-2026-0433', 'Agricultural training programme', 'Department of Agriculture', 'Free State', 'Education / Training', '2026-09-30', 'open', 'Facilitation of a 6-month smallholder farmer training programme.', ARRAY['Accredited training', 'B-BBEE', 'CIPC']),
     ('TND-2026-0418', 'Cloud software subscription', 'Financial Services Firm', 'Gauteng', 'IT / Technology', '2026-09-12', 'open', 'SaaS platform for document management and compliance tracking.', ARRAY['ISO 27001', 'B-BBEE', 'POPIA compliant']);
+
+INSERT INTO tax_deadlines (due_date, category, description, is_recurring)
+VALUES
+    ('2026-08-07', 'PAYE/UIF', 'Monthly PAYE, UIF and SDL payment to SARS (7th of the month, or last business day before)', true),
+    ('2026-08-25', 'VAT', 'VAT return and payment for Category A vendors (25th of the month, or last business day before)', true),
+    ('2026-08-31', 'Provisional tax', 'Provisional tax first period top-up for February year-end taxpayers', false),
+    ('2026-09-07', 'PAYE/UIF', 'Monthly PAYE, UIF and SDL payment to SARS', true),
+    ('2026-09-25', 'VAT', 'VAT return and payment for Category A vendors', true),
+    ('2026-09-30', 'CIPC/Annual', 'CIPC annual return filing deadline for companies with an August anniversary date', false),
+    ('2026-10-07', 'PAYE/UIF', 'Monthly PAYE, UIF and SDL payment to SARS', true),
+    ('2026-10-25', 'VAT', 'VAT return and payment for Category A vendors', true),
+    ('2026-10-31', 'Provisional tax', 'Second provisional tax payment for February year-end taxpayers', false),
+    ('2026-11-07', 'PAYE/UIF', 'Monthly PAYE, UIF and SDL payment to SARS', true),
+    ('2026-11-25', 'VAT', 'VAT return and payment for Category A vendors', true),
+    ('2026-12-07', 'PAYE/UIF', 'Monthly PAYE, UIF and SDL payment to SARS', true),
+    ('2026-12-25', 'VAT', 'VAT return and payment for Category A vendors', true),
+    ('2027-01-31', 'CIPC/Annual', 'CIPC annual return filing deadline for companies with a December anniversary date', false),
+    ('2027-02-28', 'Provisional tax', 'First provisional tax payment for February year-end taxpayers', false);
