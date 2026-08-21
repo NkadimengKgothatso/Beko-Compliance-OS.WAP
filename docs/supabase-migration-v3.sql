@@ -82,6 +82,23 @@ ALTER TABLE tender_alerts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE tender_tracks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE aml_screenings ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies so the migration can be re-run safely
+DROP POLICY IF EXISTS "Users can view own consultations" ON consultations;
+DROP POLICY IF EXISTS "Users can insert own consultations" ON consultations;
+DROP POLICY IF EXISTS "Users can update own consultations" ON consultations;
+DROP POLICY IF EXISTS "Users can view own notifications" ON notifications;
+DROP POLICY IF EXISTS "Users can insert own notifications" ON notifications;
+DROP POLICY IF EXISTS "Users can update own notifications" ON notifications;
+DROP POLICY IF EXISTS "Users can view tenders" ON tenders;
+DROP POLICY IF EXISTS "Users can view own tender alerts" ON tender_alerts;
+DROP POLICY IF EXISTS "Users can insert own tender alerts" ON tender_alerts;
+DROP POLICY IF EXISTS "Users can delete own tender alerts" ON tender_alerts;
+DROP POLICY IF EXISTS "Users can view own tender tracks" ON tender_tracks;
+DROP POLICY IF EXISTS "Users can insert own tender tracks" ON tender_tracks;
+DROP POLICY IF EXISTS "Users can delete own tender tracks" ON tender_tracks;
+DROP POLICY IF EXISTS "Users can view own aml screenings" ON aml_screenings;
+DROP POLICY IF EXISTS "Users can insert own aml screenings" ON aml_screenings;
+
 -- Consultations
 CREATE POLICY "Users can view own consultations"
     ON consultations FOR SELECT USING (auth.uid() = user_id);
