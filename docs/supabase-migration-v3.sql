@@ -171,6 +171,7 @@ CREATE TABLE IF NOT EXISTS profiles (
     company_name        TEXT,
     phone               TEXT,
     role                TEXT DEFAULT 'owner',
+    is_admin            BOOLEAN DEFAULT FALSE,
     created_at  TIMESTAMPTZ DEFAULT NOW(),
     updated_at  TIMESTAMPTZ DEFAULT NOW()
 );
@@ -212,10 +213,20 @@ CREATE TABLE IF NOT EXISTS company_profiles (
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE company_profiles ENABLE ROW LEVEL SECURITY;
 
+-- Admin helper (must exist before any policy references it)
+CREATE OR REPLACE FUNCTION public.is_admin(uid UUID)
+RETURNS BOOLEAN AS $$
+BEGIN
+    RETURN EXISTS (SELECT 1 FROM public.profiles WHERE id = uid AND is_admin = TRUE);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 DROP POLICY IF EXISTS "Users can view own profile" ON profiles;
+DROP POLICY IF EXISTS "Admins can view all profiles" ON profiles;
 DROP POLICY IF EXISTS "Users can insert own profile" ON profiles;
 DROP POLICY IF EXISTS "Users can update own profile" ON profiles;
 CREATE POLICY "Users can view own profile" ON profiles FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Admins can view all profiles" ON profiles FOR SELECT USING (public.is_admin(auth.uid()));
 CREATE POLICY "Users can insert own profile" ON profiles FOR INSERT WITH CHECK (auth.uid() = id);
 CREATE POLICY "Users can update own profile" ON profiles FOR UPDATE USING (auth.uid() = id);
 
@@ -225,6 +236,22 @@ DROP POLICY IF EXISTS "Users can update own company" ON company_profiles;
 CREATE POLICY "Users can view own company" ON company_profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Users can insert own company" ON company_profiles FOR INSERT WITH CHECK (auth.uid() = id);
 CREATE POLICY "Users can update own company" ON company_profiles FOR UPDATE USING (auth.uid() = id);
+
+-- Admin policies for feature tables
+DROP POLICY IF EXISTS "Admins can manage tenders" ON tenders;
+CREATE POLICY "Admins can manage tenders" ON tenders FOR ALL USING (public.is_admin(auth.uid()));
+
+DROP POLICY IF EXISTS "Admins can view all consultations" ON consultations;
+DROP POLICY IF EXISTS "Admins can update any consultation" ON consultations;
+CREATE POLICY "Admins can view all consultations" ON consultations FOR SELECT USING (public.is_admin(auth.uid()));
+CREATE POLICY "Admins can update any consultation" ON consultations FOR UPDATE USING (public.is_admin(auth.uid()));
+
+DROP POLICY IF EXISTS "Admins can view all notifications" ON notifications;
+DROP POLICY IF EXISTS "Admins can insert notifications for any user" ON notifications;
+DROP POLICY IF EXISTS "Admins can update any notification" ON notifications;
+CREATE POLICY "Admins can view all notifications" ON notifications FOR SELECT USING (public.is_admin(auth.uid()));
+CREATE POLICY "Admins can insert notifications for any user" ON notifications FOR INSERT WITH CHECK (public.is_admin(auth.uid()));
+CREATE POLICY "Admins can update any notification" ON notifications FOR UPDATE USING (public.is_admin(auth.uid()));
 
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$

@@ -99,6 +99,9 @@ Consultation requests are inserted into `consultations` and the page refreshes t
 - `README.md` — added live site links, updated features, project structure, database docs, and Supabase URL configuration note
 - `verify/verify-email.html` — improved verification UX with auto-polling, status states, "Open email app" button, and automatic redirect to the app once verified
 - `onboarding/onboarding.html` + `dashboard/dashboard.html` — removed demo data buttons and related logic
+- `admin/admin.html` — new admin panel to manage tenders, send notifications to users, and update consultation statuses
+- All sidebar pages — added Admin navigation link
+- `docs/supabase-schema.sql` + `docs/supabase-migration-v3.sql` — added `is_admin` column, `is_admin()` helper function, and admin RLS policies; fixed function creation order so policies can reference it
 
 ### Already existed from previous work
 - `templates/templates.html`

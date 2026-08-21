@@ -28,6 +28,7 @@ CREATE TABLE profiles (
     company_name        TEXT,
     phone               TEXT,
     role                TEXT DEFAULT 'owner',
+    is_admin            BOOLEAN DEFAULT FALSE,
     created_at  TIMESTAMPTZ DEFAULT NOW(),
     updated_at  TIMESTAMPTZ DEFAULT NOW()
 );
@@ -95,9 +96,20 @@ CREATE TRIGGER on_auth_user_created
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE company_profiles ENABLE ROW LEVEL SECURITY;
 
+-- Admin helper (must exist before any policy references it)
+CREATE OR REPLACE FUNCTION public.is_admin(uid UUID)
+RETURNS BOOLEAN AS $$
+BEGIN
+    RETURN EXISTS (SELECT 1 FROM public.profiles WHERE id = uid AND is_admin = TRUE);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 -- Profiles
 CREATE POLICY "Users can view own profile"
     ON profiles FOR SELECT USING (auth.uid() = id);
+
+CREATE POLICY "Admins can view all profiles"
+    ON profiles FOR SELECT USING (public.is_admin(auth.uid()));
 
 CREATE POLICY "Users can insert own profile"
     ON profiles FOR INSERT WITH CHECK (auth.uid() = id);
@@ -114,6 +126,22 @@ CREATE POLICY "Users can insert own company"
 
 CREATE POLICY "Users can update own company"
     ON company_profiles FOR UPDATE USING (auth.uid() = id);
+
+-- Admin policies (admins can manage feature tables)
+CREATE POLICY "Admins can manage tenders"
+    ON tenders FOR ALL USING (public.is_admin(auth.uid()));
+
+CREATE POLICY "Admins can view all consultations"
+    ON consultations FOR SELECT USING (public.is_admin(auth.uid()));
+CREATE POLICY "Admins can update any consultation"
+    ON consultations FOR UPDATE USING (public.is_admin(auth.uid()));
+
+CREATE POLICY "Admins can view all notifications"
+    ON notifications FOR SELECT USING (public.is_admin(auth.uid()));
+CREATE POLICY "Admins can insert notifications for any user"
+    ON notifications FOR INSERT WITH CHECK (public.is_admin(auth.uid()));
+CREATE POLICY "Admins can update any notification"
+    ON notifications FOR UPDATE USING (public.is_admin(auth.uid()));
 
 -- ═══════════════════════════════════════════════════════
 -- 5. Feature tables

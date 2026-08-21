@@ -35,6 +35,7 @@
 - **Consultation booking** — request help from partner law firms
 - **Notifications centre** — compliance reminders and read/unread state
 - **Row Level Security** — users can only read/write their own data
+- **Admin panel** — manage tenders, broadcast notifications, and update consultation statuses
 - **Responsive design** — works on desktop, tablet, and mobile
 
 ---
@@ -98,6 +99,9 @@ Beko-Compliance-OS.WAP/
 │
 ├── profile/                  ← User profile and settings
 │   └── profile.html
+│
+├── admin/                    ← Admin panel for managing content
+│   └── admin.html
 │
 ├── emails/                   ← Branded email HTML templates
 │   ├── verify-email.html
