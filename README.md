@@ -34,7 +34,6 @@
 - **AML risk screener** — FICA-style risk questionnaire with history
 - **Consultation booking** — request help from partner law firms
 - **Notifications centre** — compliance reminders and read/unread state
-- **Demo data** — one-click fill on onboarding and one-click load on dashboard
 - **Row Level Security** — users can only read/write their own data
 - **Responsive design** — works on desktop, tablet, and mobile
 
@@ -129,6 +128,9 @@ Beko-Compliance-OS.WAP/
    - Project URL
    - `anon` public key
 3. Paste them into `supabase.js`
+4. Go to **Authentication → URL Configuration** and set:
+   - **Site URL**: `https://www.bekocompliance.co.za` (or your local `http://localhost:3000` for testing)
+   - **Redirect URLs**: add `https://www.bekocompliance.co.za/verify/verify-email.html` so email verification links bring users back to the app
 
 ### 2. Run the database schema
 

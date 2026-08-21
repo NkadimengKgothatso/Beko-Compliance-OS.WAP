@@ -38,8 +38,7 @@ body{min-height:100vh;display:grid;grid-template-columns:340px 1fr;font-family:'
 .btn-back{background:#F3F4F6;color:var(--text)}.btn-back:hover{background:#E5E7EB}
 .btn-next{background:var(--navy);color:#fff}.btn-next:hover{background:#2E4A8E}
 .btn-finish{background:var(--green);color:#fff}.btn-finish:hover{background:#3D8B40}
-.btn-demo{background:#fff;color:var(--navy);border:1.5px solid var(--navy)}
-.btn-demo:hover{background:#F0F4FF}
+
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .score-card{background:linear-gradient(135deg,#EFF8F0,#E8F5E9);border:1.5px solid #C8E6C9;border-radius:16px;padding:36px;text-align:center}
 .score-card p{color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:8px}
@@ -155,7 +154,6 @@ body{min-height:100vh;display:grid;grid-template-columns:340px 1fr;font-family:'
             <button type="button" class="btn btn-back" id="backBtn">Back</button>
             <button type="button" class="btn btn-next" id="nextBtn">Next</button>
             <button type="submit" class="btn btn-finish" id="finishBtn" style="display:none">Generate Dashboard</button>
-            <button type="button" class="btn btn-demo" id="demoBtn">Fill demo data</button>
         </div>
     </form>
 </section>
@@ -184,7 +182,6 @@ function goTo(idx) {
     document.getElementById("backBtn").disabled = current === 0;
     document.getElementById("nextBtn").style.display = current === TOTAL - 1 ? "none" : "inline-block";
     document.getElementById("finishBtn").style.display = current === TOTAL - 1 ? "inline-block" : "none";
-    document.getElementById("demoBtn").style.display = current === TOTAL - 1 ? "none" : "inline-block";
     if (current === TOTAL - 1) calcScore();
 }
 
@@ -237,38 +234,6 @@ function calcScore() {
 
 function setValue(id, val) { const el = document.getElementById(id); if (el) el.value = val; }
 function setChecked(id, val) { const el = document.getElementById(id); if (el) el.checked = val; }
-
-// Demo data fill
-document.getElementById("demoBtn").onclick = () => {
-    setValue("businessName", "Beko Compliance Solutions Pty Ltd");
-    setValue("businessType", "private-company");
-    setValue("industry", "Technology");
-    setValue("industrySubsector", "Legal-tech compliance software");
-    setValue("regNumber", "2024/123456/07");
-    setValue("regDate", "2024-01-15");
-    setValue("taxNumber", "9123456789");
-    setValue("uifNumber", "UIF-1234567");
-    setValue("vat", "yes");
-    setValue("cipcReturn", "current");
-    setValue("province", "Gauteng");
-    setValue("city", "Johannesburg");
-    setValue("address", "123 Commissioner Street, Sandton");
-    setValue("website", "www.bekocompliance.co.za");
-    setValue("phone", "+27 11 123 4567");
-    setValue("employees", "12");
-    setValue("directors", "2");
-    setValue("revenue", "100k-500k");
-    setValue("accounting", "xero");
-    setValue("payroll", "simplepay");
-    setValue("taxFiling", "current");
-    setValue("bbbeeLevel", "2");
-    setValue("coida", "yes");
-    setChecked("sdlRegistered", true);
-    setChecked("hasRecords", true);
-    setChecked("hasBusinessPlan", true);
-    setChecked("hasContracts", true);
-    toast("Demo data filled!", "success");
-};
 
 document.getElementById("form").onsubmit = async e => {
     e.preventDefault();

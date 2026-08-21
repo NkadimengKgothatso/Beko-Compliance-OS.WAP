@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Verify Email — Beko ComplianceOS</title>
 <style>
-:root{--navy:#1B2A5C;--green:#4CAF50;--teal:#2CB5B8;--bg:#F4F6FA;--text:#374151;--muted:#6B7280;--border:#E5E7EB}
+:root{--navy:#1B2A5C;--green:#4CAF50;--teal:#2CB5B8;--bg:#F4F6FA;--text:#374151;--muted:#6B7280;--border:#E5E7EB;--danger:#DC2626}
 *{margin:0;padding:0;box-sizing:border-box}
 body{min-height:100vh;display:grid;place-items:center;background:var(--bg);font-family:'Segoe UI',system-ui,sans-serif;padding:20px}
 .card{background:#fff;border-radius:16px;padding:48px;max-width:480px;width:100%;text-align:center;box-shadow:0 4px 24px rgba(27,42,92,.06);border:1px solid var(--border)}
@@ -13,82 +13,194 @@ body{min-height:100vh;display:grid;place-items:center;background:var(--bg);font-
 .eyebrow{color:var(--teal);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
 .card h2{color:var(--navy);font-size:1.5rem;margin-bottom:8px}
 .card p{color:var(--muted);font-size:.9rem;line-height:1.6;margin-bottom:24px}
-.status{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:24px;font-size:.85rem;font-weight:500}
+.status{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:24px;font-size:.9rem;font-weight:500;min-height:28px}
+.status-icon{width:24px;height:24px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--teal);animation:spin 1s linear infinite;display:none}
+.status-icon.ok{display:grid;place-items:center;background:var(--green);border-color:var(--green);animation:none;color:#fff;font-size:14px}
+.status-icon.err{display:grid;place-items:center;background:var(--danger);border-color:var(--danger);animation:none;color:#fff;font-size:14px}
 .dot{width:10px;height:10px;border-radius:50%;background:#FCD34D;animation:pulse 1.5s infinite}
 .dot.ok{background:var(--green);animation:none}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.countdown{color:var(--teal);font-weight:700}
 .actions{display:flex;flex-direction:column;gap:12px}
-.btn{padding:13px;border:none;border-radius:8px;font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;transition:background .2s}
+.btn{padding:13px;border:none;border-radius:8px;font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;transition:background .2s;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}
 .btn-primary{background:var(--navy);color:#fff}.btn-primary:hover{background:#2E4A8E}
 .btn-secondary{background:#F3F4F6;color:var(--text)}.btn-secondary:hover{background:#E5E7EB}
 .btn:disabled{opacity:.5;cursor:not-allowed}
+.help{border-top:1px solid var(--border);margin-top:24px;padding-top:20px}
+.help p{font-size:.82rem;color:var(--muted);margin-bottom:12px}
 .toast{position:fixed;top:20px;right:20px;padding:14px 20px;border-radius:8px;font-size:.9rem;z-index:9999;transform:translateX(120%);transition:transform .3s}
 .toast.show{transform:translateX(0)}
 .toast-error{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA}
 .toast-success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0}
+@media(max-width:480px){.card{padding:32px 24px}.card img{width:150px}}
 </style>
 </head>
 <body>
 <div class="card">
     <img src="/bg.jpeg" alt="Beko ComplianceOS">
-    <p class="eyebrow">Email verification</p>
-    <h2>Check your inbox</h2>
-    <p>We sent a verification link to <strong id="userEmail">your email</strong>. Click the link to activate your account.</p>
-    <div class="status"><span class="dot" id="dot"></span><span id="statusText">Waiting for verification</span></div>
-    <div class="actions">
+    <p class="eyebrow" id="eyebrow">Email verification</p>
+    <h2 id="title">Check your inbox</h2>
+    <p id="message">We sent a verification link to <strong id="userEmail">your email</strong>. Click the link and we'll automatically redirect you back to the app.</p>
+
+    <div class="status" id="statusBox">
+        <span class="status-icon" id="statusIcon">✓</span>
+        <span class="dot" id="dot"></span>
+        <span id="statusText">Waiting for verification</span>
+    </div>
+
+    <div class="actions" id="actions">
         <button class="btn btn-primary" id="checkBtn">I've verified my email</button>
+        <a class="btn btn-secondary" id="openEmailBtn" href="#" target="_blank" rel="noopener">Open email app</a>
         <button class="btn btn-secondary" id="resendBtn">Resend verification email</button>
         <button class="btn btn-secondary" id="logoutBtn">Use a different account</button>
     </div>
+
+    <div class="help">
+        <p>Didn't receive it? Check your spam or junk folder. Verification links expire after 24 hours.</p>
+    </div>
 </div>
+
 <script type="module">
 import { supabase } from "/supabase.js";
 import { routeUser } from "/shared/router.js";
 import { toast, loading } from "/shared/ui.js";
 
-const dot = document.getElementById("dot");
-const statusText = document.getElementById("statusText");
+const $ = id => document.getElementById(id);
+const title = $("title");
+const message = $("message");
+const statusText = $("statusText");
+const dot = $("dot");
+const statusIcon = $("statusIcon");
+const checkBtn = $("checkBtn");
+const openEmailBtn = $("openEmailBtn");
 
-const { data: { user } } = await supabase.auth.getUser();
-if (!user) { window.location.href = "/login/login.html"; }
-else {
-    document.getElementById("userEmail").textContent = user.email;
+function setStatus(state, text) {
+    if (state === "loading") {
+        statusIcon.style.display = "grid";
+        statusIcon.className = "status-icon";
+        dot.style.display = "none";
+    } else if (state === "success") {
+        statusIcon.style.display = "grid";
+        statusIcon.className = "status-icon ok";
+        dot.style.display = "none";
+    } else if (state === "error") {
+        statusIcon.style.display = "grid";
+        statusIcon.className = "status-icon err";
+        dot.style.display = "none";
+    } else {
+        statusIcon.style.display = "none";
+        dot.style.display = "inline-block";
+    }
+    statusText.textContent = text;
+}
+
+function setVerified() {
+    title.textContent = "Email verified";
+    message.innerHTML = "Great! Your email has been confirmed. You'll be redirected to the app in a few seconds.";
+    setStatus("success", "Verified successfully");
+    checkBtn.textContent = "Continue to app";
+    checkBtn.onclick = () => routeUser("/verify/verify-email.html");
+}
+
+function setError(text) {
+    title.textContent = "Verification issue";
+    message.textContent = text || "We couldn't confirm your email. You can resend the verification email or try signing in again.";
+    setStatus("error", "Verification failed");
+}
+
+function detectEmailProvider(email) {
+    const domain = email?.split("@")[1]?.toLowerCase();
+    const providers = {
+        "gmail.com": "https://mail.google.com",
+        "outlook.com": "https://outlook.live.com",
+        "hotmail.com": "https://outlook.live.com",
+        "live.com": "https://outlook.live.com",
+        "yahoo.com": "https://mail.yahoo.com",
+        "icloud.com": "https://www.icloud.com/mail",
+        "me.com": "https://www.icloud.com/mail"
+    };
+    return providers[domain] || "mailto:" + (email || "");
+}
+
+async function checkVerification(auto = false) {
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error || !user) {
+        if (!auto) window.location.href = "/login/login.html";
+        return false;
+    }
+
     if (user.email_confirmed_at) {
-        dot.classList.add("ok");
-        statusText.textContent = "Email verified! Redirecting...";
-        await routeUser("/verify/verify-email.html");
+        setVerified();
+        return true;
+    }
+    return false;
+}
+
+async function startPolling() {
+    let attempts = 0;
+    const maxAttempts = 60; // ~3 minutes
+    setStatus("loading", "Checking verification status...");
+
+    const timer = setInterval(async () => {
+        attempts++;
+        const verified = await checkVerification(true);
+        if (verified) {
+            clearInterval(timer);
+            // Give user a moment to see success, then redirect
+            setTimeout(() => routeUser("/verify/verify-email.html"), 1500);
+            return;
+        }
+        if (attempts >= maxAttempts) {
+            clearInterval(timer);
+            setStatus("", "Still waiting — click the button below once you've verified");
+        }
+    }, 3000);
+}
+
+// Init
+const { data: { user }, error: userErr } = await supabase.auth.getUser();
+if (userErr || !user) {
+    window.location.href = "/login/login.html";
+} else {
+    $("userEmail").textContent = user.email;
+    openEmailBtn.href = detectEmailProvider(user.email);
+
+    if (user.email_confirmed_at) {
+        setVerified();
+        setTimeout(() => routeUser("/verify/verify-email.html"), 1500);
+    } else {
+        startPolling();
     }
 }
 
-document.getElementById("checkBtn").onclick = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return window.location.href = "/login/login.html";
-    const btn = document.getElementById("checkBtn");
+// Manual check button
+checkBtn.onclick = async () => {
+    const btn = checkBtn;
     loading(btn, true);
-    // Refresh user data
-    const { data: { user: fresh } } = await supabase.auth.getUser();
-    if (fresh?.email_confirmed_at) {
-        dot.classList.add("ok");
-        statusText.textContent = "Email verified! Redirecting...";
-        await routeUser("/verify/verify-email.html");
+    const verified = await checkVerification();
+    if (verified) {
+        setTimeout(() => routeUser("/verify/verify-email.html"), 800);
     } else {
-        statusText.textContent = "Not verified yet. Check your inbox.";
+        setStatus("", "Not verified yet. Check your inbox and click the link.");
     }
     loading(btn, false);
 };
 
-document.getElementById("resendBtn").onclick = async () => {
+// Resend
+$("resendBtn").onclick = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-    const btn = document.getElementById("resendBtn");
+    const btn = $("resendBtn");
     loading(btn, true);
     const { error } = await supabase.auth.resend({ type: "signup", email: user.email });
     if (error) toast(error.message);
-    else toast("Verification email sent!", "success");
+    else toast("Verification email sent! Check your inbox.", "success");
     loading(btn, false);
 };
 
-document.getElementById("logoutBtn").onclick = async () => {
+// Logout / use different account
+$("logoutBtn").onclick = async () => {
     await supabase.auth.signOut();
     window.location.href = "/login/login.html";
 };

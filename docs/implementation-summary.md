@@ -96,7 +96,9 @@ Consultation requests are inserted into `consultations` and the page refreshes t
 - All sidebar pages (`dashboard`, `templates`, `education`, `tenders`, `aml`, `notifications`, `consultation`, `profile`) — include shared mobile nav and improved small-screen stacking
 - `docs/supabase-schema.sql` — full v3 schema with new tables and robust auth trigger (`ON CONFLICT DO NOTHING` + exception handler)
 - `docs/supabase-migration-v3.sql` — now also creates `profiles`/`company_profiles` and the auth trigger if missing, fixing "database error saving user"; added `DROP POLICY IF EXISTS` so the migration can be re-run safely
-- `README.md` — added live site links, updated features, project structure, and database docs
+- `README.md` — added live site links, updated features, project structure, database docs, and Supabase URL configuration note
+- `verify/verify-email.html` — improved verification UX with auto-polling, status states, "Open email app" button, and automatic redirect to the app once verified
+- `onboarding/onboarding.html` + `dashboard/dashboard.html` — removed demo data buttons and related logic
 
 ### Already existed from previous work
 - `templates/templates.html`

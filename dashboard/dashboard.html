@@ -166,56 +166,6 @@ function toast(message, type = "error") {
     setTimeout(() => { el.classList.remove("show"); setTimeout(() => el.remove(), 300); }, type === "error" ? 5000 : 3000);
 }
 
-async function createDemoProfile(userId) {
-    const demoScore = 78;
-    const demoSummary = "Good foundation. A few gaps to address.";
-    const company = {
-        id: userId,
-        business_name: "Beko Compliance Solutions Pty Ltd",
-        business_type: "private-company",
-        registration_number: "2024/123456/07",
-        registration_date: "2024-01-15",
-        tax_number: "9123456789",
-        uif_number: "UIF-1234567",
-        province: "Gauteng",
-        city: "Johannesburg",
-        address: "123 Commissioner Street, Sandton",
-        website: "www.bekocompliance.co.za",
-        vat_registered: "yes",
-        employees: 12,
-        directors: 2,
-        industry: "Technology",
-        industry_subsector: "Legal-tech compliance software",
-        monthly_revenue: "100k-500k",
-        accounting_software: "xero",
-        payroll_system: "simplepay",
-        last_tax_filing: "current",
-        cipc_annual_return: "current",
-        bbbee_level: "2",
-        coida_registered: true,
-        sdl_registered: true,
-        has_records: true,
-        has_business_plan: true,
-        has_contracts: true,
-        compliance_score: demoScore,
-        score_summary: demoSummary
-    };
-
-    const { error: profileErr } = await supabase.from("profiles").upsert({
-        id: userId,
-        onboarding_complete: true,
-        compliance_score: demoScore,
-        company_id: userId,
-        company_name: company.business_name
-    });
-    if (profileErr) throw profileErr;
-
-    const { error: companyErr } = await supabase.from("company_profiles").upsert(company);
-    if (companyErr) throw companyErr;
-
-    return company;
-}
-
 async function loadDashboard() {
     const { data: { user }, error: userErr } = await supabase.auth.getUser();
     if (userErr) console.error("Dashboard: getUser error:", userErr);
@@ -249,24 +199,10 @@ async function loadDashboard() {
         document.getElementById("dashboardContent").innerHTML = `
             <div class="empty-state">
                 <h2>No business profile yet</h2>
-                <p>We couldn't load a company profile for your account. This can happen if onboarding didn't finish saving, or if you're testing the dashboard for the first time.</p>
-                <button class="btn btn-green" id="createDemoBtn" style="margin-right:12px">Load demo dashboard</button>
+                <p>We couldn't load a company profile for your account. Complete onboarding to set up your business details and see your dashboard.</p>
                 <button class="btn btn-primary" id="goOnboardingBtn">Complete onboarding</button>
             </div>
         `;
-        document.getElementById("createDemoBtn").onclick = async () => {
-            const btn = document.getElementById("createDemoBtn");
-            btn.textContent = "Loading..."; btn.disabled = true;
-            try {
-                await createDemoProfile(user.id);
-                toast("Demo dashboard loaded!", "success");
-                setTimeout(() => window.location.reload(), 800);
-            } catch (err) {
-                console.error("Demo load failed:", err);
-                toast(`Demo load failed: ${err.message}`);
-                btn.textContent = "Load demo dashboard"; btn.disabled = false;
-            }
-        };
         document.getElementById("goOnboardingBtn").onclick = () => {
             window.location.href = "/onboarding/onboarding.html";
         };
