@@ -14,12 +14,12 @@ The following missing features from the business report and desktop portal mocku
 | Feature | File | What it does |
 |---------|------|--------------|
 | **Template Library** | `templates/templates.html` | 12 downloadable legal/compliance document templates (contracts, HR, legal, tax). Filter by category, search by name/description, and download as `.txt`. |
-| **Notifications / Reminders** | `notifications/notifications.html` | Shows today’s and earlier compliance alerts (UIF, VAT, CIPC, SARS, consultations, templates). Includes channel toggles for WhatsApp, Email, and SMS. |
-| **Consultation Booking** | `consultation/consultation.html` | Form to book a consultation with partner law firms. Saves requests to a `consultations` table in Supabase. |
+| **Notifications / Reminders** | `notifications/notifications.html` | Loads compliance alerts from Supabase with read/unread state. Includes channel toggles for WhatsApp, Email, and SMS. Seeds sample notifications for new users. |
+| **Consultation Booking** | `consultation/consultation.html` | Form to book a consultation with partner law firms. Saves requests to a `consultations` table in Supabase and displays the user’s consultation history. |
 | **Profile & Settings** | `profile/profile.html` | Displays business details from `company_profiles`, allows editing full name/phone/website, and shows notification preferences and document status. |
 | **Legal Education Hub** | `education/education.html` | Searchable library of plain-language South African compliance articles (CIPC, SARS, UIF, B-BBEE, tenders, contracts, record keeping). Click any card to open a modal with full content. |
-| **AML Risk Screener** | `aml/aml.html` | Interactive FICA/AML risk questionnaire. Calculates a risk score, displays a circular score ring, labels the risk level, and lists recommended controls. Result can be printed/saved as a report. |
-| **Tender Notifications** | `tenders/tenders.html` | Sample government/corporate tender opportunities with search, province, and industry filters. Users can track tenders (saved in browser storage) and create keyword alerts. |
+| **AML Risk Screener** | `aml/aml.html` | Interactive FICA/AML risk questionnaire. Calculates a risk score, displays a circular score ring, labels the risk level, and lists recommended controls. Saves results to Supabase and shows screening history. |
+| **Tender Notifications** | `tenders/tenders.html` | Government/corporate tender opportunities with search, province, and industry filters. Users can track tenders and create keyword alerts, persisted in Supabase. Falls back to sample data if the backend table is not ready. |
 | **Dashboard Sidebar** | `dashboard/dashboard.html` | Updated the old placeholder sidebar to link to all 8 app sections: Dashboard, Templates, Education Hub, Tenders, AML Screener, Notifications, Consultation, Profile. |
 
 ---
@@ -61,13 +61,18 @@ The AML page uses a simple weighted score:
 - A circular SVG ring animates to the score, and a printable report section lists recommended actions.
 
 ### 2.6 Tender tracking and alerts
-Because the Supabase schema does not yet have dedicated `tenders` or `alerts` tables, tender data is loaded from a local sample array and tracked using `localStorage`:
-- `beko_tracked_tenders` stores tender IDs the user wants to watch.
-- `beko_tender_alerts` stores keyword/province alert rules.
-This keeps the feature fully functional without requiring a schema migration.
+Tenders are now loaded from the Supabase `tenders` table. User tracks are stored in `tender_tracks` and alert subscriptions in `tender_alerts`. If the backend tables are not ready, the page falls back to a local sample array and `localStorage` so the UI still works.
 
-### 2.7 Consultation booking
-The consultation form inserts a row into a Supabase table called `consultations` with `user_id`, `type`, `preferred_date`, and `message`. If the table does not exist yet, the user sees a friendly error toast explaining that the table may not exist.
+### 2.7 Notifications
+Notifications are loaded from the `notifications` table, filtered to the current user, sorted newest first, and grouped as a single "Recent" list. New users get sample notifications seeded automatically. Clicking a notification marks it as read; the **Mark all read** button updates all unread rows at once.
+
+### 2.8 AML screenings
+Each screening result is saved to `aml_screenings` with the score, risk level, answers (as JSON), and recommendations. The page loads the last 10 screenings and displays them as a history list below the questionnaire.
+
+### 2.9 Consultations
+Consultation requests are inserted into `consultations` and the page refreshes the user’s consultation history after a successful submission.
+
+
 
 ---
 
@@ -76,10 +81,16 @@ The consultation form inserts a row into a Supabase table called `consultations`
 ### Created
 - `aml/aml.html`
 - `tenders/tenders.html`
+- `docs/supabase-migration-v3.sql`
 - `docs/implementation-summary.md`
 
 ### Updated
 - `dashboard/dashboard.html` — sidebar navigation
+- `notifications/notifications.html` — backend-driven notifications
+- `tenders/tenders.html` — backend-driven tenders, tracking, and alerts
+- `aml/aml.html` — save screenings and show history
+- `consultation/consultation.html` — display consultation history
+- `docs/supabase-schema.sql` — full v3 schema with new tables
 
 ### Already existed from previous work
 - `templates/templates.html`
@@ -115,6 +126,11 @@ Protected pages correctly redirect unauthenticated users to `/login/login.html`.
 - **Git:** The project has a `.git` folder, but the `git` command is not available in the current PowerShell environment, so changes were not pushed from this session.
 - **Vercel:** A previous Vercel CLI login flow was interrupted when the session ran out of context. Deployment can be resumed after re-running the Vercel login and deploy steps.
 
+### Running the backend migration
+1. Open your Supabase project → SQL Editor → New Query.
+2. If you already have `profiles` and `company_profiles` tables with data, run [`docs/supabase-migration-v3.sql`](./supabase-migration-v3.sql) to add the new tables without deleting existing data.
+3. If you want a clean slate, run [`docs/supabase-schema.sql`](./supabase-schema.sql) (this drops all tables and recreates everything).
+
 ### Suggested git commands for the user
 Run these in a terminal where Git is installed (e.g., Git Bash or a system shell with Git on PATH):
 
@@ -131,6 +147,6 @@ git push
 
 1. **Push the changes** using the commands above.
 2. **Resume Vercel deployment** if a live URL is still needed.
-3. **Add Supabase tables** for `consultations`, `tenders`, and `tender_alerts` if you want persistent backend storage instead of `localStorage`.
-4. **Replace sample tenders** with real tender data from the South African eTenderPortal or National Treasury API.
+3. **Replace sample tenders** with real tender data from the South African eTenderPortal or National Treasury API.
+4. **Add admin UI** for managing tenders and notifications without writing SQL.
 5. **Print this summary to PDF** from any browser or Markdown viewer if a PDF copy is required.

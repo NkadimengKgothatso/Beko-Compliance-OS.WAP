@@ -19,6 +19,11 @@ aside nav a.active{background:#EFF8F0;color:var(--navy);font-weight:600;box-shad
 .user-box .email{font-size:.75rem;color:var(--muted);margin-bottom:12px;overflow:hidden;text-overflow:ellipsis}
 .logout{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--text);font:inherit;font-size:.82rem;cursor:pointer;transition:background .2s}
 .logout:hover{background:#FEE2E2;color:var(--danger);border-color:#FECACA}
+.btn{padding:10px 20px;border:none;border-radius:8px;font:inherit;font-weight:600;font-size:.85rem;cursor:pointer;transition:background .2s}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-primary:hover{background:#2E4A8E}
+.btn-secondary{background:#fff;color:var(--navy);border:1.5px solid var(--navy)}
+.btn-secondary:hover{background:#F0F4FF}
 main{padding:40px 48px}
 .header{margin-bottom:28px}
 .header h1{color:var(--navy);font-size:1.6rem;margin-bottom:4px}
@@ -76,38 +81,41 @@ main{padding:40px 48px}
 
     <div class="grid">
         <div class="card">
-            <h2>Today</h2>
-            <div class="notif"><div class="dot red"></div><div class="body"><div class="title">UIF submission overdue — penalty risk</div><div class="time">Today, 08:00</div></div><span class="badge">New</span></div>
-            <div class="notif"><div class="dot warn"></div><div class="body"><div class="title">VAT return due in 5 days — file now</div><div class="time">Today, 09:15</div></div><span class="badge">New</span></div>
-            <div class="notif"><div class="dot green"></div><div class="body"><div class="title">CIPC Annual Return due in 20 days</div><div class="time">Today, 10:00</div></div><span class="badge">New</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                <h2>Recent</h2>
+                <button class="btn btn-secondary" id="markReadBtn" style="padding:6px 14px;font-size:.78rem">Mark all read</button>
+            </div>
+            <div id="notifList"></div>
         </div>
         <div class="card">
-            <h2>Earlier</h2>
-            <div class="notif"><div class="dot green"></div><div class="body"><div class="title">SARS filing reminder: due 15 Jan 2027</div><div class="time">Yesterday, 14:30</div></div></div>
-            <div class="notif"><div class="dot gray"></div><div class="body"><div class="title">New template available: Employment contract</div><div class="time">3 days ago</div></div></div>
-            <div class="notif"><div class="dot green"></div><div class="body"><div class="title">Consultation with TaxHelp SA confirmed</div><div class="time">5 days ago</div></div></div>
-        </div>
-    </div>
-
-    <div class="card" style="max-width:720px">
-        <h2>Notification channels</h2>
-        <div class="toggle-row">
-            <div>WhatsApp reminders <span>Quick deadline nudges via WhatsApp</span></div>
-            <div class="toggle on" data-channel="whatsapp"></div>
-        </div>
-        <div class="toggle-row">
-            <div>Email notifications <span>Weekly compliance summary</span></div>
-            <div class="toggle on" data-channel="email"></div>
-        </div>
-        <div class="toggle-row">
-            <div>SMS alerts <span>Critical alerts only</span></div>
-            <div class="toggle" data-channel="sms"></div>
+            <h2>Notification channels</h2>
+            <div class="toggle-row">
+                <div>WhatsApp reminders <span>Quick deadline nudges via WhatsApp</span></div>
+                <div class="toggle on" data-channel="whatsapp"></div>
+            </div>
+            <div class="toggle-row">
+                <div>Email notifications <span>Weekly compliance summary</span></div>
+                <div class="toggle on" data-channel="email"></div>
+            </div>
+            <div class="toggle-row">
+                <div>SMS alerts <span>Critical alerts only</span></div>
+                <div class="toggle" data-channel="sms"></div>
+            </div>
         </div>
     </div>
 </main>
 
 <script type="module">
 import { supabase } from "/supabase.js";
+
+function toast(message) {
+    const el = document.createElement("div");
+    el.className = "toast toast-success";
+    el.textContent = message;
+    document.body.appendChild(el);
+    requestAnimationFrame(() => el.classList.add("show"));
+    setTimeout(() => { el.classList.remove("show"); setTimeout(() => el.remove(), 300); }, 3000);
+}
 
 const { data: { user } } = await supabase.auth.getUser();
 if (!user) window.location.href = "/login/login.html";
@@ -122,6 +130,107 @@ document.getElementById("logoutBtn").onclick = async () => {
 document.querySelectorAll(".toggle").forEach(t => {
     t.onclick = () => t.classList.toggle("on");
 });
+
+const sampleNotifications = [
+    { title: "UIF submission overdue — penalty risk", body: "Your monthly UIF declaration is overdue. Submit now to avoid penalties.", priority: "high", is_read: false, created_at: new Date().toISOString() },
+    { title: "VAT return due in 5 days — file now", body: "Your VAT return is due soon. Ensure all invoices are captured.", priority: "medium", is_read: false, created_at: new Date(Date.now() - 3600000).toISOString() },
+    { title: "CIPC Annual Return due in 20 days", body: "Remember to file your annual return within the next 20 days.", priority: "normal", is_read: false, created_at: new Date(Date.now() - 7200000).toISOString() },
+    { title: "SARS filing reminder: due 15 Jan 2027", body: "Your provisional tax filing deadline is approaching.", priority: "normal", is_read: true, created_at: new Date(Date.now() - 86400000).toISOString() },
+    { title: "New template available: Employment contract", body: "An updated employment contract template is now in the library.", priority: "low", is_read: true, created_at: new Date(Date.now() - 259200000).toISOString() }
+];
+
+function priorityClass(p) {
+    if (p === "high") return "red";
+    if (p === "medium") return "warn";
+    if (p === "low") return "gray";
+    return "green";
+}
+
+function timeAgo(dateStr) {
+    const seconds = Math.floor((new Date() - new Date(dateStr)) / 1000);
+    if (seconds < 60) return "Just now";
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes} min ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+    const days = Math.floor(hours / 24);
+    return `${days} day${days === 1 ? "" : "s"} ago`;
+}
+
+let notifications = [];
+let backendReady = false;
+
+async function loadNotifications() {
+    const { data, error } = await supabase
+        .from("notifications")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+
+    if (error) {
+        console.warn("Notifications table not ready, using samples:", error);
+        notifications = sampleNotifications;
+        backendReady = false;
+    } else {
+        notifications = data || [];
+        backendReady = true;
+        if (notifications.length === 0) {
+            // Seed sample notifications for new users
+            const { error: seedErr } = await supabase.from("notifications").insert(
+                sampleNotifications.map(n => ({ ...n, user_id: user.id }))
+            );
+            if (!seedErr) {
+                const { data: fresh } = await supabase.from("notifications").select("*").eq("user_id", user.id).order("created_at", { ascending: false });
+                notifications = fresh || [];
+            }
+        }
+    }
+    render();
+}
+
+function render() {
+    const list = document.getElementById("notifList");
+    list.innerHTML = "";
+    if (notifications.length === 0) {
+        list.innerHTML = `<p style="color:var(--muted);font-size:.9rem">No notifications yet.</p>`;
+        return;
+    }
+    notifications.forEach(n => {
+        const el = document.createElement("div");
+        el.className = "notif";
+        el.style.opacity = n.is_read ? "0.7" : "1";
+        el.innerHTML = `
+            <div class="dot ${priorityClass(n.priority)}"></div>
+            <div class="body">
+                <div class="title">${n.title}</div>
+                <div class="time">${n.body ? n.body + " · " : ""}${timeAgo(n.created_at)}</div>
+            </div>
+            ${n.is_read ? "" : '<span class="badge">New</span>'}
+        `;
+        el.onclick = async () => {
+            if (backendReady && !n.is_read) {
+                await supabase.from("notifications").update({ is_read: true }).eq("id", n.id);
+                n.is_read = true;
+                render();
+            }
+        };
+        list.appendChild(el);
+    });
+}
+
+document.getElementById("markReadBtn").onclick = async () => {
+    if (backendReady) {
+        const unreadIds = notifications.filter(n => !n.is_read).map(n => n.id);
+        if (unreadIds.length) {
+            await supabase.from("notifications").update({ is_read: true }).in("id", unreadIds);
+        }
+    }
+    notifications.forEach(n => n.is_read = true);
+    toast("All notifications marked as read");
+    render();
+};
+
+loadNotifications();
 </script>
 </body>
 </html>

@@ -107,12 +107,10 @@ main{padding:40px 48px}
             </form>
         </div>
         <div class="card">
-            <h2>Upcoming consultations</h2>
-            <div class="row">
-                <span>TaxHelp SA <small>SARS compliance review</small></span>
-                <span class="pill">15 Apr</span>
+            <h2>Your consultations</h2>
+            <div id="consultationList">
+                <p style="font-size:.85rem;color:var(--muted)">Loading...</p>
             </div>
-            <p style="margin-top:16px;font-size:.85rem;color:var(--muted)">No other consultations scheduled.</p>
         </div>
     </div>
 
@@ -160,6 +158,37 @@ document.getElementById("logoutBtn").onclick = async () => {
     window.location.href = "/login/login.html";
 };
 
+async function loadConsultations() {
+    const list = document.getElementById("consultationList");
+    const { data, error } = await supabase
+        .from("consultations")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+
+    if (error) {
+        list.innerHTML = `<p style="font-size:.85rem;color:var(--muted)">Could not load consultations. The table may not exist yet.</p>`;
+        return;
+    }
+
+    if (!data || data.length === 0) {
+        list.innerHTML = `<p style="font-size:.85rem;color:var(--muted)">No consultations requested yet.</p>`;
+        return;
+    }
+
+    list.innerHTML = "";
+    data.forEach(c => {
+        const date = c.preferred_date ? new Date(c.preferred_date).toLocaleDateString("en-ZA") : "No date";
+        const el = document.createElement("div");
+        el.className = "row";
+        el.innerHTML = `
+            <span>${c.type} <small>${c.status}</small></span>
+            <span class="pill">${date}</span>
+        `;
+        list.appendChild(el);
+    });
+}
+
 document.getElementById("form").onsubmit = async e => {
     e.preventDefault();
     const btn = e.target.querySelector("button");
@@ -174,6 +203,7 @@ document.getElementById("form").onsubmit = async e => {
         if (error) throw error;
         toast("Consultation request sent!");
         e.target.reset();
+        await loadConsultations();
     } catch (err) {
         console.error(err);
         toast(`Request failed: ${err.message}. The consultations table may not exist yet.`, "error");
@@ -181,6 +211,8 @@ document.getElementById("form").onsubmit = async e => {
         btn.disabled = false; btn.textContent = "Request consultation";
     }
 };
+
+loadConsultations();
 </script>
 </body>
 </html>

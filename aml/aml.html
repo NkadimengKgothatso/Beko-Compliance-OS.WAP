@@ -170,6 +170,11 @@ main{padding:40px 48px}
             <div class="empty">Complete the questionnaire to see your AML risk score and recommended controls.</div>
         </div>
     </div>
+
+    <div class="card" id="historyCard" style="display:none">
+        <h2>Your screening history</h2>
+        <div id="historyList"></div>
+    </div>
 </main>
 
 <script type="module">
@@ -199,7 +204,53 @@ function getRiskLevel(score) {
     return { label: "Low risk", desc: "Your profile shows limited AML exposure, but basic record keeping is still required.", class: "risk-low" };
 }
 
-document.getElementById("screenForm").onsubmit = e => {
+async function saveScreening(score, risk, recommendations) {
+    const answers = {
+        businessType: document.getElementById("businessType").value,
+        cashTurnover: document.getElementById("cashTurnover").value,
+        international: document.getElementById("international").value,
+        pep: document.getElementById("pep").value,
+        customerDueDiligence: document.getElementById("customerDueDiligence").checked,
+        recordKeeping: document.getElementById("recordKeeping").checked,
+        suspiciousReporting: document.getElementById("suspiciousReporting").checked,
+        staffTraining: document.getElementById("staffTraining").checked
+    };
+    const { error } = await supabase.from("aml_screenings").insert({
+        user_id: user.id,
+        score,
+        risk_level: risk.label,
+        answers,
+        recommendations
+    });
+    if (error) console.warn("Could not save AML screening:", error);
+}
+
+async function loadHistory() {
+    const { data, error } = await supabase
+        .from("aml_screenings")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(10);
+    if (error || !data || data.length === 0) return;
+
+    document.getElementById("historyCard").style.display = "block";
+    const list = document.getElementById("historyList");
+    list.innerHTML = "";
+    data.forEach(h => {
+        const date = new Date(h.created_at).toLocaleDateString("en-ZA");
+        const el = document.createElement("div");
+        el.className = "row";
+        el.style = "display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #F3F4F6";
+        el.innerHTML = `
+            <span><strong>${h.risk_level}</strong> · Score ${h.score}%</span>
+            <span style="color:var(--muted);font-size:.85rem">${date}</span>
+        `;
+        list.appendChild(el);
+    });
+}
+
+document.getElementById("screenForm").onsubmit = async e => {
     e.preventDefault();
     let score = 0;
     score += weights[document.getElementById("businessType").value] || 0;
@@ -230,21 +281,29 @@ document.getElementById("screenForm").onsubmit = e => {
 
     const list = document.getElementById("actionList");
     list.innerHTML = "";
+    const recommendations = [];
     Object.keys(controls).forEach(id => {
         if (!document.getElementById(id).checked || score >= 40) {
             const li = document.createElement("li");
             li.textContent = controls[id];
             list.appendChild(li);
+            recommendations.push(controls[id]);
         }
     });
     if (score >= 70) {
         const li = document.createElement("li");
         li.textContent = "Consider an independent AML compliance review or consultation.";
         list.appendChild(li);
+        recommendations.push(li.textContent);
     }
+
+    await saveScreening(score, risk, recommendations);
+    await loadHistory();
 };
 
 document.getElementById("printBtn").onclick = () => window.print();
+
+loadHistory();
 </script>
 </body>
 </html>
