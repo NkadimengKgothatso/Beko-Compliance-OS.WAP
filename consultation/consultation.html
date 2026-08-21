@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consultation — Beko ComplianceOS</title>
+<style>
+:root{--navy:#1B2A5C;--green:#4CAF50;--teal:#2CB5B8;--bg:#F4F6FA;--text:#374151;--muted:#6B7280;--border:#E5E7EB;--danger:#DC2626;--warn:#D97706}
+*{margin:0;padding:0;box-sizing:border-box}
+body{display:grid;grid-template-columns:240px 1fr;min-height:100vh;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg)}
+aside{background:#fff;border-right:1px solid var(--border);padding:32px 24px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+aside img{width:160px;margin-bottom:32px;filter:brightness(1.15);background:rgba(27,42,92,.04);padding:12px 16px;border-radius:12px}
+aside nav{flex:1}
+aside nav a{display:block;padding:10px 14px;border-radius:8px;text-decoration:none;color:var(--text);font-size:.88rem;font-weight:500;margin-bottom:4px;transition:background .2s}
+aside nav a:hover{background:#F3F4F6}
+aside nav a.active{background:#EFF8F0;color:var(--navy);font-weight:600;box-shadow:inset 3px 0 0 var(--green)}
+.user-box{border-top:1px solid var(--border);padding-top:16px}
+.user-box .name{font-weight:600;font-size:.85rem;color:var(--navy)}
+.user-box .email{font-size:.75rem;color:var(--muted);margin-bottom:12px;overflow:hidden;text-overflow:ellipsis}
+.logout{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--text);font:inherit;font-size:.82rem;cursor:pointer;transition:background .2s}
+.logout:hover{background:#FEE2E2;color:var(--danger);border-color:#FECACA}
+main{padding:40px 48px}
+.header{margin-bottom:28px}
+.header h1{color:var(--navy);font-size:1.6rem;margin-bottom:4px}
+.header p{color:var(--muted);font-size:.88rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px}
+.card{background:#fff;border-radius:12px;padding:24px;border:1px solid var(--border)}
+.card h2{font-size:1rem;color:var(--navy);margin-bottom:16px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.82rem;font-weight:600;color:var(--text);margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:8px;font:inherit;font-size:.9rem;background:#FAFBFC}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--teal);background:#fff}
+.field textarea{resize:vertical;min-height:90px}
+.btn{padding:11px 22px;border:none;border-radius:8px;font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;transition:background .2s}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-primary:hover{background:#2E4A8E}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #F3F4F6}
+.row:last-child{border-bottom:none}
+.row span:first-child{font-size:.9rem;color:var(--text)}
+.row span:first-child small{display:block;font-size:.78rem;color:var(--muted);margin-top:2px}
+.pill{font-size:.75rem;font-weight:600;padding:3px 10px;border-radius:20px;background:#E8F5E9;color:var(--navy)}
+.partners{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.partner{border:1px solid var(--border);border-radius:12px;padding:18px}
+.partner h3{font-size:.95rem;color:var(--navy);margin-bottom:4px}
+.partner p{font-size:.8rem;color:var(--muted);margin-bottom:12px}
+.partner button{width:100%;padding:8px;border:1.5px solid var(--navy);border-radius:8px;background:#fff;color:var(--navy);font:inherit;font-size:.8rem;font-weight:600;cursor:pointer;transition:background .2s}
+.partner button:hover{background:#F0F4FF}
+.toast{position:fixed;top:20px;right:20px;padding:14px 20px;border-radius:8px;font-size:.9rem;z-index:9999;transform:translateX(120%);transition:transform .3s}
+.toast.show{transform:translateX(0)}
+.toast-success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0}
+.toast-error{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA}
+@media(max-width:1024px){body{grid-template-columns:1fr}aside{display:none}.grid,.partners{grid-template-columns:1fr}main{padding:24px 16px}}
+</style>
+</head>
+<body>
+
+<aside>
+    <img src="/bg.jpeg" alt="Beko ComplianceOS">
+    <nav>
+        <a href="/dashboard/dashboard.html">Dashboard</a>
+        <a href="/templates/templates.html">Templates</a>
+        <a href="/education/education.html">Education Hub</a>
+        <a href="/tenders/tenders.html">Tenders</a>
+        <a href="/aml/aml.html">AML Screener</a>
+        <a href="/notifications/notifications.html">Notifications</a>
+        <a href="/consultation/consultation.html" class="active">Consultation</a>
+        <a href="/profile/profile.html">Profile</a>
+    </nav>
+    <div class="user-box">
+        <div class="name" id="userName">User</div>
+        <div class="email" id="userEmail">—</div>
+        <button class="logout" id="logoutBtn">Logout</button>
+    </div>
+</aside>
+
+<main>
+    <div class="header">
+        <h1>Consultation</h1>
+        <p>Get legal and compliance help from verified professionals.</p>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h2>Book an appointment</h2>
+            <form id="form">
+                <div class="field">
+                    <label>Consultation type</label>
+                    <select id="type" required>
+                        <option value="">Select type</option>
+                        <option>General compliance review</option>
+                        <option>Tax advisory (SARS)</option>
+                        <option>Company registration (CIPC)</option>
+                        <option>UIF and labour law</option>
+                        <option>Contracts and legal documents</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Preferred date</label>
+                    <input type="date" id="date" required>
+                </div>
+                <div class="field">
+                    <label>Message (optional)</label>
+                    <textarea id="message" placeholder="Describe your situation briefly..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Request consultation</button>
+            </form>
+        </div>
+        <div class="card">
+            <h2>Upcoming consultations</h2>
+            <div class="row">
+                <span>TaxHelp SA <small>SARS compliance review</small></span>
+                <span class="pill">15 Apr</span>
+            </div>
+            <p style="margin-top:16px;font-size:.85rem;color:var(--muted)">No other consultations scheduled.</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Partner law firms</h2>
+        <div class="partners">
+            <div class="partner">
+                <h3>TaxHelp SA</h3>
+                <p>SARS, VAT, Income Tax</p>
+                <button>Refer me</button>
+            </div>
+            <div class="partner">
+                <h3>CompliLegal Inc.</h3>
+                <p>CIPC, Labour, UIF</p>
+                <button>Refer me</button>
+            </div>
+            <div class="partner">
+                <h3>SME Law Partners</h3>
+                <p>Contracts, NDAs, HR</p>
+                <button>Refer me</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script type="module">
+import { supabase } from "/supabase.js";
+
+function toast(message, type = "success") {
+    const el = document.createElement("div");
+    el.className = `toast toast-${type}`;
+    el.textContent = message;
+    document.body.appendChild(el);
+    requestAnimationFrame(() => el.classList.add("show"));
+    setTimeout(() => { el.classList.remove("show"); setTimeout(() => el.remove(), 300); }, type === "error" ? 5000 : 3000);
+}
+
+const { data: { user } } = await supabase.auth.getUser();
+if (!user) window.location.href = "/login/login.html";
+document.getElementById("userEmail").textContent = user?.email || "—";
+document.getElementById("userName").textContent = user?.user_metadata?.full_name || "User";
+
+document.getElementById("logoutBtn").onclick = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/login/login.html";
+};
+
+document.getElementById("form").onsubmit = async e => {
+    e.preventDefault();
+    const btn = e.target.querySelector("button");
+    btn.disabled = true; btn.textContent = "Sending...";
+    try {
+        const { error } = await supabase.from("consultations").insert({
+            user_id: user.id,
+            type: document.getElementById("type").value,
+            preferred_date: document.getElementById("date").value,
+            message: document.getElementById("message").value || null
+        });
+        if (error) throw error;
+        toast("Consultation request sent!");
+        e.target.reset();
+    } catch (err) {
+        console.error(err);
+        toast(`Request failed: ${err.message}. The consultations table may not exist yet.`, "error");
+    } finally {
+        btn.disabled = false; btn.textContent = "Request consultation";
+    }
+};
+</script>
+</body>
+</html>

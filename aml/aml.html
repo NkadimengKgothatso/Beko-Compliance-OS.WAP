@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AML Screener — Beko ComplianceOS</title>
+<style>
+:root{--navy:#1B2A5C;--green:#4CAF50;--teal:#2CB5B8;--bg:#F4F6FA;--text:#374151;--muted:#6B7280;--border:#E5E7EB;--danger:#DC2626;--warn:#D97706}
+*{margin:0;padding:0;box-sizing:border-box}
+body{display:grid;grid-template-columns:240px 1fr;min-height:100vh;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg)}
+aside{background:#fff;border-right:1px solid var(--border);padding:32px 24px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+aside img{width:160px;margin-bottom:32px;filter:brightness(1.15);background:rgba(27,42,92,.04);padding:12px 16px;border-radius:12px}
+aside nav{flex:1}
+aside nav a{display:block;padding:10px 14px;border-radius:8px;text-decoration:none;color:var(--text);font-size:.88rem;font-weight:500;margin-bottom:4px;transition:background .2s}
+aside nav a:hover{background:#F3F4F6}
+aside nav a.active{background:#EFF8F0;color:var(--navy);font-weight:600;box-shadow:inset 3px 0 0 var(--green)}
+.user-box{border-top:1px solid var(--border);padding-top:16px}
+.user-box .name{font-weight:600;font-size:.85rem;color:var(--navy)}
+.user-box .email{font-size:.75rem;color:var(--muted);margin-bottom:12px;overflow:hidden;text-overflow:ellipsis}
+.logout{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--text);font:inherit;font-size:.82rem;cursor:pointer;transition:background .2s}
+.logout:hover{background:#FEE2E2;color:var(--danger);border-color:#FECACA}
+main{padding:40px 48px}
+.header{margin-bottom:28px}
+.header h1{color:var(--navy);font-size:1.6rem;margin-bottom:4px}
+.header p{color:var(--muted);font-size:.88rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.card{background:#fff;border-radius:12px;padding:24px;border:1px solid var(--border);margin-bottom:24px}
+.card h2{font-size:1rem;color:var(--navy);margin-bottom:16px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.82rem;font-weight:600;color:var(--text);margin-bottom:6px}
+.field select,.field input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:8px;font:inherit;font-size:.9rem;background:#FAFBFC}
+.field select:focus,.field input:focus{outline:none;border-color:var(--teal);background:#fff}
+.check{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;cursor:pointer}
+.check input{width:18px;height:18px;accent-color:var(--navy);margin-top:2px;flex-shrink:0}
+.check span{font-size:.88rem;color:var(--text);line-height:1.4}
+.btn{padding:12px 24px;border:none;border-radius:8px;font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;transition:background .2s}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-primary:hover{background:#2E4A8E}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn-secondary{background:#fff;color:var(--navy);border:1.5px solid var(--navy)}
+.btn-secondary:hover{background:#F0F4FF}
+.result{display:none}
+.result.active{display:block}
+.score-ring{width:120px;height:120px;margin:0 auto 20px;position:relative}
+.score-ring svg{transform:rotate(-90deg)}
+.score-ring circle{fill:none;stroke-width:10}
+.score-ring .track{stroke:var(--border)}
+.score-ring .fill{stroke-linecap:round;transition:stroke-dashoffset .6s ease}
+.score-text{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.score-text strong{font-size:1.6rem;color:var(--navy);display:block}
+.score-text span{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.risk-low{stroke:var(--green);color:var(--green)}
+.risk-medium{stroke:var(--warn);color:var(--warn)}
+.risk-high{stroke:var(--danger);color:var(--danger)}
+.risk-label{text-align:center;font-size:1.1rem;font-weight:700;margin-bottom:8px}
+.risk-desc{text-align:center;color:var(--muted);font-size:.9rem;margin-bottom:20px}
+.actions{list-style:none}
+.actions li{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #F3F4F6;font-size:.88rem;color:var(--text)}
+.actions li:last-child{border-bottom:none}
+.actions li::before{content:'\2713';width:20px;height:20px;border-radius:50%;background:#E8F5E9;color:var(--green);display:grid;place-items:center;font-size:.7rem;flex-shrink:0}
+.report-header{display:none}
+.empty{color:var(--muted);font-size:.9rem;text-align:center;padding:40px 20px}
+@media print{
+    aside,.btn,.field,.check,.header p{display:none!important}
+    body{grid-template-columns:1fr}
+    main{padding:0}
+    .report-header{display:block;margin-bottom:20px}
+    .report-header h2{color:var(--navy)}
+    .card{box-shadow:none;border:1px solid #ccc}
+}
+@media(max-width:1024px){body{grid-template-columns:1fr}aside{display:none}.grid{grid-template-columns:1fr}main{padding:24px 16px}}
+</style>
+</head>
+<body>
+
+<aside>
+    <img src="/bg.jpeg" alt="Beko ComplianceOS">
+    <nav>
+        <a href="/dashboard/dashboard.html">Dashboard</a>
+        <a href="/templates/templates.html">Templates</a>
+        <a href="/education/education.html">Education Hub</a>
+        <a href="/tenders/tenders.html">Tenders</a>
+        <a href="/aml/aml.html" class="active">AML Screener</a>
+        <a href="/notifications/notifications.html">Notifications</a>
+        <a href="/consultation/consultation.html">Consultation</a>
+        <a href="/profile/profile.html">Profile</a>
+    </nav>
+    <div class="user-box">
+        <div class="name" id="userName">User</div>
+        <div class="email" id="userEmail">—</div>
+        <button class="logout" id="logoutBtn">Logout</button>
+    </div>
+</aside>
+
+<main>
+    <div class="header">
+        <h1>AML Risk Screener</h1>
+        <p>Assess your business's exposure to money laundering risk under South Africa's FICA requirements.</p>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h2>Risk questionnaire</h2>
+            <form id="screenForm">
+                <div class="field">
+                    <label>Business type</label>
+                    <select id="businessType">
+                        <option value="low">Retail / services (low cash)</option>
+                        <option value="medium">Wholesale / e-commerce</option>
+                        <option value="high">Money services / cryptocurrency / forex</option>
+                        <option value="high">Gambling / high-value goods</option>
+                        <option value="medium">Real estate / vehicle sales</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Typical monthly cash turnover</label>
+                    <select id="cashTurnover">
+                        <option value="low">Under R50 000</option>
+                        <option value="medium">R50 000 – R500 000</option>
+                        <option value="high">Over R500 000</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Do you accept payments from outside South Africa?</label>
+                    <select id="international">
+                        <option value="low">No</option>
+                        <option value="medium">Occasionally</option>
+                        <option value="high">Frequently</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Do you deal with politically exposed persons (PEPs) or state-owned entities?</label>
+                    <select id="pep">
+                        <option value="low">No</option>
+                        <option value="medium">Indirectly / occasionally</option>
+                        <option value="high">Directly / frequently</option>
+                    </select>
+                </div>
+                <label class="check"><input type="checkbox" id="customerDueDiligence"><span>We have a customer due diligence (CDD) process in place</span></label>
+                <label class="check"><input type="checkbox" id="recordKeeping"><span>We keep identity and transaction records for at least 5 years</span></label>
+                <label class="check"><input type="checkbox" id="suspiciousReporting"><span>We know how to report suspicious transactions to the FIC</span></label>
+                <label class="check"><input type="checkbox" id="staffTraining"><span>Staff receive regular AML / FICA training</span></label>
+                <button type="submit" class="btn btn-primary" style="margin-top:8px">Run screening</button>
+            </form>
+        </div>
+
+        <div class="card result" id="resultCard">
+            <div class="report-header">
+                <h2>AML Risk Screening Report</h2>
+                <p>Beko ComplianceOS</p>
+            </div>
+            <h2>Screening result</h2>
+            <div class="score-ring">
+                <svg width="120" height="120" viewBox="0 0 120 120">
+                    <circle class="track" cx="60" cy="60" r="50"></circle>
+                    <circle class="fill" id="scoreFill" cx="60" cy="60" r="50" stroke-dasharray="314" stroke-dashoffset="314"></circle>
+                </svg>
+                <div class="score-text">
+                    <div><strong id="scoreValue">0%</strong><span>Risk score</span></div>
+                </div>
+            </div>
+            <div class="risk-label" id="riskLabel">—</div>
+            <div class="risk-desc" id="riskDesc">—</div>
+            <h2 style="margin-top:24px">Recommended actions</h2>
+            <ul class="actions" id="actionList"></ul>
+            <button class="btn btn-secondary" id="printBtn" style="margin-top:20px;width:100%">Print / save report</button>
+        </div>
+
+        <div class="card" id="placeholderCard">
+            <div class="empty">Complete the questionnaire to see your AML risk score and recommended controls.</div>
+        </div>
+    </div>
+</main>
+
+<script type="module">
+import { supabase } from "/supabase.js";
+
+const { data: { user } } = await supabase.auth.getUser();
+if (!user) window.location.href = "/login/login.html";
+document.getElementById("userEmail").textContent = user?.email || "—";
+document.getElementById("userName").textContent = user?.user_metadata?.full_name || "User";
+
+document.getElementById("logoutBtn").onclick = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/login/login.html";
+};
+
+const weights = { low: 10, medium: 25, high: 40 };
+const controls = {
+    customerDueDiligence: "Implement and document a Customer Due Diligence process.",
+    recordKeeping: "Maintain identity and transaction records for at least 5 years.",
+    suspiciousReporting: "Register with the FIC and report suspicious transactions promptly.",
+    staffTraining: "Train staff on FICA obligations and red-flag indicators."
+};
+
+function getRiskLevel(score) {
+    if (score >= 70) return { label: "High risk", desc: "Your business has significant AML exposure. Strong controls and FIC registration are essential.", class: "risk-high" };
+    if (score >= 40) return { label: "Medium risk", desc: "Some risk factors are present. Improve controls and monitor transactions regularly.", class: "risk-medium" };
+    return { label: "Low risk", desc: "Your profile shows limited AML exposure, but basic record keeping is still required.", class: "risk-low" };
+}
+
+document.getElementById("screenForm").onsubmit = e => {
+    e.preventDefault();
+    let score = 0;
+    score += weights[document.getElementById("businessType").value] || 0;
+    score += weights[document.getElementById("cashTurnover").value] || 0;
+    score += weights[document.getElementById("international").value] || 0;
+    score += weights[document.getElementById("pep").value] || 0;
+
+    Object.keys(controls).forEach(id => {
+        if (document.getElementById(id).checked) score = Math.max(0, score - 8);
+    });
+
+    score = Math.min(100, Math.max(0, score));
+    const risk = getRiskLevel(score);
+
+    document.getElementById("placeholderCard").style.display = "none";
+    document.getElementById("resultCard").classList.add("active");
+
+    const fill = document.getElementById("scoreFill");
+    fill.setAttribute("class", `fill ${risk.class}`);
+    const offset = 314 - (score / 100) * 314;
+    fill.style.strokeDashoffset = offset;
+
+    document.getElementById("scoreValue").textContent = `${score}%`;
+    const labelEl = document.getElementById("riskLabel");
+    labelEl.textContent = risk.label;
+    labelEl.className = `risk-label ${risk.class}`;
+    document.getElementById("riskDesc").textContent = risk.desc;
+
+    const list = document.getElementById("actionList");
+    list.innerHTML = "";
+    Object.keys(controls).forEach(id => {
+        if (!document.getElementById(id).checked || score >= 40) {
+            const li = document.createElement("li");
+            li.textContent = controls[id];
+            list.appendChild(li);
+        }
+    });
+    if (score >= 70) {
+        const li = document.createElement("li");
+        li.textContent = "Consider an independent AML compliance review or consultation.";
+        list.appendChild(li);
+    }
+};
+
+document.getElementById("printBtn").onclick = () => window.print();
+</script>
+</body>
+</html>

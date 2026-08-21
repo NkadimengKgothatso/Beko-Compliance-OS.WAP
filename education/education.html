@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legal Education Hub — Beko ComplianceOS</title>
+<style>
+:root{--navy:#1B2A5C;--green:#4CAF50;--teal:#2CB5B8;--bg:#F4F6FA;--text:#374151;--muted:#6B7280;--border:#E5E7EB;--danger:#DC2626;--warn:#D97706}
+*{margin:0;padding:0;box-sizing:border-box}
+body{display:grid;grid-template-columns:240px 1fr;min-height:100vh;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg)}
+aside{background:#fff;border-right:1px solid var(--border);padding:32px 24px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+aside img{width:160px;margin-bottom:32px;filter:brightness(1.15);background:rgba(27,42,92,.04);padding:12px 16px;border-radius:12px}
+aside nav{flex:1}
+aside nav a{display:block;padding:10px 14px;border-radius:8px;text-decoration:none;color:var(--text);font-size:.88rem;font-weight:500;margin-bottom:4px;transition:background .2s}
+aside nav a:hover{background:#F3F4F6}
+aside nav a.active{background:#EFF8F0;color:var(--navy);font-weight:600;box-shadow:inset 3px 0 0 var(--green)}
+.user-box{border-top:1px solid var(--border);padding-top:16px}
+.user-box .name{font-weight:600;font-size:.85rem;color:var(--navy)}
+.user-box .email{font-size:.75rem;color:var(--muted);margin-bottom:12px;overflow:hidden;text-overflow:ellipsis}
+.logout{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--text);font:inherit;font-size:.82rem;cursor:pointer;transition:background .2s}
+.logout:hover{background:#FEE2E2;color:var(--danger);border-color:#FECACA}
+main{padding:40px 48px}
+.header{margin-bottom:28px}
+.header h1{color:var(--navy);font-size:1.6rem;margin-bottom:4px}
+.header p{color:var(--muted);font-size:.88rem}
+.search{padding:11px 14px;border:1.5px solid var(--border);border-radius:8px;font:inherit;font-size:.9rem;width:100%;max-width:360px;margin-bottom:24px}
+.search:focus{outline:none;border-color:var(--teal)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{background:#fff;border-radius:12px;padding:22px;border:1px solid var(--border);transition:box-shadow .2s,border-color .2s;cursor:pointer}
+.card:hover{border-color:var(--teal);box-shadow:0 4px 20px rgba(27,42,92,.06)}
+.tag{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--teal);background:#E0F2F1;padding:3px 8px;border-radius:6px;display:inline-block;margin-bottom:10px}
+.card h3{font-size:1rem;color:var(--navy);margin-bottom:8px}
+.card p{font-size:.85rem;color:var(--text);line-height:1.5;margin-bottom:12px}
+.card small{font-size:.78rem;color:var(--muted)}
+.modal{display:none;position:fixed;inset:0;background:rgba(27,42,92,.5);z-index:1000;place-items:center;padding:24px}
+.modal.active{display:grid}
+.modal-content{background:#fff;border-radius:16px;max-width:680px;width:100%;max-height:80vh;overflow-y:auto;padding:32px;position:relative}
+.modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;border:none;background:#F3F4F6;color:var(--text);font-size:1.2rem;cursor:pointer}
+.modal-content h2{color:var(--navy);margin-bottom:12px}
+.modal-content p{margin-bottom:14px;line-height:1.6;color:var(--text)}
+.modal-content ul{margin-left:20px;margin-bottom:14px;color:var(--text)}
+.modal-content li{margin-bottom:6px}
+@media(max-width:1024px){body{grid-template-columns:1fr}aside{display:none}main{padding:24px 16px}}
+</style>
+</head>
+<body>
+
+<aside>
+    <img src="/bg.jpeg" alt="Beko ComplianceOS">
+    <nav>
+        <a href="/dashboard/dashboard.html">Dashboard</a>
+        <a href="/templates/templates.html">Templates</a>
+        <a href="/education/education.html" class="active">Education Hub</a>
+        <a href="/tenders/tenders.html">Tenders</a>
+        <a href="/aml/aml.html">AML Screener</a>
+        <a href="/notifications/notifications.html">Notifications</a>
+        <a href="/consultation/consultation.html">Consultation</a>
+        <a href="/profile/profile.html">Profile</a>
+    </nav>
+    <div class="user-box">
+        <div class="name" id="userName">User</div>
+        <div class="email" id="userEmail">—</div>
+        <button class="logout" id="logoutBtn">Logout</button>
+    </div>
+</aside>
+
+<main>
+    <div class="header">
+        <h1>Legal Education Hub</h1>
+        <p>Plain-language guides to South African business compliance.</p>
+    </div>
+    <input type="text" class="search" id="search" placeholder="Search topics...">
+    <div class="grid" id="grid"></div>
+</main>
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <button class="modal-close" id="closeModal">&times;</button>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<script type="module">
+import { supabase } from "/supabase.js";
+
+const articles = [
+    {
+        id: "register-business", tag: "CIPC", title: "How to register a business in South Africa", read: "4 min",
+        summary: "A step-by-step guide to company registration, from name reservation to final CIPC certificate.",
+        body: `
+            <h2>How to register a business in South Africa</h2>
+            <p>Registering a company in South Africa is done through the Companies and Intellectual Property Commission (CIPC).</p>
+            <ul>
+                <li>Reserve a company name or use a registration number directly.</li>
+                <li>Complete the CoR14.1 application with director and shareholder details.</li>
+                <li>Pay the R175 registration fee (as of 2026).</li>
+                <li>Receive your company registration certificate.</li>
+            </ul>
+            <p>After registration, you must file annual returns and maintain accurate company records.</p>
+        `
+    },
+    {
+        id: "tax-basics", tag: "SARS", title: "SARS tax basics for small business", read: "5 min",
+        summary: "Understand income tax, VAT, PAYE, and provisional tax for your business stage.",
+        body: `
+            <h2>SARS tax basics for small business</h2>
+            <p>Most South African businesses need to register for one or more tax types:</p>
+            <ul>
+                <li><strong>Income tax:</strong> All registered companies must submit annual returns.</li>
+                <li><strong>Provisional tax:</strong> Pay tax in advance twice a year if you earn taxable income.</li>
+                <li><strong>VAT:</strong> Compulsory once turnover exceeds R1 million in 12 months (voluntary from R50,000).</li>
+                <li><strong>PAYE/UIF/SDL:</strong> Required if you employ staff.</li>
+            </ul>
+            <p>Keep invoices, bank statements, and expense records for at least five years.</p>
+        `
+    },
+    {
+        id: "uif-guide", tag: "UIF", title: "UIF and labour law for employers", read: "4 min",
+        summary: "What you must know about UIF registration, monthly declarations, and employee rights.",
+        body: `
+            <h2>UIF and labour law for employers</h2>
+            <p>If you employ anyone for more than 24 hours per month, you must register with UIF and deduct 1% from the employee's pay plus contribute 1% as the employer.</p>
+            <ul>
+                <li>Register as an employer on uFiling.</li>
+                <li>Declare and pay contributions monthly.</li>
+                <li>Provide payslips and maintain employment contracts.</li>
+            </ul>
+            <p>Non-compliance can lead to penalties and labour disputes.</p>
+        `
+    },
+    {
+        id: "annual-returns", tag: "CIPC", title: "CIPC annual returns explained", read: "3 min",
+        summary: "Why annual returns matter, how much they cost, and what happens if you miss the deadline.",
+        body: `
+            <h2>CIPC annual returns explained</h2>
+            <p>Every registered company must file an annual return with CIPC within 30 days of its anniversary date.</p>
+            <ul>
+                <li>Fees range from R100 to R450 depending on company turnover.</li>
+                <li>Late filing leads to penalties and eventual deregistration.</li>
+                <li>File online at the CIPC eServices portal.</li>
+            </ul>
+            <p>Deregistration means your company no longer legally exists and cannot enter contracts or open bank accounts.</p>
+        `
+    },
+    {
+        id: "contracts-101", tag: "Legal", title: "Contracts every small business needs", read: "4 min",
+        summary: "Service agreements, NDAs, employment contracts, and terms of service — what they protect.",
+        body: `
+            <h2>Contracts every small business needs</h2>
+            <ul>
+                <li><strong>Service agreement:</strong> Defines scope, payment, and liability with clients.</li>
+                <li><strong>NDA:</strong> Protects confidential information shared with partners or staff.</li>
+                <li><strong>Employment contract:</strong> Sets out duties, salary, leave, and termination rules.</li>
+                <li><strong>Terms of service:</strong> Governs how customers use your product or service.</li>
+            </ul>
+            <p>Use the Template Library to download starter versions of these documents.</p>
+        `
+    },
+    {
+        id: "bbbee", tag: "B-BBEE", title: "B-BBEE for small business", read: "3 min",
+        summary: "Exempted Micro-Enterprises (EMEs) and Qualifying Small Enterprises (QSEs) explained.",
+        body: `
+            <h2>B-BBEE for small business</h2>
+            <p>Broad-Based Black Economic Empowerment (B-BBEE) measures economic participation by black South Africans.</p>
+            <ul>
+                <li>Automatic Level 4 or better for EMEs (turnover under R10 million).</li>
+                <li>Sworn affidavit or B-BBEE certificate may be required for tenders.</li>
+                <li>QSEs (turnover R10m – R50m) use a scorecard with priority elements.</li>
+            </ul>
+            <p>Having a valid B-BBEE affidavit can help you access corporate and government contracts.</p>
+        `
+    },
+    {
+        id: "record-keeping", tag: "SARS", title: "Record keeping for SARS and CIPC", read: "3 min",
+        summary: "What documents to keep, for how long, and how to organise them.",
+        body: `
+            <h2>Record keeping for SARS and CIPC</h2>
+            <p>Good records reduce audit risk and make tax filing easier.</p>
+            <ul>
+                <li>Keep all invoices, receipts, and bank statements for 5 years.</li>
+                <li>Store CIPC certificates, MOI, and shareholder registers safely.</li>
+                <li>Reconcile your books monthly, not only at year-end.</li>
+            </ul>
+            <p>Cloud accounting software like Xero, Sage, or QuickBooks can automate much of this.</p>
+        `
+    },
+    {
+        id: "tendering", tag: "Tenders", title: "How to apply for tenders", read: "5 min",
+        summary: "Where to find tenders, common requirements, and how to avoid disqualification.",
+        body: `
+            <h2>How to apply for tenders</h2>
+            <p>Government and corporate tenders are published on platforms like eTenderPortal, National Treasury, and municipal websites.</p>
+            <ul>
+                <li>Check compliance requirements before bidding.</li>
+                <li>Prepare tax clearance, B-BBEE affidavit, and company registration.</li>
+                <li>Submit before the deadline and keep proof of submission.</li>
+            </ul>
+            <p>Use the Tenders page to see sample opportunities.</p>
+        `
+    }
+];
+
+function render(searchTerm = "") {
+    const grid = document.getElementById("grid");
+    grid.innerHTML = "";
+    const filtered = articles.filter(a => a.title.toLowerCase().includes(searchTerm.toLowerCase()) || a.summary.toLowerCase().includes(searchTerm.toLowerCase()) || a.tag.toLowerCase().includes(searchTerm.toLowerCase()));
+    filtered.forEach(a => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `<span class="tag">${a.tag}</span><h3>${a.title}</h3><p>${a.summary}</p><small>\u23f5 ${a.read} read</small>`;
+        card.onclick = () => openModal(a);
+        grid.appendChild(card);
+    });
+}
+
+function openModal(a) {
+    document.getElementById("modalBody").innerHTML = a.body;
+    document.getElementById("modal").classList.add("active");
+}
+
+document.getElementById("search").oninput = e => render(e.target.value);
+document.getElementById("closeModal").onclick = () => document.getElementById("modal").classList.remove("active");
+document.getElementById("modal").onclick = e => { if (e.target.id === "modal") document.getElementById("modal").classList.remove("active"); };
+
+const { data: { user } } = await supabase.auth.getUser();
+if (!user) window.location.href = "/login/login.html";
+document.getElementById("userEmail").textContent = user?.email || "—";
+document.getElementById("userName").textContent = user?.user_metadata?.full_name || "User";
+
+document.getElementById("logoutBtn").onclick = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/login/login.html";
+};
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notifications — Beko ComplianceOS</title>
+<style>
+:root{--navy:#1B2A5C;--green:#4CAF50;--teal:#2CB5B8;--bg:#F4F6FA;--text:#374151;--muted:#6B7280;--border:#E5E7EB;--danger:#DC2626;--warn:#D97706}
+*{margin:0;padding:0;box-sizing:border-box}
+body{display:grid;grid-template-columns:240px 1fr;min-height:100vh;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg)}
+aside{background:#fff;border-right:1px solid var(--border);padding:32px 24px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+aside img{width:160px;margin-bottom:32px;filter:brightness(1.15);background:rgba(27,42,92,.04);padding:12px 16px;border-radius:12px}
+aside nav{flex:1}
+aside nav a{display:block;padding:10px 14px;border-radius:8px;text-decoration:none;color:var(--text);font-size:.88rem;font-weight:500;margin-bottom:4px;transition:background .2s}
+aside nav a:hover{background:#F3F4F6}
+aside nav a.active{background:#EFF8F0;color:var(--navy);font-weight:600;box-shadow:inset 3px 0 0 var(--green)}
+.user-box{border-top:1px solid var(--border);padding-top:16px}
+.user-box .name{font-weight:600;font-size:.85rem;color:var(--navy)}
+.user-box .email{font-size:.75rem;color:var(--muted);margin-bottom:12px;overflow:hidden;text-overflow:ellipsis}
+.logout{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--text);font:inherit;font-size:.82rem;cursor:pointer;transition:background .2s}
+.logout:hover{background:#FEE2E2;color:var(--danger);border-color:#FECACA}
+main{padding:40px 48px}
+.header{margin-bottom:28px}
+.header h1{color:var(--navy);font-size:1.6rem;margin-bottom:4px}
+.header p{color:var(--muted);font-size:.88rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px}
+.card{background:#fff;border-radius:12px;padding:24px;border:1px solid var(--border)}
+.card h2{font-size:1rem;color:var(--navy);margin-bottom:16px;text-transform:uppercase;letter-spacing:.04em;font-size:.8rem}
+.notif{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid #F3F4F6}
+.notif:last-child{border-bottom:none;padding-bottom:0}
+.notif:first-child{padding-top:0}
+.dot{width:8px;height:8px;border-radius:50%;margin-top:6px;flex-shrink:0}
+.dot.red{background:var(--danger)}.dot.warn{background:var(--warn)}.dot.green{background:var(--green)}.dot.gray{background:var(--muted)}
+.body{flex:1}
+.title{font-size:.9rem;color:var(--text);font-weight:500;margin-bottom:2px}
+.time{font-size:.78rem;color:var(--muted)}
+.badge{font-size:.7rem;font-weight:700;color:var(--green);background:#E8F5E9;padding:2px 8px;border-radius:10px;margin-left:auto;flex-shrink:0}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #F3F4F6}
+.toggle-row:last-child{border-bottom:none;padding-bottom:0}
+.toggle-row:first-child{padding-top:0}
+.toggle-row div:first-child{font-size:.9rem;color:var(--text)}
+.toggle-row div:first-child span{display:block;font-size:.78rem;color:var(--muted);margin-top:2px}
+.toggle{width:44px;height:24px;border-radius:12px;background:var(--border);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle.on{background:var(--green)}
+.toggle::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.toggle.on::after{transform:translateX(20px)}
+@media(max-width:1024px){body{grid-template-columns:1fr}aside{display:none}.grid{grid-template-columns:1fr}main{padding:24px 16px}}
+</style>
+</head>
+<body>
+
+<aside>
+    <img src="/bg.jpeg" alt="Beko ComplianceOS">
+    <nav>
+        <a href="/dashboard/dashboard.html">Dashboard</a>
+        <a href="/templates/templates.html">Templates</a>
+        <a href="/education/education.html">Education Hub</a>
+        <a href="/tenders/tenders.html">Tenders</a>
+        <a href="/aml/aml.html">AML Screener</a>
+        <a href="/notifications/notifications.html" class="active">Notifications</a>
+        <a href="/consultation/consultation.html">Consultation</a>
+        <a href="/profile/profile.html">Profile</a>
+    </nav>
+    <div class="user-box">
+        <div class="name" id="userName">User</div>
+        <div class="email" id="userEmail">—</div>
+        <button class="logout" id="logoutBtn">Logout</button>
+    </div>
+</aside>
+
+<main>
+    <div class="header">
+        <h1>Notifications</h1>
+        <p>Reminders and compliance alerts for your business.</p>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h2>Today</h2>
+            <div class="notif"><div class="dot red"></div><div class="body"><div class="title">UIF submission overdue — penalty risk</div><div class="time">Today, 08:00</div></div><span class="badge">New</span></div>
+            <div class="notif"><div class="dot warn"></div><div class="body"><div class="title">VAT return due in 5 days — file now</div><div class="time">Today, 09:15</div></div><span class="badge">New</span></div>
+            <div class="notif"><div class="dot green"></div><div class="body"><div class="title">CIPC Annual Return due in 20 days</div><div class="time">Today, 10:00</div></div><span class="badge">New</span></div>
+        </div>
+        <div class="card">
+            <h2>Earlier</h2>
+            <div class="notif"><div class="dot green"></div><div class="body"><div class="title">SARS filing reminder: due 15 Jan 2027</div><div class="time">Yesterday, 14:30</div></div></div>
+            <div class="notif"><div class="dot gray"></div><div class="body"><div class="title">New template available: Employment contract</div><div class="time">3 days ago</div></div></div>
+            <div class="notif"><div class="dot green"></div><div class="body"><div class="title">Consultation with TaxHelp SA confirmed</div><div class="time">5 days ago</div></div></div>
+        </div>
+    </div>
+
+    <div class="card" style="max-width:720px">
+        <h2>Notification channels</h2>
+        <div class="toggle-row">
+            <div>WhatsApp reminders <span>Quick deadline nudges via WhatsApp</span></div>
+            <div class="toggle on" data-channel="whatsapp"></div>
+        </div>
+        <div class="toggle-row">
+            <div>Email notifications <span>Weekly compliance summary</span></div>
+            <div class="toggle on" data-channel="email"></div>
+        </div>
+        <div class="toggle-row">
+            <div>SMS alerts <span>Critical alerts only</span></div>
+            <div class="toggle" data-channel="sms"></div>
+        </div>
+    </div>
+</main>
+
+<script type="module">
+import { supabase } from "/supabase.js";
+
+const { data: { user } } = await supabase.auth.getUser();
+if (!user) window.location.href = "/login/login.html";
+document.getElementById("userEmail").textContent = user?.email || "—";
+document.getElementById("userName").textContent = user?.user_metadata?.full_name || "User";
+
+document.getElementById("logoutBtn").onclick = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/login/login.html";
+};
+
+document.querySelectorAll(".toggle").forEach(t => {
+    t.onclick = () => t.classList.toggle("on");
+});
+</script>
+</body>
+</html>

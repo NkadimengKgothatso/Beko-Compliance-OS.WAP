@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tender Notifications — Beko ComplianceOS</title>
+<style>
+:root{--navy:#1B2A5C;--green:#4CAF50;--teal:#2CB5B8;--bg:#F4F6FA;--text:#374151;--muted:#6B7280;--border:#E5E7EB;--danger:#DC2626;--warn:#D97706}
+*{margin:0;padding:0;box-sizing:border-box}
+body{display:grid;grid-template-columns:240px 1fr;min-height:100vh;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg)}
+aside{background:#fff;border-right:1px solid var(--border);padding:32px 24px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+aside img{width:160px;margin-bottom:32px;filter:brightness(1.15);background:rgba(27,42,92,.04);padding:12px 16px;border-radius:12px}
+aside nav{flex:1}
+aside nav a{display:block;padding:10px 14px;border-radius:8px;text-decoration:none;color:var(--text);font-size:.88rem;font-weight:500;margin-bottom:4px;transition:background .2s}
+aside nav a:hover{background:#F3F4F6}
+aside nav a.active{background:#EFF8F0;color:var(--navy);font-weight:600;box-shadow:inset 3px 0 0 var(--green)}
+.user-box{border-top:1px solid var(--border);padding-top:16px}
+.user-box .name{font-weight:600;font-size:.85rem;color:var(--navy)}
+.user-box .email{font-size:.75rem;color:var(--muted);margin-bottom:12px;overflow:hidden;text-overflow:ellipsis}
+.logout{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--text);font:inherit;font-size:.82rem;cursor:pointer;transition:background .2s}
+.logout:hover{background:#FEE2E2;color:var(--danger);border-color:#FECACA}
+main{padding:40px 48px}
+.header{margin-bottom:28px}
+.header h1{color:var(--navy);font-size:1.6rem;margin-bottom:4px}
+.header p{color:var(--muted);font-size:.88rem}
+.toolbar{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;align-items:end}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.field input,.field select{padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font:inherit;font-size:.9rem;background:#FAFBFC;min-width:180px}
+.field input:focus,.field select:focus{outline:none;border-color:var(--teal);background:#fff}
+.btn{padding:10px 20px;border:none;border-radius:8px;font:inherit;font-weight:600;font-size:.85rem;cursor:pointer;transition:background .2s}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-primary:hover{background:#2E4A8E}
+.btn-secondary{background:#fff;color:var(--navy);border:1.5px solid var(--navy)}
+.btn-secondary:hover{background:#F0F4FF}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{background:#fff;border-radius:12px;padding:20px;border:1px solid var(--border);transition:box-shadow .2s,border-color .2s;display:flex;flex-direction:column}
+.card:hover{border-color:var(--teal);box-shadow:0 4px 20px rgba(27,42,92,.06)}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.card h3{font-size:1rem;color:var(--navy);margin-bottom:4px;flex:1}
+.badge{font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.03em}
+.badge-open{background:#E8F5E9;color:#1B5E20}
+.badge-closing{background:#FFF3E0;color:#E65100}
+.badge-closed{background:#F3F4F6;color:var(--muted)}
+.meta{font-size:.82rem;color:var(--muted);margin-bottom:12px}
+.meta span{display:inline-block;margin-right:12px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tag{font-size:.72rem;background:#F3F4F6;color:var(--text);padding:3px 10px;border-radius:6px}
+.desc{font-size:.85rem;color:var(--text);line-height:1.5;margin-bottom:16px;flex:1}
+.card-actions{display:flex;gap:8px}
+.card-actions .btn{flex:1}
+.tracked{border-color:var(--green);background:#FBFDFB}
+.tracked .btn-secondary{border-color:var(--green);color:var(--green)}
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty h3{color:var(--navy);margin-bottom:8px}
+.alert-card{background:linear-gradient(135deg,var(--navy),var(--teal));color:#fff;border-radius:12px;padding:22px;margin-bottom:24px}
+.alert-card h2{font-size:1.1rem;margin-bottom:8px}
+.alert-card p{font-size:.9rem;opacity:.9;margin-bottom:16px}
+.alert-card .btn{background:#fff;color:var(--navy);border:none}
+.modal{display:none;position:fixed;inset:0;background:rgba(27,42,92,.5);z-index:1000;place-items:center;padding:24px}
+.modal.active{display:grid}
+.modal-content{background:#fff;border-radius:16px;max-width:520px;width:100%;padding:28px;position:relative}
+.modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;border:none;background:#F3F4F6;color:var(--text);font-size:1.2rem;cursor:pointer}
+.modal h2{color:var(--navy);margin-bottom:12px}
+.modal p{color:var(--muted);font-size:.9rem;margin-bottom:20px}
+.toast{position:fixed;top:20px;right:20px;padding:14px 20px;border-radius:8px;font-size:.9rem;z-index:9999;transform:translateX(120%);transition:transform .3s}
+.toast.show{transform:translateX(0)}
+.toast-success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0}
+@media(max-width:1024px){body{grid-template-columns:1fr}aside{display:none}.grid{grid-template-columns:1fr}main{padding:24px 16px}.toolbar{flex-direction:column;align-items:stretch}}
+</style>
+</head>
+<body>
+
+<aside>
+    <img src="/bg.jpeg" alt="Beko ComplianceOS">
+    <nav>
+        <a href="/dashboard/dashboard.html">Dashboard</a>
+        <a href="/templates/templates.html">Templates</a>
+        <a href="/education/education.html">Education Hub</a>
+        <a href="/tenders/tenders.html" class="active">Tenders</a>
+        <a href="/aml/aml.html">AML Screener</a>
+        <a href="/notifications/notifications.html">Notifications</a>
+        <a href="/consultation/consultation.html">Consultation</a>
+        <a href="/profile/profile.html">Profile</a>
+    </nav>
+    <div class="user-box">
+        <div class="name" id="userName">User</div>
+        <div class="email" id="userEmail">—</div>
+        <button class="logout" id="logoutBtn">Logout</button>
+    </div>
+</aside>
+
+<main>
+    <div class="header">
+        <h1>Tender notifications</h1>
+        <p>Find and track government and corporate opportunities relevant to your business.</p>
+    </div>
+
+    <div class="alert-card">
+        <h2>Never miss an opportunity</h2>
+        <p>Set up keyword and province alerts. We'll scan new tender listings and notify you when a match is posted.</p>
+        <button class="btn" id="openAlertBtn">Create alert</button>
+    </div>
+
+    <div class="toolbar">
+        <div class="field">
+            <label>Search</label>
+            <input type="text" id="search" placeholder="Keyword, department, or tender number">
+        </div>
+        <div class="field">
+            <label>Province</label>
+            <select id="province">
+                <option value="">All provinces</option>
+                <option>Gauteng</option>
+                <option>Western Cape</option>
+                <option>KwaZulu-Natal</option>
+                <option>Eastern Cape</option>
+                <option>Free State</option>
+                <option>Mpumalanga</option>
+                <option>North West</option>
+                <option>Limpopo</option>
+                <option>Northern Cape</option>
+                <option>National</option>
+            </select>
+        </div>
+        <div class="field">
+            <label>Industry</label>
+            <select id="industry">
+                <option value="">All industries</option>
+                <option>Construction</option>
+                <option>IT / Technology</option>
+                <option>Professional services</option>
+                <option>Cleaning / Facilities</option>
+                <option>Transport</option>
+                <option>Agriculture</option>
+                <option>Healthcare</option>
+                <option>Education / Training</option>
+            </select>
+        </div>
+        <button class="btn btn-primary" id="resetBtn" style="align-self:flex-end">Reset filters</button>
+    </div>
+
+    <div class="grid" id="grid"></div>
+</main>
+
+<div class="modal" id="alertModal">
+    <div class="modal-content">
+        <button class="modal-close" id="closeAlert">&times;</button>
+        <h2>Create tender alert</h2>
+        <p>Get notified when new tenders match your criteria.</p>
+        <form id="alertForm">
+            <div class="field" style="margin-bottom:14px">
+                <label>Keywords (comma separated)</label>
+                <input type="text" id="alertKeywords" placeholder="e.g. cleaning, software, construction" required>
+            </div>
+            <div class="field" style="margin-bottom:14px">
+                <label>Province</label>
+                <select id="alertProvince">
+                    <option value="">All provinces</option>
+                    <option>Gauteng</option>
+                    <option>Western Cape</option>
+                    <option>KwaZulu-Natal</option>
+                    <option>Eastern Cape</option>
+                    <option>Free State</option>
+                    <option>Mpumalanga</option>
+                    <option>North West</option>
+                    <option>Limpopo</option>
+                    <option>Northern Cape</option>
+                    <option>National</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%">Save alert</button>
+        </form>
+    </div>
+</div>
+
+<script type="module">
+import { supabase } from "/supabase.js";
+
+function toast(message) {
+    const el = document.createElement("div");
+    el.className = "toast toast-success";
+    el.textContent = message;
+    document.body.appendChild(el);
+    requestAnimationFrame(() => el.classList.add("show"));
+    setTimeout(() => { el.classList.remove("show"); setTimeout(() => el.remove(), 300); }, 3000);
+}
+
+const { data: { user } } = await supabase.auth.getUser();
+if (!user) window.location.href = "/login/login.html";
+document.getElementById("userEmail").textContent = user?.email || "—";
+document.getElementById("userName").textContent = user?.user_metadata?.full_name || "User";
+
+document.getElementById("logoutBtn").onclick = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/login/login.html";
+};
+
+const tenders = [
+    { id: "TND-2026-0412", title: "Supply of office cleaning services", dept: "Department of Health", province: "Gauteng", industry: "Cleaning / Facilities", closing: "2026-09-15", status: "open", desc: "Annual contract for daily office cleaning and hygiene services at provincial health facilities.", tags: ["B-BBEE Level 1-4", "Tax clearance", "CIPC"] },
+    { id: "TND-2026-0389", title: "ICT support and maintenance", dept: "Municipality IT Division", province: "Western Cape", industry: "IT / Technology", closing: "2026-09-08", status: "closing", desc: "Desktop support, network maintenance, and software licensing for 120 municipal users.", tags: ["B-BBEE", "CIDB", "3 years experience"] },
+    { id: "TND-2026-0401", title: "Construction of rural classrooms", dept: "Department of Education", province: "Eastern Cape", industry: "Construction", closing: "2026-09-22", status: "open", desc: "Design and construction of two classroom blocks at a district primary school.", tags: ["CIDB 5GB", "B-BBEE", "Local content"] },
+    { id: "TND-2026-0395", title: "Legal compliance advisory services", dept: "State-Owned Enterprise", province: "National", industry: "Professional services", closing: "2026-09-05", status: "closing", desc: "Provision of annual legal and compliance advisory services covering CIPC, SARS, and labour law.", tags: ["B-BBEE Level 1-3", "Professional indemnity"] },
+    { id: "TND-2026-0420", title: "Supply and delivery of PPE", dept: "Department of Public Works", province: "KwaZulu-Natal", industry: "Healthcare", closing: "2026-09-18", status: "open", desc: "Bulk supply of personal protective equipment for government buildings.", tags: ["SABS approved", "Tax clearance", "B-BBEE"] },
+    { id: "TND-2026-0377", title: "Scholar transport services", dept: "Department of Transport", province: "Mpumalanga", industry: "Transport", closing: "2026-08-28", status: "closed", desc: "Daily scholar transport for designated routes in the Mbombela district.", tags: ["PSIRA", "Roadworthy certificate", "B-BBEE"] },
+    { id: "TND-2026-0433", title: "Agricultural training programme", dept: "Department of Agriculture", province: "Free State", industry: "Education / Training", closing: "2026-09-30", status: "open", desc: "Facilitation of a 6-month smallholder farmer training programme.", tags: ["Accredited training", "B-BBEE", "CIPC"] },
+    { id: "TND-2026-0418", title: "Cloud software subscription", dept: "Financial Services Firm", province: "Gauteng", industry: "IT / Technology", closing: "2026-09-12", status: "open", desc: "SaaS platform for document management and compliance tracking.", tags: ["ISO 27001", "B-BBEE", "POPIA compliant"] }
+];
+
+let tracked = JSON.parse(localStorage.getItem("beko_tracked_tenders") || "[]");
+
+function daysUntil(dateStr) {
+    const diff = Math.ceil((new Date(dateStr) - new Date()) / (1000 * 60 * 60 * 24));
+    return diff;
+}
+
+function statusBadge(t) {
+    const days = daysUntil(t.closing);
+    if (t.status === "closed" || days < 0) return `<span class="badge badge-closed">Closed</span>`;
+    if (days <= 7) return `<span class="badge badge-closing">Closing in ${days} day${days === 1 ? "" : "s"}</span>`;
+    return `<span class="badge badge-open">Open</span>`;
+}
+
+function render() {
+    const search = document.getElementById("search").value.toLowerCase();
+    const province = document.getElementById("province").value;
+    const industry = document.getElementById("industry").value;
+    const grid = document.getElementById("grid");
+    grid.innerHTML = "";
+
+    const filtered = tenders.filter(t => {
+        const matchesSearch = t.title.toLowerCase().includes(search) || t.dept.toLowerCase().includes(search) || t.id.toLowerCase().includes(search);
+        const matchesProvince = !province || t.province === province;
+        const matchesIndustry = !industry || t.industry === industry;
+        return matchesSearch && matchesProvince && matchesIndustry;
+    });
+
+    if (filtered.length === 0) {
+        grid.innerHTML = `<div class="empty"><h3>No tenders found</h3><p>Try changing your filters or create an alert to be notified of new opportunities.</p></div>`;
+        return;
+    }
+
+    filtered.forEach(t => {
+        const isTracked = tracked.includes(t.id);
+        const card = document.createElement("div");
+        card.className = `card ${isTracked ? "tracked" : ""}`;
+        card.innerHTML = `
+            <div class="card-header">
+                <h3>${t.title}</h3>
+                ${statusBadge(t)}
+            </div>
+            <div class="meta">
+                <span><strong>${t.id}</strong></span>
+                <span>${t.dept}</span>
+                <span>${t.province}</span>
+            </div>
+            <div class="tags">${t.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}</div>
+            <p class="desc">${t.desc}</p>
+            <div class="card-actions">
+                <button class="btn btn-secondary track-btn" data-id="${t.id}">${isTracked ? "Untrack" : "Track tender"}</button>
+                <button class="btn btn-primary" onclick="alert('Apply via the ${t.dept} portal using tender reference ${t.id}.')">Apply</button>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+
+    document.querySelectorAll(".track-btn").forEach(btn => {
+        btn.onclick = () => {
+            const id = btn.dataset.id;
+            if (tracked.includes(id)) {
+                tracked = tracked.filter(x => x !== id);
+                toast("Tender removed from tracked list");
+            } else {
+                tracked.push(id);
+                toast("Tender saved to tracked list");
+            }
+            localStorage.setItem("beko_tracked_tenders", JSON.stringify(tracked));
+            render();
+        };
+    });
+}
+
+document.getElementById("search").oninput = render;
+document.getElementById("province").onchange = render;
+document.getElementById("industry").onchange = render;
+document.getElementById("resetBtn").onclick = () => {
+    document.getElementById("search").value = "";
+    document.getElementById("province").value = "";
+    document.getElementById("industry").value = "";
+    render();
+};
+
+document.getElementById("openAlertBtn").onclick = () => document.getElementById("alertModal").classList.add("active");
+document.getElementById("closeAlert").onclick = () => document.getElementById("alertModal").classList.remove("active");
+document.getElementById("alertModal").onclick = e => { if (e.target.id === "alertModal") document.getElementById("alertModal").classList.remove("active"); };
+
+document.getElementById("alertForm").onsubmit = e => {
+    e.preventDefault();
+    const keywords = document.getElementById("alertKeywords").value.trim();
+    const province = document.getElementById("alertProvince").value;
+    const alerts = JSON.parse(localStorage.getItem("beko_tender_alerts") || "[]");
+    alerts.push({ keywords, province, created: new Date().toISOString() });
+    localStorage.setItem("beko_tender_alerts", JSON.stringify(alerts));
+    toast("Alert saved. You will be notified of matching tenders.");
+    document.getElementById("alertModal").classList.remove("active");
+    e.target.reset();
+};
+
+render();
+</script>
+</body>
+</html>

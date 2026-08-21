@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Template Library — Beko ComplianceOS</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--navy:#1B2A5C;--green:#4CAF50;--teal:#2CB5B8;--bg:#F4F6FA;--text:#374151;--muted:#6B7280;--border:#E5E7EB;--danger:#DC2626;--warn:#D97706}
+*{margin:0;padding:0;box-sizing:border-box}
+body{display:grid;grid-template-columns:240px 1fr;min-height:100vh;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg)}
+aside{background:#fff;border-right:1px solid var(--border);padding:32px 24px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+aside img{width:160px;margin-bottom:32px;filter:brightness(1.15);background:rgba(27,42,92,.04);padding:12px 16px;border-radius:12px}
+aside nav{flex:1}
+aside nav a{display:block;padding:10px 14px;border-radius:8px;text-decoration:none;color:var(--text);font-size:.88rem;font-weight:500;margin-bottom:4px;transition:background .2s}
+aside nav a:hover{background:#F3F4F6}
+aside nav a.active{background:#EFF8F0;color:var(--navy);font-weight:600;box-shadow:inset 3px 0 0 var(--green)}
+.user-box{border-top:1px solid var(--border);padding-top:16px}
+.user-box .name{font-weight:600;font-size:.85rem;color:var(--navy)}
+.user-box .email{font-size:.75rem;color:var(--muted);margin-bottom:12px;overflow:hidden;text-overflow:ellipsis}
+.logout{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--text);font:inherit;font-size:.82rem;cursor:pointer;transition:background .2s}
+.logout:hover{background:#FEE2E2;color:var(--danger);border-color:#FECACA}
+main{padding:40px 48px}
+.header{margin-bottom:28px}
+.header h1{color:var(--navy);font-size:1.6rem;margin-bottom:4px}
+.header p{color:var(--muted);font-size:.88rem}
+.toolbar{display:flex;gap:12px;margin-bottom:24px;align-items:center;flex-wrap:wrap}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tab{padding:8px 16px;border:1.5px solid var(--border);border-radius:20px;background:#fff;color:var(--text);font:inherit;font-size:.85rem;cursor:pointer;transition:all .2s}
+.tab:hover{border-color:var(--teal)}
+.tab.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.search{padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font:inherit;font-size:.9rem;min-width:240px}
+.search:focus{outline:none;border-color:var(--teal)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.card{background:#fff;border-radius:12px;padding:22px;border:1px solid var(--border);transition:box-shadow .2s,border-color .2s}
+.card:hover{border-color:var(--teal);box-shadow:0 4px 20px rgba(27,42,92,.06)}
+.icon{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#E8F5E9,#E0F2F1);display:grid;place-items:center;margin-bottom:14px;color:var(--navy);font-size:1.1rem}
+.card h3{font-size:1rem;color:var(--navy);margin-bottom:4px}
+.card .cat{font-size:.8rem;color:var(--muted);margin-bottom:14px}
+.card p{font-size:.85rem;color:var(--text);line-height:1.5;margin-bottom:16px}
+.btn{width:100%;padding:10px;border:none;border-radius:8px;background:var(--navy);color:#fff;font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;transition:background .2s}
+.btn:hover{background:#2E4A8E}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.hidden{display:none}
+.toast{position:fixed;top:20px;right:20px;padding:14px 20px;border-radius:8px;font-size:.9rem;z-index:9999;transform:translateX(120%);transition:transform .3s}
+.toast.show{transform:translateX(0)}
+.toast-success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0}
+@media(max-width:1024px){body{grid-template-columns:1fr}aside{display:none}main{padding:24px 16px}}
+</style>
+</head>
+<body>
+
+<aside>
+    <img src="/bg.jpeg" alt="Beko ComplianceOS">
+    <nav>
+        <a href="/dashboard/dashboard.html">Dashboard</a>
+        <a href="/templates/templates.html" class="active">Templates</a>
+        <a href="/education/education.html">Education Hub</a>
+        <a href="/tenders/tenders.html">Tenders</a>
+        <a href="/aml/aml.html">AML Screener</a>
+        <a href="/notifications/notifications.html">Notifications</a>
+        <a href="/consultation/consultation.html">Consultation</a>
+        <a href="/profile/profile.html">Profile</a>
+    </nav>
+    <div class="user-box">
+        <div class="name" id="userName">User</div>
+        <div class="email" id="userEmail">—</div>
+        <button class="logout" id="logoutBtn">Logout</button>
+    </div>
+</aside>
+
+<main>
+    <div class="header">
+        <h1>Template library</h1>
+        <p>Download professional legal and compliance documents for your business.</p>
+    </div>
+
+    <div class="toolbar">
+        <div class="tabs" id="tabs">
+            <button class="tab active" data-cat="all">All</button>
+            <button class="tab" data-cat="contracts">Contracts</button>
+            <button class="tab" data-cat="hr">HR</button>
+            <button class="tab" data-cat="legal">Legal</button>
+            <button class="tab" data-cat="tax">Tax</button>
+        </div>
+        <input type="text" class="search" id="search" placeholder="Search templates...">
+    </div>
+
+    <div class="grid" id="grid"></div>
+</main>
+
+<script type="module">
+import { supabase } from "/supabase.js";
+
+const templates = [
+    { id: "service-agreement", name: "Service Agreement", cat: "contracts", icon: "fa-file-signature", desc: "Standard contract for providing services to a client. Includes scope, payment, and termination clauses." },
+    { id: "nda", name: "Non-Disclosure Agreement", cat: "legal", icon: "fa-user-secret", desc: "Protect confidential information shared with employees, partners, or potential investors." },
+    { id: "employment-contract", name: "Employment Contract", cat: "hr", icon: "fa-id-card", desc: "Basic employment terms compliant with South African labour law." },
+    { id: "affidavit", name: "Affidavit Template", cat: "legal", icon: "fa-file-alt", desc: "General affidavit format for sworn statements and declarations." },
+    { id: "tax-invoice", name: "Tax Invoice Template", cat: "tax", icon: "fa-file-invoice-dollar", desc: "SARS-compliant tax invoice with all required fields." },
+    { id: "leave-policy", name: "Leave Policy", cat: "hr", icon: "fa-umbrella-beach", desc: "Annual, sick, and family leave policy for employees." },
+    { id: "contractor-agreement", name: "Independent Contractor Agreement", cat: "contracts", icon: "fa-handshake", desc: "Agreement for freelancers and contractors to clarify deliverables and payment." },
+    { id: "privacy-policy", name: "Privacy Policy", cat: "legal", icon: "fa-shield-alt", desc: "Basic privacy policy covering personal data processing for SMEs." },
+    { id: "terms-of-service", name: "Terms of Service", cat: "legal", icon: "fa-gavel", desc: "Standard terms and conditions for customers using your services." },
+    { id: "expense-claim", name: "Expense Claim Form", cat: "tax", icon: "fa-receipt", desc: "Employee expense claim form with VAT treatment." },
+    { id: "disciplinary", name: "Disciplinary Procedure", cat: "hr", icon: "fa-exclamation-triangle", desc: "Fair disciplinary process aligned with South African labour law." },
+    { id: "shareholders", name: "Shareholders Agreement", cat: "contracts", icon: "fa-users", desc: "Agreement between company shareholders covering roles, dividends, and exit." }
+];
+
+function generateDoc(template) {
+    const date = new Date().toLocaleDateString('en-ZA');
+    const docs = {
+        "service-agreement": `SERVICE AGREEMENT\n\nDate: ${date}\n\nBetween:\n[Service Provider Name]\n[Registration number]\n[Address]\n\nAnd:\n[Client Name]\n[Address]\n\n1. SERVICES\nThe service provider agrees to perform the following services:\n[Describe services in detail]\n\n2. FEES AND PAYMENT\nThe client agrees to pay the service provider the agreed fee within 30 days of invoice.\n\n3. TERM\nThis agreement starts on [start date] and continues until [end date / project completion].\n\n4. TERMINATION\nEither party may terminate this agreement with 14 days written notice.\n\n5. GOVERNING LAW\nThis agreement is governed by the laws of the Republic of South Africa.\n\nSigned: ___________________\nService Provider\n\nSigned: ___________________\nClient`,
+        "nda": `NON-DISCLOSURE AGREEMENT\n\nDate: ${date}\n\nBetween:\n[Disclosing Party]\n\nAnd:\n[Receiving Party]\n\n1. PURPOSE\nThe parties wish to explore a business opportunity and may disclose confidential information.\n\n2. CONFIDENTIAL INFORMATION\nIncludes business plans, financial data, customer lists, technical information, and trade secrets.\n\n3. OBLIGATIONS\nThe receiving party agrees to keep all confidential information secret and not disclose it to third parties.\n\n4. DURATION\nThis agreement remains in effect for 3 years from the date of signing.\n\n5. GOVERNING LAW\nThis agreement is governed by the laws of the Republic of South Africa.\n\nSigned: ___________________\nDisclosing Party\n\nSigned: ___________________\nReceiving Party`,
+        "employment-contract": `EMPLOYMENT CONTRACT\n\nDate: ${date}\n\nEmployer:\n[Company name]\n[Registration number]\n[Address]\n\nEmployee:\n[Full name]\n[ID number]\n[Address]\n\n1. POSITION\nThe employee is employed as: [Job title]\n\n2. START DATE\nEmployment commences on: [Start date]\n\n3. REMUNERATION\nMonthly salary: R[Amount]\nPayment date: [Date]\n\n4. WORKING HOURS\n[Number] hours per week, Monday to Friday.\n\n5. LEAVE\nAnnual leave: 21 days per year. Sick leave in accordance with the Basic Conditions of Employment Act.\n\n6. TERMINATION\nNotice period: [1 calendar month / as per applicable law]\n\nSigned: ___________________\nEmployer\n\nSigned: ___________________\nEmployee`,
+        "affidavit": `AFFIDAVIT\n\nI, the undersigned,\n\n[Full names]\n[ID number]\n[Residential address]\n\ndo hereby make oath and state that:\n\n1. [State fact 1]\n2. [State fact 2]\n3. [State fact 3]\n\nI declare that the above is true and correct to the best of my knowledge.\n\nSigned and sworn to before me at [place] on ${date}.\n\nDeponent: ___________________\n\nCommissioner of Oaths: ___________________`,
+        "tax-invoice": `TAX INVOICE\n\nInvoice number: [INV-001]\nDate: ${date}\n\nSupplier:\n[Company name]\n[VAT registration number (if applicable)]\n[Address]\n\nCustomer:\n[Customer name]\n[Address]\n\nDescription | Quantity | Unit price | Amount\n[Item 1] | 1 | R0.00 | R0.00\n[Item 2] | 1 | R0.00 | R0.00\n\nSubtotal: R0.00\nVAT (15%): R0.00\nTotal: R0.00\n\nPayment terms: 30 days`,
+        "leave-policy": `LEAVE POLICY\n\nEffective date: ${date}\n\n1. ANNUAL LEAVE\nAll permanent employees are entitled to 21 consecutive days of annual leave per leave cycle.\n\n2. SICK LEAVE\nEmployees are entitled to sick leave as per the Basic Conditions of Employment Act.\n\n3. FAMILY RESPONSIBILITY LEAVE\nEmployees may take up to 3 days paid family responsibility leave per year.\n\n4. MATERNITY LEAVE\nFemale employees are entitled to 4 consecutive months of maternity leave.\n\n5. LEAVE APPLICATION\nAll leave must be requested in writing and approved by a manager.`,
+        "contractor-agreement": `INDEPENDENT CONTRACTOR AGREEMENT\n\nDate: ${date}\n\nBetween:\n[Company name]\n\nAnd:\n[Contractor name]\n\n1. SERVICES\nThe contractor agrees to provide the following services:\n[Describe services]\n\n2. PAYMENT\nThe company will pay the contractor R[amount] upon completion of the services.\n\n3. TAX STATUS\nThe contractor is an independent contractor and is responsible for their own tax obligations.\n\n4. TERMINATION\nEither party may terminate this agreement with 7 days written notice.\n\n5. GOVERNING LAW\nThis agreement is governed by the laws of the Republic of South Africa.\n\nSigned: ___________________\nCompany\n\nSigned: ___________________\nContractor`,
+        "privacy-policy": `PRIVACY POLICY\n\nLast updated: ${date}\n\n1. INTRODUCTION\n[Company name] respects your privacy and is committed to protecting your personal information.\n\n2. INFORMATION WE COLLECT\nWe collect names, contact details, business information, and usage data.\n\n3. HOW WE USE INFORMATION\nWe use your information to provide services, communicate with you, and comply with legal obligations.\n\n4. SHARING INFORMATION\nWe do not sell your personal information. We may share it with service providers or when required by law.\n\n5. YOUR RIGHTS\nYou have the right to access, correct, or delete your personal information.\n\n6. CONTACT US\n[Email]`,
+        "terms-of-service": `TERMS OF SERVICE\n\nLast updated: ${date}\n\n1. ACCEPTANCE\nBy using our services, you agree to these terms.\n\n2. SERVICES\nWe provide compliance guidance, templates, and related tools.\n\n3. USER RESPONSIBILITIES\nYou agree to provide accurate information and use the services lawfully.\n\n4. LIMITATION OF LIABILITY\nOur services are provided for guidance only and do not constitute legal advice.\n\n5. CHANGES\nWe may update these terms from time to time.\n\n6. GOVERNING LAW\nThese terms are governed by the laws of the Republic of South Africa.`,
+        "expense-claim": `EXPENSE CLAIM FORM\n\nEmployee name: [Name]\nDepartment: [Department]\nDate submitted: ${date}\n\nDate | Description | Amount | VAT incl.\n[Date] | [Description] | R0.00 | Yes/No\n\nTotal claimed: R0.00\n\nApproved by: ___________________\nDate: ___________________`,
+        "disciplinary": `DISCIPLINARY PROCEDURE\n\nEffective date: ${date}\n\n1. PURPOSE\nTo ensure fair and consistent handling of misconduct in the workplace.\n\n2. INFORMAL WARNING\nMinor issues may be addressed through verbal counselling.\n\n3. FORMAL WARNING\nRepeated or serious misconduct will result in a written warning.\n\n4. DISCIPLINARY HEARING\nFor gross misconduct, the employee is entitled to a disciplinary hearing.\n\n5. SANCTIONS\nSanctions may include final written warning, suspension, or dismissal.\n\n6. APPEAL\nEmployees may appeal disciplinary decisions within 5 working days.`,
+        "shareholders": `SHAREHOLDERS AGREEMENT\n\nDate: ${date}\n\nBetween:\n[Shareholder 1]\n[Shareholder 2]\n\n1. COMPANY\nThe parties are shareholders of [Company name] (registration number [reg number]).\n\n2. SHAREHOLDING\nShareholder 1: [Number] shares\nShareholder 2: [Number] shares\n\n3. DIRECTORS\nThe board shall consist of [number] directors.\n\n4. DIVIDENDS\nDividends will be declared in proportion to shareholding.\n\n5. TRANSFER OF SHARES\nNo shareholder may transfer shares without first offering them to existing shareholders.\n\n6. DISPUTE RESOLUTION\nDisputes shall first be referred to mediation.\n\n7. GOVERNING LAW\nThis agreement is governed by the laws of the Republic of South Africa.\n\nSigned: ___________________\nShareholder 1\n\nSigned: ___________________\nShareholder 2`
+    };
+    return docs[template.id] || `${template.name.toUpperCase()}\n\nDate: ${date}\n\n[This is a template placeholder. Replace with your business details.]\n\n[Company name]\n[Registration number]\n[Address]`;
+}
+
+function download(template) {
+    const content = generateDoc(template);
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${template.id}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast(`Downloaded ${template.name}`);
+}
+
+function toast(message) {
+    const el = document.createElement("div");
+    el.className = "toast toast-success";
+    el.textContent = message;
+    document.body.appendChild(el);
+    requestAnimationFrame(() => el.classList.add("show"));
+    setTimeout(() => { el.classList.remove("show"); setTimeout(() => el.remove(), 300); }, 3000);
+}
+
+function render(filterCat = "all", searchTerm = "") {
+    const grid = document.getElementById("grid");
+    grid.innerHTML = "";
+    const filtered = templates.filter(t => {
+        const matchCat = filterCat === "all" || t.cat === filterCat;
+        const matchSearch = t.name.toLowerCase().includes(searchTerm.toLowerCase()) || t.desc.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchCat && matchSearch;
+    });
+    filtered.forEach(t => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+            <div class="icon"><i class="fas ${t.icon}"></i></div>
+            <h3>${t.name}</h3>
+            <div class="cat">${t.cat.charAt(0).toUpperCase() + t.cat.slice(1)}</div>
+            <p>${t.desc}</p>
+            <button class="btn">Download</button>
+        `;
+        card.querySelector("button").onclick = () => download(t);
+        grid.appendChild(card);
+    });
+    if (filtered.length === 0) {
+        grid.innerHTML = `<p style="color:var(--muted)">No templates match your search.</p>`;
+    }
+}
+
+let currentCat = "all";
+document.getElementById("tabs").onclick = e => {
+    if (e.target.classList.contains("tab")) {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+        e.target.classList.add("active");
+        currentCat = e.target.dataset.cat;
+        render(currentCat, document.getElementById("search").value);
+    }
+};
+document.getElementById("search").oninput = e => render(currentCat, e.target.value);
+
+const { data: { user } } = await supabase.auth.getUser();
+if (!user) window.location.href = "/login/login.html";
+document.getElementById("userEmail").textContent = user?.email || "—";
+document.getElementById("userName").textContent = user?.user_metadata?.full_name || "User";
+
+document.getElementById("logoutBtn").onclick = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/login/login.html";
+};
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile — Beko ComplianceOS</title>
+<style>
+:root{--navy:#1B2A5C;--green:#4CAF50;--teal:#2CB5B8;--bg:#F4F6FA;--text:#374151;--muted:#6B7280;--border:#E5E7EB;--danger:#DC2626;--warn:#D97706}
+*{margin:0;padding:0;box-sizing:border-box}
+body{display:grid;grid-template-columns:240px 1fr;min-height:100vh;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg)}
+aside{background:#fff;border-right:1px solid var(--border);padding:32px 24px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+aside img{width:160px;margin-bottom:32px;filter:brightness(1.15);background:rgba(27,42,92,.04);padding:12px 16px;border-radius:12px}
+aside nav{flex:1}
+aside nav a{display:block;padding:10px 14px;border-radius:8px;text-decoration:none;color:var(--text);font-size:.88rem;font-weight:500;margin-bottom:4px;transition:background .2s}
+aside nav a:hover{background:#F3F4F6}
+aside nav a.active{background:#EFF8F0;color:var(--navy);font-weight:600;box-shadow:inset 3px 0 0 var(--green)}
+.user-box{border-top:1px solid var(--border);padding-top:16px}
+.user-box .name{font-weight:600;font-size:.85rem;color:var(--navy)}
+.user-box .email{font-size:.75rem;color:var(--muted);margin-bottom:12px;overflow:hidden;text-overflow:ellipsis}
+.logout{width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--text);font:inherit;font-size:.82rem;cursor:pointer;transition:background .2s}
+.logout:hover{background:#FEE2E2;color:var(--danger);border-color:#FECACA}
+main{padding:40px 48px}
+.header{margin-bottom:28px}
+.header h1{color:var(--navy);font-size:1.6rem;margin-bottom:4px}
+.header p{color:var(--muted);font-size:.88rem}
+.hero{background:linear-gradient(135deg,var(--navy),var(--teal));border-radius:16px;padding:28px 32px;display:flex;align-items:center;gap:20px;margin-bottom:24px;color:#fff}
+.avatar{width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:1.5rem;font-weight:700}
+.hero h2{font-size:1.4rem;margin-bottom:4px}
+.hero p{opacity:.85;font-size:.9rem}
+.tag{display:inline-block;background:rgba(255,255,255,.18);font-size:.75rem;font-weight:600;padding:4px 12px;border-radius:8px;margin-top:8px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.card{background:#fff;border-radius:12px;padding:24px;border:1px solid var(--border);margin-bottom:24px}
+.card h2{font-size:1rem;color:var(--navy);margin-bottom:16px}
+.row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #F3F4F6}
+.row:last-child{border-bottom:none}
+.row span:first-child{font-size:.85rem;color:var(--muted)}
+.row span:last-child{font-size:.85rem;font-weight:600;color:var(--text)}
+.row span.green{color:var(--green)}.row span.red{color:var(--danger)}.row span.amber{color:var(--warn)}
+.toggle-row{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid #F3F4F6;gap:12px}
+.toggle-row:last-child{border-bottom:none}
+.toggle-row div:first-child{flex:1}
+.toggle-row div:first-child strong{display:block;font-size:.9rem;color:var(--text);font-weight:500}
+.toggle-row div:first-child span{display:block;font-size:.78rem;color:var(--muted);margin-top:2px}
+.toggle{width:44px;height:24px;border-radius:12px;background:var(--border);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle.on{background:var(--green)}
+.toggle::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.toggle.on::after{transform:translateX(20px)}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:.82rem;font-weight:600;color:var(--text);margin-bottom:6px}
+.field input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font:inherit;font-size:.9rem;background:#FAFBFC}
+.field input:focus{outline:none;border-color:var(--teal);background:#fff}
+.btn{padding:10px 20px;border:none;border-radius:8px;font:inherit;font-weight:600;font-size:.85rem;cursor:pointer;transition:background .2s}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-primary:hover{background:#2E4A8E}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.toast{position:fixed;top:20px;right:20px;padding:14px 20px;border-radius:8px;font-size:.9rem;z-index:9999;transform:translateX(120%);transition:transform .3s}
+.toast.show{transform:translateX(0)}
+.toast-success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0}
+.toast-error{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA}
+@media(max-width:1024px){body{grid-template-columns:1fr}aside{display:none}.grid{grid-template-columns:1fr}main{padding:24px 16px}}
+</style>
+</head>
+<body>
+
+<aside>
+    <img src="/bg.jpeg" alt="Beko ComplianceOS">
+    <nav>
+        <a href="/dashboard/dashboard.html">Dashboard</a>
+        <a href="/templates/templates.html">Templates</a>
+        <a href="/education/education.html">Education Hub</a>
+        <a href="/tenders/tenders.html">Tenders</a>
+        <a href="/aml/aml.html">AML Screener</a>
+        <a href="/notifications/notifications.html">Notifications</a>
+        <a href="/consultation/consultation.html">Consultation</a>
+        <a href="/profile/profile.html" class="active">Profile</a>
+    </nav>
+    <div class="user-box">
+        <div class="name" id="sbName">User</div>
+        <div class="email" id="sbEmail">—</div>
+        <button class="logout" id="logoutBtn">Logout</button>
+    </div>
+</aside>
+
+<main>
+    <div class="header">
+        <h1>Profile & settings</h1>
+        <p>Your business details and preferences.</p>
+    </div>
+
+    <div class="hero">
+        <div class="avatar" id="avatar">U</div>
+        <div>
+            <h2 id="heroName">User</h2>
+            <p id="heroBiz">Company &middot; Province</p>
+            <span class="tag" id="heroIndustry">Industry</span>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h2>Business details</h2>
+            <div class="row"><span>Company type</span><span id="bizType">—</span></div>
+            <div class="row"><span>Registration status</span><span class="green" id="regStatus">—</span></div>
+            <div class="row"><span>Tax status</span><span class="green" id="taxStatus">—</span></div>
+            <div class="row"><span>VAT registered</span><span id="vatStatus">—</span></div>
+            <div class="row"><span>Employees</span><span id="empCount">—</span></div>
+            <div class="row"><span>Monthly revenue</span><span id="revenue">—</span></div>
+            <div class="row"><span>Province</span><span id="province">—</span></div>
+        </div>
+
+        <div>
+            <div class="card">
+                <h2>Edit profile</h2>
+                <form id="form">
+                    <div class="field"><label>Full name</label><input id="fullName" required></div>
+                    <div class="field"><label>Phone</label><input id="phone"></div>
+                    <div class="field"><label>Company website</label><input id="website"></div>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </form>
+            </div>
+            <div class="card">
+                <h2>Notification preferences</h2>
+                <div class="toggle-row"><div><strong>WhatsApp</strong><span>Deadline reminders</span></div><div class="toggle on" data-channel="whatsapp"></div></div>
+                <div class="toggle-row"><div><strong>Email</strong><span>Weekly summary</span></div><div class="toggle on" data-channel="email"></div></div>
+                <div class="toggle-row"><div><strong>SMS</strong><span>Critical alerts only</span></div><div class="toggle" data-channel="sms"></div></div>
+            </div>
+            <div class="card">
+                <h2>Documents</h2>
+                <div class="row"><span>CIPC Certificate</span><span class="green">Uploaded</span></div>
+                <div class="row"><span>Tax clearance</span><span class="amber">Expiring soon</span></div>
+                <div class="row"><span>UIF letter</span><span class="red">Not uploaded</span></div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script type="module">
+import { supabase } from "/supabase.js";
+
+function toast(message, type = "success") {
+    const el = document.createElement("div");
+    el.className = `toast toast-${type}`;
+    el.textContent = message;
+    document.body.appendChild(el);
+    requestAnimationFrame(() => el.classList.add("show"));
+    setTimeout(() => { el.classList.remove("show"); setTimeout(() => el.remove(), 300); }, type === "error" ? 5000 : 3000);
+}
+
+const { data: { user } } = await supabase.auth.getUser();
+if (!user) window.location.href = "/login/login.html";
+
+const name = user?.user_metadata?.full_name || "User";
+document.getElementById("sbName").textContent = name;
+document.getElementById("sbEmail").textContent = user?.email || "—";
+document.getElementById("avatar").textContent = name.split(" ").map(n => n[0]).join("").slice(0,2).toUpperCase();
+document.getElementById("heroName").textContent = name;
+document.getElementById("fullName").value = name;
+
+document.getElementById("logoutBtn").onclick = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/login/login.html";
+};
+
+const { data: profile } = await supabase.from("company_profiles").select("*").eq("id", user.id).maybeSingle();
+const { data: userData } = await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle();
+
+if (profile) {
+    document.getElementById("heroBiz").textContent = `${profile.business_name || "Company"} \u00b7 ${profile.province || "Province"}`;
+    document.getElementById("heroIndustry").textContent = profile.industry || "Industry";
+    document.getElementById("bizType").textContent = String(profile.business_type || "—").replace(/-/g, " ");
+    document.getElementById("regStatus").textContent = profile.registration_number ? "Registered" : "Not registered";
+    document.getElementById("taxStatus").textContent = profile.last_tax_filing === "current" ? "Compliant" : "Attention needed";
+    document.getElementById("taxStatus").className = profile.last_tax_filing === "current" ? "green" : "amber";
+    document.getElementById("vatStatus").textContent = profile.vat_registered === "yes" ? "Yes" : "No";
+    document.getElementById("vatStatus").className = profile.vat_registered === "yes" ? "green" : "red";
+    document.getElementById("empCount").textContent = profile.employees || 0;
+    document.getElementById("revenue").textContent = String(profile.monthly_revenue || "—").replace(/-/g, " ").replace(/k/g, "K");
+    document.getElementById("province").textContent = profile.province || "—";
+    document.getElementById("website").value = profile.website || "";
+}
+if (userData) {
+    document.getElementById("phone").value = userData.phone || "";
+}
+
+document.getElementById("form").onsubmit = async e => {
+    e.preventDefault();
+    const btn = e.target.querySelector("button");
+    btn.disabled = true; btn.textContent = "Saving...";
+    try {
+        const updates = {
+            full_name: document.getElementById("fullName").value.trim(),
+            phone: document.getElementById("phone").value.trim() || null
+        };
+        const { error: p1 } = await supabase.auth.updateUser({ data: updates });
+        if (p1) throw p1;
+        const { error: p2 } = await supabase.from("profiles").update(updates).eq("id", user.id);
+        if (p2) throw p2;
+        if (profile) {
+            const { error: p3 } = await supabase.from("company_profiles").update({ website: document.getElementById("website").value.trim() || null }).eq("id", user.id);
+            if (p3) throw p3;
+        }
+        toast("Profile saved!");
+    } catch (err) {
+        console.error(err);
+        toast(`Save failed: ${err.message}`, "error");
+    } finally {
+        btn.disabled = false; btn.textContent = "Save changes";
+    }
+};
+
+document.querySelectorAll(".toggle").forEach(t => {
+    t.onclick = () => t.classList.toggle("on");
+});
+</script>
+</body>
+</html>
