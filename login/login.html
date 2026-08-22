@@ -113,9 +113,6 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
             <p class="forgot"><a href="#" class="link" id="showReset">Forgot password?</a></p>
             <button type="submit" class="btn btn-primary">Sign In</button>
         </form>
-
-        <div class="divider">or</div>
-        <button type="button" class="btn btn-google" id="googleLogin"><i class="fab fa-google"></i> Continue with Google</button>
     </div>
 
     <!-- ═══════════ SIGNUP VIEW ═══════════ -->
@@ -144,9 +141,6 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
             <p style="font-size:.8rem;color:var(--muted);margin-bottom:14px">We'll email you an 8-digit verification code to confirm your account.</p>
             <button type="submit" class="btn btn-green">Create Account &amp; Send Code</button>
         </form>
-
-        <div class="divider">or</div>
-        <button type="button" class="btn btn-google" id="googleSignup"><i class="fab fa-google"></i> Sign Up with Google</button>
     </div>
 
     <!-- ═══════════ RESET VIEW ═══════════ -->
@@ -284,16 +278,6 @@ function updateMatchMsg() {
 $("signupPass").oninput = updateMatchMsg;
 $("signupConfirmPass").oninput = updateMatchMsg;
 
-// ─── GOOGLE AUTH ──────────────────────────────────────────────────
-async function googleAuth() {
-    const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: window.location.origin + "/login/login.html" }
-    });
-    if (error) toast("Google sign-in failed.");
-}
-$("googleLogin").onclick = googleAuth;
-$("googleSignup").onclick = googleAuth;
 
 // ─── PASSWORD RESET ───────────────────────────────────────────────
 $("resetForm").onsubmit = async e => {
