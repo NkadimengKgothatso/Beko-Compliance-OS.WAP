@@ -119,6 +119,11 @@ Consultation requests are inserted into `consultations` and the page refreshes t
 - `dashboard/dashboard.html` — added install banner with `beforeinstallprompt` handling
 - `index.html`, `login/login.html`, `verify/verify-email.html`, `onboarding/onboarding.html` — register service worker and link manifest
 - All app pages — added PWA manifest, theme-color, and Apple mobile web app meta tags
+- `login/login.html` — redesigned with tab-based UI (Sign In / Create Account), confirm password with live match feedback, auto-redirect to verify page if unverified user attempts login
+- `verify/verify-email.html` — replaced link-waiting flow with 8-digit code input (auto-advance, paste support, auto-submit), resend code functionality, fallback link verification
+- `README.md` — updated auth flow diagram, added SMTP configuration instructions for `bekocompliance9@gmail.com`
+- `docs/test-checklist.md` — new manual test checklist covering all 15 feature areas with 70+ test cases
+- Supabase dashboard — configured custom SMTP (Gmail), disabled secure email change, confirmed email provider enabled with 8-digit OTP
 
 ### Already existed from previous work
 - `templates/templates.html`

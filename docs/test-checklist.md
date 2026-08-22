@@ -14,20 +14,21 @@
 | # | Action | Expected Result | Pass |
 |---|--------|-----------------|------|
 | 1.1 | Open the site URL | Splash screen appears for ~2.5 seconds, then redirects to login | [ ] |
-| 1.2 | On the login page, enter an email and click **Send verification code** | An 8-digit code is sent to that email | [ ] |
-| 1.3 | Click the verify link in the code email or wait for redirect to verify page | Verify page shows 8-digit code input boxes | [ ] |
-| 1.4 | Enter the 8-digit code from the email | Code is accepted, "Verified successfully" appears, redirects to app | [ ] |
-| 1.5 | Paste an 8-digit code (Ctrl+V) into the first box | All 8 boxes auto-fill and verification starts automatically | [ ] |
-| 1.6 | Enter a wrong code | Shows "Invalid code" error, input clears for retry | [ ] |
-| 1.7 | Click **Resend code** | A new code is sent to your email | [ ] |
-| 1.8 | Click **sign in with password** on the login page | Password login form appears | [ ] |
-| 1.9 | Sign in with email and password | Redirects to dashboard (or onboarding) | [ ] |
-| 1.10 | Click **Create one** to go to signup | Signup form appears with Full Name, Email, Password fields | [ ] |
-| 1.11 | Fill in signup form and click **Create Account & Send Code** | Account is created, redirects to verify page, code is auto-sent | [ ] |
-| 1.12 | Enter the verification code on the verify page | Email confirmed, redirected to onboarding | [ ] |
-| 1.13 | Click **Continue with Google** button | Google OAuth flow starts, after approval you land on dashboard or onboarding | [ ] |
-| 1.14 | Click **Forgot password?** (in password login) and enter email | Password reset email is sent | [ ] |
-| 1.15 | Try to send a code with an email that has no account | Shows "No account found. Please sign up first." | [ ] |
+| 1.2 | Login page shows two tabs: **Sign In** and **Create Account** | Tabs are visible, Sign In is active by default | [ ] |
+| 1.3 | Click the **Create Account** tab | Signup form appears with Full Name, Email, Password, Confirm Password fields | [ ] |
+| 1.4 | Type different passwords in Password and Confirm Password | Red message says "Passwords do not match" | [ ] |
+| 1.5 | Type matching passwords | Green message says "Passwords match" | [ ] |
+| 1.6 | Fill in all signup fields with valid data and click **Create Account & Send Code** | Account created, redirects to verify page, 8-digit code auto-sent | [ ] |
+| 1.7 | On verify page, enter the 8-digit code from email | "Verified successfully" appears, redirects to onboarding | [ ] |
+| 1.8 | Paste an 8-digit code (Ctrl+V) into the first box | All 8 boxes auto-fill and verification starts automatically | [ ] |
+| 1.9 | Enter a wrong code | Shows "Invalid code" error, input clears for retry | [ ] |
+| 1.10 | Click **Resend code** | A new code is sent to your email | [ ] |
+| 1.11 | Click **Sign In** tab on login page | Sign in form shows with Email and Password fields | [ ] |
+| 1.12 | Sign in with email and password | Redirects to dashboard (or onboarding) | [ ] |
+| 1.13 | Try signing in with an unverified email/password | Shows "Email not verified. Sending code..." and redirects to verify page | [ ] |
+| 1.14 | Click **Continue with Google** button | Google OAuth flow starts, after approval you land on dashboard or onboarding | [ ] |
+| 1.15 | Click **Forgot password?** and enter email | Password reset email is sent | [ ] |
+| 1.16 | Try signing up with an email that already has an account | Supabase shows an error that user already exists | [ ] |
 
 ---
 

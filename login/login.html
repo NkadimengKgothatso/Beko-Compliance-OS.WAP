@@ -11,9 +11,11 @@
 <title>Login — Beko ComplianceOS</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-:root{--navy:#1B2A5C;--green:#4CAF50;--teal:#2CB5B8;--bg:#F4F6FA;--text:#374151;--muted:#6B7280;--border:#E5E7EB}
+:root{--navy:#1B2A5C;--green:#4CAF50;--teal:#2CB5B8;--bg:#F4F6FA;--text:#374151;--muted:#6B7280;--border:#E5E7EB;--danger:#DC2626}
 *{margin:0;padding:0;box-sizing:border-box}
 body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg)}
+
+/* ── Brand Panel (left) ── */
 .brand-panel{background:linear-gradient(160deg,#1B2A5C 0%,#1E3A6E 50%,#1B5A5C 100%);padding:60px 48px;display:flex;flex-direction:column;justify-content:center;color:#fff;position:relative;overflow:hidden}
 .brand-panel::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(44,181,184,.12) 0%,transparent 50%)}
 .brand-panel img{width:240px;margin-bottom:32px;filter:brightness(1.15);position:relative;background:rgba(255,255,255,.12);padding:18px 24px;border-radius:18px;backdrop-filter:blur(4px)}
@@ -22,37 +24,53 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
 .brand-panel ul{list-style:none;margin-top:24px;position:relative}
 .brand-panel li{padding:6px 0;font-size:.9rem;opacity:.85}
 .brand-panel li::before{content:'✓';color:var(--green);margin-right:10px;font-weight:700}
+
+/* ── Form Panel (right) ── */
 .form-panel{padding:60px 48px;display:flex;flex-direction:column;justify-content:center;max-width:520px;margin:0 auto;width:100%}
 .form-panel h2{color:var(--navy);font-size:1.6rem;margin-bottom:6px}
-.sub{color:var(--muted);font-size:.9rem;margin-bottom:32px}
-.form-group{margin-bottom:18px}
+.sub{color:var(--muted);font-size:.9rem;margin-bottom:28px}
+
+/* ── Tabs ── */
+.tabs{display:flex;gap:0;margin-bottom:28px;border-bottom:2px solid var(--border)}
+.tab{flex:1;padding:12px;text-align:center;font-weight:600;font-size:.9rem;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-2px;transition:color .2s,border-color .2s;background:none;border-top:none;border-left:none;border-right:none}
+.tab.active{color:var(--navy);border-bottom-color:var(--navy)}
+.tab:hover{color:var(--navy)}
+
+/* ── Form Elements ── */
+.form-group{margin-bottom:16px}
 .form-group label{display:block;font-weight:600;font-size:.82rem;color:var(--text);margin-bottom:6px}
 .form-group input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:.95rem;background:#FAFBFC;transition:border .2s,box-shadow .2s}
 .form-group input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(44,181,184,.1);background:#fff}
-.btn{width:100%;padding:13px;border:none;border-radius:8px;font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;transition:background .2s}
-.btn-primary{background:var(--navy);color:#fff;margin-bottom:12px}
+.match-msg{font-size:.82rem;margin-top:4px;font-weight:500;min-height:18px}
+.match-msg.error{color:var(--danger)}
+.match-msg.success{color:var(--green)}
+
+/* ── Buttons ── */
+.btn{width:100%;padding:13px;border:none;border-radius:8px;font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;transition:background .2s,transform .1s}
+.btn:active{transform:scale(.99)}
+.btn-primary{background:var(--navy);color:#fff}
 .btn-primary:hover{background:#2E4A8E}
-.btn-green{background:var(--green);color:#fff;margin-bottom:12px}
+.btn-green{background:var(--green);color:#fff}
 .btn-green:hover{background:#388E3C}
-.btn-google{background:#fff;color:var(--text);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-google{background:#fff;color:var(--text);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px}
 .btn-google:hover{background:#F9FAFB}
 .btn:disabled{opacity:.5;cursor:not-allowed}
-.divider{text-align:center;margin:20px 0;color:var(--muted);font-size:.8rem;position:relative}
+
+/* ── Misc ── */
+.divider{text-align:center;margin:18px 0;color:var(--muted);font-size:.8rem;position:relative}
 .divider::before,.divider::after{content:'';position:absolute;top:50%;width:40%;height:1px;background:var(--border)}
 .divider::before{left:0}.divider::after{right:0}
 .link{color:var(--teal);text-decoration:none;font-size:.85rem;font-weight:500}
 .link:hover{text-decoration:underline}
-.form-footer{text-align:center;margin-top:20px;font-size:.85rem;color:var(--muted)}
+.form-footer{text-align:center;margin-top:18px;font-size:.82rem;color:var(--muted)}
 .form-footer a{color:var(--navy);font-weight:600;text-decoration:none}
 .hide{display:none!important}
-.match-msg{font-size:.82rem;margin:-8px 0 14px;font-weight:500;min-height:18px}
-.match-msg.error{color:var(--danger)}
-.match-msg.success{color:var(--green)}
 .toast{position:fixed;top:20px;right:20px;padding:14px 20px;border-radius:8px;font-size:.9rem;font-weight:500;z-index:9999;transform:translateX(120%);transition:transform .3s ease}
 .toast.show{transform:translateX(0)}
 .toast-error{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA}
 .toast-success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0}
-.toggle-link{color:var(--teal);cursor:pointer;font-size:.85rem;font-weight:500;background:none;border:none;font-family:inherit;text-decoration:underline}
+.forgot{text-align:right;margin-bottom:14px}
+
 @media(max-width:768px){body{grid-template-columns:1fr}.brand-panel{display:none}.form-panel{padding:32px 20px}}
 </style>
 </head>
@@ -72,60 +90,74 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
 
 <section class="form-panel">
 
-    <!-- LOGIN -->
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab active" id="tabLogin" type="button">Sign In</button>
+        <button class="tab" id="tabSignup" type="button">Create Account</button>
+    </div>
+
+    <!-- ═══════════ SIGN IN VIEW ═══════════ -->
     <div id="loginView">
         <h2>Welcome back</h2>
         <p class="sub">Sign in to manage your compliance dashboard.</p>
 
-        <!-- Email code (primary) -->
-        <form id="emailCodeForm">
+        <form id="loginForm">
             <div class="form-group">
                 <label>Email</label>
-                <input type="email" id="otpEmail" placeholder="you@company.co.za" required>
+                <input type="email" id="loginEmail" placeholder="you@company.co.za" required>
             </div>
-            <button type="submit" class="btn btn-primary">Send verification code</button>
-        </form>
-
-        <p style="text-align:center;font-size:.85rem;color:var(--muted);margin:16px 0">
-            or <button type="button" class="toggle-link" id="showPasswordLogin">sign in with password</button>
-        </p>
-
-        <!-- Password login (hidden by default) -->
-        <form id="loginForm" class="hide">
-            <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="you@company.co.za"></div>
-            <div class="form-group"><label>Password</label><input type="password" id="loginPass" placeholder="Enter your password"></div>
-            <p style="text-align:right;margin-bottom:16px"><a href="#" class="link" id="showReset">Forgot password?</a></p>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPass" placeholder="Enter your password" required>
+            </div>
+            <p class="forgot"><a href="#" class="link" id="showReset">Forgot password?</a></p>
             <button type="submit" class="btn btn-primary">Sign In</button>
         </form>
 
         <div class="divider">or</div>
         <button type="button" class="btn btn-google" id="googleLogin"><i class="fab fa-google"></i> Continue with Google</button>
-
-        <p class="form-footer">No account? <a href="#" id="showSignup">Create one</a></p>
     </div>
 
-    <!-- SIGNUP -->
+    <!-- ═══════════ SIGNUP VIEW ═══════════ -->
     <div id="signupView" class="hide">
         <h2>Create your account</h2>
         <p class="sub">Get started with your compliance journey.</p>
+
         <form id="signupForm">
-            <div class="form-group"><label>Full Name</label><input type="text" id="fullName" placeholder="Your full name" required></div>
-            <div class="form-group"><label>Email</label><input type="email" id="signupEmail" placeholder="you@company.co.za" required></div>
-            <div class="form-group"><label>Password</label><input type="password" id="signupPass" placeholder="Minimum 6 characters" minlength="6" required></div>
-            <p style="font-size:.82rem;color:var(--muted);margin:-8px 0 14px">After signup we'll email you an 8-digit verification code.</p>
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="fullName" placeholder="Your full name" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="signupEmail" placeholder="you@company.co.za" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="signupPass" placeholder="Minimum 6 characters" minlength="6" required>
+            </div>
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" id="signupConfirmPass" placeholder="Re-enter your password" minlength="6" required>
+            </div>
+            <p id="passMatchMsg" class="match-msg"></p>
+            <p style="font-size:.8rem;color:var(--muted);margin-bottom:14px">After signup we'll email you an 8-digit verification code.</p>
             <button type="submit" class="btn btn-green">Create Account &amp; Send Code</button>
-            <div class="divider">or</div>
-            <button type="button" class="btn btn-google" id="googleSignup"><i class="fab fa-google"></i> Sign Up with Google</button>
         </form>
-        <p class="form-footer">Have an account? <a href="#" id="showLogin">Sign in</a></p>
+
+        <div class="divider">or</div>
+        <button type="button" class="btn btn-google" id="googleSignup"><i class="fab fa-google"></i> Sign Up with Google</button>
     </div>
 
-    <!-- RESET -->
+    <!-- ═══════════ RESET VIEW ═══════════ -->
     <div id="resetView" class="hide">
         <h2>Reset password</h2>
         <p class="sub">Enter your email and we'll send a reset link.</p>
         <form id="resetForm">
-            <div class="form-group"><label>Email</label><input type="email" id="resetEmail" placeholder="you@company.co.za" required></div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="resetEmail" placeholder="you@company.co.za" required>
+            </div>
             <button type="submit" class="btn btn-primary">Send Reset Link</button>
         </form>
         <p class="form-footer"><a href="#" id="backLogin">&larr; Back to sign in</a></p>
@@ -145,108 +177,123 @@ if ("serviceWorker" in navigator) {
 
 const $ = id => document.getElementById(id);
 const views = { login: $("loginView"), signup: $("signupView"), reset: $("resetView") };
-function show(name) { Object.values(views).forEach(v => v.classList.add("hide")); views[name].classList.remove("hide"); }
+const tabs  = { login: $("tabLogin"),   signup: $("tabSignup") };
 
-$("showSignup").onclick = e => { e.preventDefault(); show("signup"); };
-$("showLogin").onclick  = e => { e.preventDefault(); show("login"); };
-$("showReset").onclick  = e => { e.preventDefault(); show("reset"); };
-$("backLogin").onclick  = e => { e.preventDefault(); show("login"); };
+function show(name) {
+    Object.values(views).forEach(v => v.classList.add("hide"));
+    Object.values(tabs).forEach(t => t.classList.remove("active"));
+    views[name].classList.remove("hide");
+    if (tabs[name]) tabs[name].classList.add("active");
+}
 
-// Toggle password login
-$("showPasswordLogin").onclick = () => {
-    $("emailCodeForm").classList.add("hide");
-    $("loginForm").classList.remove("hide");
-    $("showPasswordLogin").parentElement.classList.add("hide");
-};
+// Tab switching
+tabs.login.onclick  = () => show("login");
+tabs.signup.onclick = () => show("signup");
+
+// Reset back-link
+$("showReset").onclick = e => { e.preventDefault(); show("reset"); };
+$("backLogin").onclick = e => { e.preventDefault(); show("login"); };
 
 // Check if already logged in
 const { data: { session } } = await supabase.auth.getSession();
 if (session) await routeUser("/login/login.html");
 
-// Helper: send OTP to an email
-async function sendOtp(email) {
-    const { error } = await supabase.auth.signInWithOtp({ email });
-    if (error) throw error;
-}
-
-// Auto-send code after signup redirect (?sent=1&email=...)
+// ─── Auto-send code after signup redirect (?sent=1&email=...) ───
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get("sent") === "1" && urlParams.get("email")) {
     const signupEmail = urlParams.get("email");
-    $("otpEmail").value = signupEmail;
-    try {
-        await sendOtp(signupEmail);
-        toast("Verification code sent to " + signupEmail, "success");
-    } catch (err) {
-        toast("Could not send code: " + err.message);
-    }
+    toast("Sending verification code to " + signupEmail + "...", "success");
+    // Redirect straight to verify page which will auto-send the code
+    setTimeout(() => {
+        window.location.href = "/verify/verify-email.html";
+    }, 600);
 }
 
-// Send code (OTP login)
-$("emailCodeForm").onsubmit = async e => {
-    e.preventDefault();
-    const btn = e.target.querySelector("button[type=submit]");
-    const email = $("otpEmail").value.trim();
-    if (!email) return toast("Enter your email");
-    loading(btn, true);
-    try {
-        await sendOtp(email);
-        toast("Verification code sent! Check your email.", "success");
-        setTimeout(() => {
-            window.location.href = "/verify/verify-email.html";
-        }, 800);
-    } catch (err) {
-        toast(err.message.includes("User not found")
-            ? "No account found. Please sign up first."
-            : err.message);
-        loading(btn, false);
-    }
-};
-
-// Password login
+// ─── SIGN IN ──────────────────────────────────────────────────────
 $("loginForm").onsubmit = async e => {
     e.preventDefault();
     const btn = e.target.querySelector("button[type=submit]");
     const email = $("loginEmail").value.trim();
     const pass  = $("loginPass").value;
+
     if (!email || !pass) return toast("Fill in all fields");
     loading(btn, true);
+
     const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
     if (error) {
-        toast(error.message.includes("Invalid") ? "Invalid email or password" : error.message);
+        const msg = error.message.toLowerCase();
+        if (msg.includes("invalid")) {
+            toast("Invalid email or password");
+        } else if (msg.includes("email not confirmed")) {
+            // User exists but hasn't verified email — send code and redirect
+            toast("Email not verified. Sending code...", "success");
+            await supabase.auth.signInWithOtp({ email });
+            setTimeout(() => { window.location.href = "/verify/verify-email.html"; }, 800);
+            return;
+        } else {
+            toast(error.message);
+        }
         loading(btn, false);
         return;
     }
+
+    // Login successful
     toast("Welcome back!", "success");
     await routeUser("/login/login.html");
 };
 
-// Signup
+// ─── CONFIRM PASSWORD LIVE FEEDBACK ────────────────────────────────
+function updateMatchMsg() {
+    const pass = $("signupPass").value;
+    const confirm = $("signupConfirmPass").value;
+    const msg = $("passMatchMsg");
+    if (!confirm) {
+        msg.textContent = "";
+        msg.className = "match-msg";
+    } else if (pass !== confirm) {
+        msg.textContent = "Passwords do not match";
+        msg.className = "match-msg error";
+    } else {
+        msg.textContent = "Passwords match";
+        msg.className = "match-msg success";
+    }
+}
+$("signupPass").oninput = updateMatchMsg;
+$("signupConfirmPass").oninput = updateMatchMsg;
+
+// ─── SIGN UP ──────────────────────────────────────────────────────
 $("signupForm").onsubmit = async e => {
     e.preventDefault();
-    const btn = e.target.querySelector("button[type=submit]");
-    const name  = $("fullName").value.trim();
-    const email = $("signupEmail").value.trim();
-    const pass  = $("signupPass").value;
-    if (!name || !email || !pass) return toast("Fill in all fields");
+    const btn     = e.target.querySelector("button[type=submit]");
+    const name    = $("fullName").value.trim();
+    const email   = $("signupEmail").value.trim();
+    const pass    = $("signupPass").value;
+    const confirm = $("signupConfirmPass").value;
+
+    if (!name || !email || !pass || !confirm) return toast("Fill in all fields");
     if (pass.length < 6) return toast("Password must be at least 6 characters");
+    if (pass !== confirm) return toast("Passwords do not match");
+
     loading(btn, true);
+
     const { error } = await supabase.auth.signUp({
         email, password: pass,
         options: { data: { full_name: name } }
     });
+
     if (error) {
         toast(error.message);
         loading(btn, false);
         return;
     }
-    // Sign out to get a clean state, then redirect to login which will auto-send OTP
+
+    // Sign out for a clean state, then redirect to verify which sends the OTP
     await supabase.auth.signOut();
-    toast("Account created! Sending verification code...", "success");
+    toast("Account created! Redirecting to verify...", "success");
     window.location.href = `/login/login.html?sent=1&email=${encodeURIComponent(email)}`;
 };
 
-// Google
+// ─── GOOGLE AUTH ──────────────────────────────────────────────────
 async function googleAuth() {
     const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
@@ -257,7 +304,7 @@ async function googleAuth() {
 $("googleLogin").onclick = googleAuth;
 $("googleSignup").onclick = googleAuth;
 
-// Password reset
+// ─── PASSWORD RESET ───────────────────────────────────────────────
 $("resetForm").onsubmit = async e => {
     e.preventDefault();
     const btn = e.target.querySelector("button[type=submit]");

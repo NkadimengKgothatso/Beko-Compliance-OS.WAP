@@ -23,8 +23,10 @@
 
 ## Features
 
-- **Email code (OTP), password & Google authentication** via Supabase Auth
-- **6-digit verification code** for email verification instead of links
+- **Email/password, code verification & Google authentication** via Supabase Auth
+- **Confirm password validation** with live match feedback
+- **8-digit email verification code** for email confirmation after signup
+- **Auto-redirect to verify** if unverified user tries to log in
 - **Password reset** via email link
 - **Multi-step onboarding wizard** that collects business profile data
 - **Compliance score calculator** (0–100) based on business profile
@@ -178,31 +180,37 @@ Open `http://localhost:3000`.
 
 ## Authentication Flow
 
-The app uses **6-digit email verification codes** (OTP) as the primary authentication method.
+The app uses **password-based login** with **8-digit email verification codes** sent after signup.
 
 ```
 User opens app
   │
   ▼
-Splash screen  ──►  Login page
+Splash screen  ──►  Login page (tabs: Sign In / Create Account)
                       │
-        ┌─────────────┼──────────────────┐
-        ▼             ▼                  ▼
-   Send Code    Password Login      Google Login
-        │             │                  │
-        ▼             │                  │
-   Enter 6-digit      │                  │
-   code on verify     │                  │
-   page               │                  │
-        │             │                  │
-   (signup) ──► Signup form ──► Code     │
-        │             │             │    │
-        └──────┬──────┴─────────────┘    │
-               ▼                         │
-        Onboarding Wizard ◄──────────────┘
+        ┌─────────────┼──────────────┐
+        ▼             ▼              ▼
+   Password Login   Signup form   Google OAuth
+        │          (name, email,
+        │          password, confirm)
+        │             │
+        │             ▼
+        │     Account created →
+        │     Redirect to verify
+        │     page (auto-sends code)
+        │             │
+        ▼             ▼
+   ┌─────────────────────────┐
+   │  Verify page: 8-digit   │
+   │  code input + auto-     │
+   │  submit + resend        │
+   └────────────┬────────────┘
+                │
+                ▼
+        Onboarding Wizard
         (6-step business profile)
-               │
-               ▼
+                │
+                ▼
         Compliance Dashboard
 ```
 
