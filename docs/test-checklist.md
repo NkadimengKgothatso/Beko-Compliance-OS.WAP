@@ -14,7 +14,7 @@
 | # | Action | Expected Result | Pass |
 |---|--------|-----------------|------|
 | 1.1 | Open the site URL | Splash screen appears for ~2.5 seconds, then redirects to login | [ ] |
-| 1.2 | Login page shows two tabs: **Sign In** and **Create Account** | Tabs are visible, Sign In is active by default | [ ] |
+| 1.2 | Login page shows three tabs: **Sign In**, **Send Code**, and **Create Account** | Tabs are visible, Sign In is active by default | [ ] |
 | 1.3 | Click the **Create Account** tab | Signup form appears with Full Name, Email, Password, Confirm Password fields | [ ] |
 | 1.4 | Type different passwords in Password and Confirm Password | Red message says "Passwords do not match" | [ ] |
 | 1.5 | Type matching passwords | Green message says "Passwords match" | [ ] |
@@ -22,13 +22,16 @@
 | 1.7 | On verify page, enter the 8-digit code from email | "Verified successfully" appears, redirects to onboarding | [ ] |
 | 1.8 | Paste an 8-digit code (Ctrl+V) into the first box | All 8 boxes auto-fill and verification starts automatically | [ ] |
 | 1.9 | Enter a wrong code | Shows "Invalid code" error, input clears for retry | [ ] |
-| 1.10 | Click **Resend code** | A new code is sent to your email | [ ] |
-| 1.11 | Click **Sign In** tab on login page | Sign in form shows with Email and Password fields | [ ] |
-| 1.12 | Sign in with email and password | Redirects to dashboard (or onboarding) | [ ] |
-| 1.13 | Try signing in with an unverified email/password | Shows "Email not verified. Sending code..." and redirects to verify page | [ ] |
-| 1.14 | Click **Continue with Google** button | Google OAuth flow starts, after approval you land on dashboard or onboarding | [ ] |
-| 1.15 | Click **Forgot password?** and enter email | Password reset email is sent | [ ] |
-| 1.16 | Try signing up with an email that already has an account | Supabase shows an error that user already exists | [ ] |
+| 1.10 | Observe the resend cooldown timer | Resend button is disabled for 60 seconds with a progress bar countdown | [ ] |
+| 1.11 | Click **Resend code** after cooldown expires | A new code is sent to your email, cooldown restarts | [ ] |
+| 1.12 | Click **Sign In** tab on login page | Sign in form shows with Email and Password fields | [ ] |
+| 1.13 | Sign in with email and password | Redirects to dashboard (or onboarding) | [ ] |
+| 1.14 | Try signing in with an unverified email/password | "Email not verified" section appears inline with code input boxes | [ ] |
+| 1.15 | Enter the 8-digit code in the inline verify section | Email verified, redirects to dashboard | [ ] |
+| 1.16 | Click **Send Code** tab | Email-only form appears for OTP-based login | [ ] |
+| 1.17 | Enter email and click **Send Verification Code** | Code is sent, redirects to verify page | [ ] |
+| 1.18 | Click **Forgot password?** and enter email | Password reset email is sent | [ ] |
+| 1.19 | Try signing up with an email that already has an account | Supabase shows an error that user already exists | [ ] |
 
 ---
 

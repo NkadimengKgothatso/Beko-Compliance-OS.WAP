@@ -32,7 +32,7 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
 
 /* ── Tabs ── */
 .tabs{display:flex;gap:0;margin-bottom:28px;border-bottom:2px solid var(--border)}
-.tab{flex:1;padding:12px;text-align:center;font-weight:600;font-size:.9rem;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-2px;transition:color .2s,border-color .2s;background:none;border-top:none;border-left:none;border-right:none}
+.tab{flex:1;padding:12px;text-align:center;font-weight:600;font-size:.85rem;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-2px;transition:color .2s,border-color .2s;background:none;border-top:none;border-left:none;border-right:none}
 .tab.active{color:var(--navy);border-bottom-color:var(--navy)}
 .tab:hover{color:var(--navy)}
 
@@ -52,14 +52,11 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
 .btn-primary:hover{background:#2E4A8E}
 .btn-green{background:var(--green);color:#fff}
 .btn-green:hover{background:#388E3C}
-.btn-google{background:#fff;color:var(--text);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px}
-.btn-google:hover{background:#F9FAFB}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-teal:hover{background:#239E9E}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 
 /* ── Misc ── */
-.divider{text-align:center;margin:18px 0;color:var(--muted);font-size:.8rem;position:relative}
-.divider::before,.divider::after{content:'';position:absolute;top:50%;width:40%;height:1px;background:var(--border)}
-.divider::before{left:0}.divider::after{right:0}
 .link{color:var(--teal);text-decoration:none;font-size:.85rem;font-weight:500}
 .link:hover{text-decoration:underline}
 .form-footer{text-align:center;margin-top:18px;font-size:.82rem;color:var(--muted)}
@@ -70,6 +67,16 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
 .toast-error{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA}
 .toast-success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0}
 .forgot{text-align:right;margin-bottom:14px}
+
+/* ── Inline verify section ── */
+.inline-verify{background:#F0F9FF;border:1px solid #BAE6FD;border-radius:12px;padding:24px;margin-top:20px;text-align:center}
+.inline-verify h3{color:var(--navy);font-size:1rem;margin-bottom:8px}
+.inline-verify p{color:var(--muted);font-size:.82rem;margin-bottom:16px;line-height:1.5}
+.code-inputs{display:flex;gap:6px;justify-content:center;margin-bottom:16px}
+.code-input{width:38px;height:46px;text-align:center;font-size:1.2rem;font-weight:700;color:var(--navy);border:2px solid var(--border);border-radius:8px;background:#fff;outline:none;transition:border .2s,box-shadow .2s}
+.code-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(44,181,184,.12)}
+.code-input.filled{border-color:var(--navy)}
+.cooldown{font-size:.78rem;color:var(--muted);margin-top:8px}
 
 @media(max-width:768px){body{grid-template-columns:1fr}.brand-panel{display:none}.form-panel{padding:32px 20px}}
 </style>
@@ -93,6 +100,7 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
     <!-- Tabs -->
     <div class="tabs">
         <button class="tab active" id="tabLogin" type="button">Sign In</button>
+        <button class="tab" id="tabCode" type="button">Send Code</button>
         <button class="tab" id="tabSignup" type="button">Create Account</button>
     </div>
 
@@ -112,6 +120,39 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
             </div>
             <p class="forgot"><a href="#" class="link" id="showReset">Forgot password?</a></p>
             <button type="submit" class="btn btn-primary">Sign In</button>
+        </form>
+
+        <!-- Inline verification (shown when user is unverified) -->
+        <div id="inlineVerify" class="inline-verify hide">
+            <h3>Email not verified</h3>
+            <p>We sent an 8-digit code to <strong id="inlineEmail"></strong>. Enter it below to verify your account.</p>
+            <div class="code-inputs" id="inlineCodeInputs">
+                <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="0">
+                <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="1">
+                <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="2">
+                <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="3">
+                <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="4">
+                <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="5">
+                <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="6">
+                <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="7">
+            </div>
+            <button class="btn btn-teal" id="inlineVerifyBtn" style="width:auto;padding:10px 24px;margin:0 auto">Verify code</button>
+            <p class="cooldown" id="inlineCooldown"></p>
+            <p style="margin-top:10px"><a href="#" class="link" id="inlineResend">Resend code</a></p>
+        </div>
+    </div>
+
+    <!-- ═══════════ SEND CODE VIEW (OTP Login) ═══════════ -->
+    <div id="codeView" class="hide">
+        <h2>Sign in with code</h2>
+        <p class="sub">Enter your email and we'll send a verification code to sign you in.</p>
+
+        <form id="codeForm">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="codeEmail" placeholder="you@company.co.za" required>
+            </div>
+            <button type="submit" class="btn btn-teal">Send Verification Code</button>
         </form>
     </div>
 
@@ -170,8 +211,8 @@ if ("serviceWorker" in navigator) {
 }
 
 const $ = id => document.getElementById(id);
-const views = { login: $("loginView"), signup: $("signupView"), reset: $("resetView") };
-const tabs  = { login: $("tabLogin"),   signup: $("tabSignup") };
+const views = { login: $("loginView"), code: $("codeView"), signup: $("signupView"), reset: $("resetView") };
+const tabs  = { login: $("tabLogin"), code: $("tabCode"), signup: $("tabSignup") };
 
 function show(name) {
     Object.values(views).forEach(v => v.classList.add("hide"));
@@ -182,6 +223,7 @@ function show(name) {
 
 // Tab switching
 tabs.login.onclick  = () => show("login");
+tabs.code.onclick   = () => show("code");
 tabs.signup.onclick = () => show("signup");
 
 // Reset back-link
@@ -193,8 +235,7 @@ const { data: { session } } = await supabase.auth.getSession();
 if (session) await routeUser("/login/login.html");
 
 
-
-// ─── SIGN IN ──────────────────────────────────────────────────────
+// ─── SIGN IN (password) ─────────────────────────────────────────────
 $("loginForm").onsubmit = async e => {
     e.preventDefault();
     const btn = e.target.querySelector("button[type=submit]");
@@ -204,17 +245,19 @@ $("loginForm").onsubmit = async e => {
     if (!email || !pass) return toast("Fill in all fields");
     loading(btn, true);
 
+    // Hide inline verify from previous attempts
+    $("inlineVerify").classList.add("hide");
+
     const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
     if (error) {
         const msg = error.message.toLowerCase();
         if (msg.includes("invalid login") || msg.includes("invalid email")) {
             toast("Invalid email or password");
         } else if (msg.includes("not confirmed") || msg.includes("email not confirmed")) {
-            // User exists but hasn't verified email — send code and redirect
+            // User exists but hasn't verified email — send code and show inline verify
             toast("Email not verified. Sending code...", "success");
             await supabase.auth.signInWithOtp({ email });
-            setTimeout(() => { window.location.href = "/verify/verify-email.html"; }, 800);
-            return;
+            showInlineVerify(email);
         } else {
             toast(error.message);
         }
@@ -228,7 +271,144 @@ $("loginForm").onsubmit = async e => {
 };
 
 
-// ─── SIGN UP ──────────────────────────────────────────────────────
+// ─── INLINE VERIFY (unverified user on login page) ──────────────────
+const inlineInputs = document.querySelectorAll("#inlineCodeInputs .code-input");
+let inlineCooldownTimer = null;
+
+function showInlineVerify(email) {
+    $("inlineVerify").classList.remove("hide");
+    $("inlineEmail").textContent = email;
+    inlineInputs.forEach(i => { i.value = ""; i.classList.remove("filled"); });
+    inlineInputs[0].focus();
+    startInlineCooldown(60);
+}
+
+function startInlineCooldown(seconds) {
+    let remaining = seconds;
+    $("inlineResend").style.pointerEvents = "none";
+    $("inlineResend").style.opacity = "0.4";
+    clearInterval(inlineCooldownTimer);
+    $("inlineCooldown").textContent = `Resend available in ${remaining}s`;
+    inlineCooldownTimer = setInterval(() => {
+        remaining--;
+        if (remaining <= 0) {
+            clearInterval(inlineCooldownTimer);
+            $("inlineCooldown").textContent = "";
+            $("inlineResend").style.pointerEvents = "";
+            $("inlineResend").style.opacity = "";
+        } else {
+            $("inlineCooldown").textContent = `Resend available in ${remaining}s`;
+        }
+    }, 1000);
+}
+
+// Code input behaviour for inline verify
+inlineInputs.forEach((input, idx) => {
+    input.addEventListener("input", e => {
+        const v = e.target.value.replace(/[^0-9]/g, "");
+        e.target.value = v;
+        if (v) {
+            e.target.classList.add("filled");
+            if (idx < 7) inlineInputs[idx + 1].focus();
+        } else {
+            e.target.classList.remove("filled");
+        }
+    });
+    input.addEventListener("keydown", e => {
+        if (e.key === "Backspace" && !e.target.value && idx > 0) {
+            inlineInputs[idx - 1].focus();
+            inlineInputs[idx - 1].value = "";
+            inlineInputs[idx - 1].classList.remove("filled");
+        }
+    });
+    input.addEventListener("paste", e => {
+        e.preventDefault();
+        const text = (e.clipboardData || window.clipboardData).getData("text").replace(/[^0-9]/g, "").slice(0, 8);
+        for (let i = 0; i < text.length; i++) {
+            inlineInputs[i].value = text[i];
+            inlineInputs[i].classList.add("filled");
+        }
+        if (text.length === 8) inlineInputs[7].focus();
+        else if (text.length > 0) inlineInputs[text.length].focus();
+    });
+});
+
+function getInlineCode() {
+    return Array.from(inlineInputs).map(i => i.value).join("");
+}
+
+// Auto-submit when 8 digits entered
+inlineInputs[7].addEventListener("input", () => {
+    if (getInlineCode().length === 8) verifyInlineCode();
+});
+
+async function verifyInlineCode() {
+    const code = getInlineCode();
+    if (code.length !== 8) return toast("Enter all 8 digits");
+
+    const email = $("inlineEmail").textContent;
+    const btn = $("inlineVerifyBtn");
+    loading(btn, true);
+
+    const { error } = await supabase.auth.verifyOtp({
+        email,
+        token: code,
+        type: "email"
+    });
+
+    if (error) {
+        toast(error.message);
+        inlineInputs.forEach(i => { i.value = ""; i.classList.remove("filled"); });
+        inlineInputs[0].focus();
+        loading(btn, false);
+        return;
+    }
+
+    toast("Email verified!", "success");
+    loading(btn, false);
+    await routeUser("/login/login.html");
+}
+
+$("inlineVerifyBtn").onclick = verifyInlineCode;
+
+// Inline resend
+$("inlineResend").onclick = async e => {
+    e.preventDefault();
+    const email = $("inlineEmail").textContent;
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    if (error) { toast(error.message); return; }
+    toast("New code sent!", "success");
+    inlineInputs.forEach(i => { i.value = ""; i.classList.remove("filled"); });
+    inlineInputs[0].focus();
+    startInlineCooldown(60);
+};
+
+
+// ─── SEND CODE (OTP Login) ──────────────────────────────────────────
+$("codeForm").onsubmit = async e => {
+    e.preventDefault();
+    const btn = e.target.querySelector("button[type=submit]");
+    const email = $("codeEmail").value.trim();
+
+    if (!email) return toast("Enter your email");
+    loading(btn, true);
+
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    if (error) {
+        toast(error.message);
+        loading(btn, false);
+        return;
+    }
+
+    toast("Code sent! Check your inbox.", "success");
+    // Redirect to verify page — user enters code there
+    setTimeout(() => {
+        window.location.href = "/verify/verify-email.html";
+    }, 800);
+};
+
+
+// ─── SIGN UP ─────────────────────────────────────────────────────────
 $("signupForm").onsubmit = async e => {
     e.preventDefault();
     const btn     = e.target.querySelector("button[type=submit]");
@@ -259,6 +439,7 @@ $("signupForm").onsubmit = async e => {
     window.location.href = "/verify/verify-email.html";
 };
 
+
 // ─── CONFIRM PASSWORD LIVE FEEDBACK ────────────────────────────────
 function updateMatchMsg() {
     const pass = $("signupPass").value;
@@ -279,7 +460,7 @@ $("signupPass").oninput = updateMatchMsg;
 $("signupConfirmPass").oninput = updateMatchMsg;
 
 
-// ─── PASSWORD RESET ───────────────────────────────────────────────
+// ─── PASSWORD RESET ──────────────────────────────────────────────────
 $("resetForm").onsubmit = async e => {
     e.preventDefault();
     const btn = e.target.querySelector("button[type=submit]");
