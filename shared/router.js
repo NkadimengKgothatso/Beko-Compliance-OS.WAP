@@ -3,7 +3,7 @@
  */
 import { supabase } from "/supabase.js";
 
-export const TEST_MODE = true;
+export const TEST_MODE = false;
 
 /**
  * Get the destination URL for a signed-in user.
