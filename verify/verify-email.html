@@ -250,8 +250,15 @@ if (userErr || !user) {
         setVerified();
         setTimeout(() => routeUser("/verify/verify-email.html"), 1500);
     } else {
+        // Auto-send a verification code on page load
         codeInputs[0].focus();
         startPolling();
+        try {
+            await supabase.auth.signInWithOtp({ email: user.email });
+            toast("Verification code sent to " + user.email, "success");
+        } catch (err) {
+            toast("Could not send code: " + err.message);
+        }
     }
 }
 
