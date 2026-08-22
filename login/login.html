@@ -136,6 +136,11 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
                 <label>Password</label>
                 <input type="password" id="signupPass" placeholder="Minimum 6 characters" minlength="6" required>
             </div>
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" id="signupConfirmPass" placeholder="Re-enter your password" minlength="6" required>
+            </div>
+            <p id="passMatchMsg" class="match-msg"></p>
             <p style="font-size:.8rem;color:var(--muted);margin-bottom:14px">We'll email you an 8-digit verification code to confirm your account.</p>
             <button type="submit" class="btn btn-green">Create Account &amp; Send Code</button>
         </form>
@@ -232,13 +237,15 @@ $("loginForm").onsubmit = async e => {
 // ─── SIGN UP ──────────────────────────────────────────────────────
 $("signupForm").onsubmit = async e => {
     e.preventDefault();
-    const btn   = e.target.querySelector("button[type=submit]");
-    const name  = $("fullName").value.trim();
-    const email = $("signupEmail").value.trim();
-    const pass  = $("signupPass").value;
+    const btn     = e.target.querySelector("button[type=submit]");
+    const name    = $("fullName").value.trim();
+    const email   = $("signupEmail").value.trim();
+    const pass    = $("signupPass").value;
+    const confirm = $("signupConfirmPass").value;
 
-    if (!name || !email || !pass) return toast("Fill in all fields");
+    if (!name || !email || !pass || !confirm) return toast("Fill in all fields");
     if (pass.length < 6) return toast("Password must be at least 6 characters");
+    if (pass !== confirm) return toast("Passwords do not match");
 
     loading(btn, true);
 
@@ -257,6 +264,25 @@ $("signupForm").onsubmit = async e => {
     toast("Account created! Sending verification code...", "success");
     window.location.href = "/verify/verify-email.html";
 };
+
+// ─── CONFIRM PASSWORD LIVE FEEDBACK ────────────────────────────────
+function updateMatchMsg() {
+    const pass = $("signupPass").value;
+    const confirm = $("signupConfirmPass").value;
+    const msg = $("passMatchMsg");
+    if (!confirm) {
+        msg.textContent = "";
+        msg.className = "match-msg";
+    } else if (pass !== confirm) {
+        msg.textContent = "Passwords do not match";
+        msg.className = "match-msg error";
+    } else {
+        msg.textContent = "Passwords match";
+        msg.className = "match-msg success";
+    }
+}
+$("signupPass").oninput = updateMatchMsg;
+$("signupConfirmPass").oninput = updateMatchMsg;
 
 // ─── GOOGLE AUTH ──────────────────────────────────────────────────
 async function googleAuth() {
