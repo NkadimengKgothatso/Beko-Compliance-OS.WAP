@@ -32,6 +32,8 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
 .btn{width:100%;padding:13px;border:none;border-radius:8px;font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;transition:background .2s}
 .btn-primary{background:var(--navy);color:#fff;margin-bottom:12px}
 .btn-primary:hover{background:#2E4A8E}
+.btn-green{background:var(--green);color:#fff;margin-bottom:12px}
+.btn-green:hover{background:#388E3C}
 .btn-google{background:#fff;color:var(--text);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;gap:10px}
 .btn-google:hover{background:#F9FAFB}
 .btn:disabled{opacity:.5;cursor:not-allowed}
@@ -50,6 +52,7 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
 .toast.show{transform:translateX(0)}
 .toast-error{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA}
 .toast-success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0}
+.toggle-link{color:var(--teal);cursor:pointer;font-size:.85rem;font-weight:500;background:none;border:none;font-family:inherit;text-decoration:underline}
 @media(max-width:768px){body{grid-template-columns:1fr}.brand-panel{display:none}.form-panel{padding:32px 20px}}
 </style>
 </head>
@@ -73,14 +76,31 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
     <div id="loginView">
         <h2>Welcome back</h2>
         <p class="sub">Sign in to manage your compliance dashboard.</p>
-        <form id="loginForm">
-            <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="you@company.co.za" required></div>
-            <div class="form-group"><label>Password</label><input type="password" id="loginPass" placeholder="Enter your password" required></div>
+
+        <!-- Email code (primary) -->
+        <form id="emailCodeForm">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="otpEmail" placeholder="you@company.co.za" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Send verification code</button>
+        </form>
+
+        <p style="text-align:center;font-size:.85rem;color:var(--muted);margin:16px 0">
+            or <button type="button" class="toggle-link" id="showPasswordLogin">sign in with password</button>
+        </p>
+
+        <!-- Password login (hidden by default) -->
+        <form id="loginForm" class="hide">
+            <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="you@company.co.za"></div>
+            <div class="form-group"><label>Password</label><input type="password" id="loginPass" placeholder="Enter your password"></div>
             <p style="text-align:right;margin-bottom:16px"><a href="#" class="link" id="showReset">Forgot password?</a></p>
             <button type="submit" class="btn btn-primary">Sign In</button>
-            <div class="divider">or</div>
-            <button type="button" class="btn btn-google" id="googleLogin"><i class="fab fa-google"></i> Continue with Google</button>
         </form>
+
+        <div class="divider">or</div>
+        <button type="button" class="btn btn-google" id="googleLogin"><i class="fab fa-google"></i> Continue with Google</button>
+
         <p class="form-footer">No account? <a href="#" id="showSignup">Create one</a></p>
     </div>
 
@@ -92,9 +112,8 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
             <div class="form-group"><label>Full Name</label><input type="text" id="fullName" placeholder="Your full name" required></div>
             <div class="form-group"><label>Email</label><input type="email" id="signupEmail" placeholder="you@company.co.za" required></div>
             <div class="form-group"><label>Password</label><input type="password" id="signupPass" placeholder="Minimum 6 characters" minlength="6" required></div>
-            <div class="form-group"><label>Confirm Password</label><input type="password" id="signupConfirmPass" placeholder="Re-enter your password" minlength="6" required></div>
-            <p id="passMatchMsg" class="match-msg"></p>
-            <button type="submit" class="btn btn-primary">Create Account</button>
+            <p style="font-size:.82rem;color:var(--muted);margin:-8px 0 14px">After signup we'll email you an 8-digit verification code.</p>
+            <button type="submit" class="btn btn-green">Create Account &amp; Send Code</button>
             <div class="divider">or</div>
             <button type="button" class="btn btn-google" id="googleSignup"><i class="fab fa-google"></i> Sign Up with Google</button>
         </form>
@@ -109,7 +128,7 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
             <div class="form-group"><label>Email</label><input type="email" id="resetEmail" placeholder="you@company.co.za" required></div>
             <button type="submit" class="btn btn-primary">Send Reset Link</button>
         </form>
-        <p class="form-footer"><a href="#" id="backLogin">← Back to sign in</a></p>
+        <p class="form-footer"><a href="#" id="backLogin">&larr; Back to sign in</a></p>
     </div>
 
 </section>
@@ -133,11 +152,58 @@ $("showLogin").onclick  = e => { e.preventDefault(); show("login"); };
 $("showReset").onclick  = e => { e.preventDefault(); show("reset"); };
 $("backLogin").onclick  = e => { e.preventDefault(); show("login"); };
 
+// Toggle password login
+$("showPasswordLogin").onclick = () => {
+    $("emailCodeForm").classList.add("hide");
+    $("loginForm").classList.remove("hide");
+    $("showPasswordLogin").parentElement.classList.add("hide");
+};
+
 // Check if already logged in
 const { data: { session } } = await supabase.auth.getSession();
 if (session) await routeUser("/login/login.html");
 
-// Login
+// Helper: send OTP to an email
+async function sendOtp(email) {
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    if (error) throw error;
+}
+
+// Auto-send code after signup redirect (?sent=1&email=...)
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get("sent") === "1" && urlParams.get("email")) {
+    const signupEmail = urlParams.get("email");
+    $("otpEmail").value = signupEmail;
+    try {
+        await sendOtp(signupEmail);
+        toast("Verification code sent to " + signupEmail, "success");
+    } catch (err) {
+        toast("Could not send code: " + err.message);
+    }
+}
+
+// Send code (OTP login)
+$("emailCodeForm").onsubmit = async e => {
+    e.preventDefault();
+    const btn = e.target.querySelector("button[type=submit]");
+    const email = $("otpEmail").value.trim();
+    if (!email) return toast("Enter your email");
+    loading(btn, true);
+    try {
+        await sendOtp(email);
+        toast("Verification code sent! Check your email.", "success");
+        setTimeout(() => {
+            window.location.href = "/verify/verify-email.html";
+        }, 800);
+    } catch (err) {
+        toast(err.message.includes("User not found")
+            ? "No account found. Please sign up first."
+            : err.message);
+        loading(btn, false);
+    }
+};
+
+// Password login
 $("loginForm").onsubmit = async e => {
     e.preventDefault();
     const btn = e.target.querySelector("button[type=submit]");
@@ -155,25 +221,6 @@ $("loginForm").onsubmit = async e => {
     await routeUser("/login/login.html");
 };
 
-// Confirm password live feedback
-function updateMatchMsg() {
-    const pass = $("signupPass").value;
-    const confirm = $("signupConfirmPass").value;
-    const msg = $("passMatchMsg");
-    if (!confirm) {
-        msg.textContent = "";
-        msg.className = "match-msg";
-    } else if (pass !== confirm) {
-        msg.textContent = "Passwords do not match";
-        msg.className = "match-msg error";
-    } else {
-        msg.textContent = "Passwords match";
-        msg.className = "match-msg success";
-    }
-}
-$("signupPass").oninput = updateMatchMsg;
-$("signupConfirmPass").oninput = updateMatchMsg;
-
 // Signup
 $("signupForm").onsubmit = async e => {
     e.preventDefault();
@@ -181,10 +228,8 @@ $("signupForm").onsubmit = async e => {
     const name  = $("fullName").value.trim();
     const email = $("signupEmail").value.trim();
     const pass  = $("signupPass").value;
-    const confirm = $("signupConfirmPass").value;
-    if (!name || !email || !pass || !confirm) return toast("Fill in all fields");
+    if (!name || !email || !pass) return toast("Fill in all fields");
     if (pass.length < 6) return toast("Password must be at least 6 characters");
-    if (pass !== confirm) return toast("Passwords do not match");
     loading(btn, true);
     const { error } = await supabase.auth.signUp({
         email, password: pass,
@@ -195,20 +240,22 @@ $("signupForm").onsubmit = async e => {
         loading(btn, false);
         return;
     }
-    toast("Account created! Redirecting...", "success");
-    await routeUser("/login/login.html");
+    // Sign out to get a clean state, then redirect to login which will auto-send OTP
+    await supabase.auth.signOut();
+    toast("Account created! Sending verification code...", "success");
+    window.location.href = `/login/login.html?sent=1&email=${encodeURIComponent(email)}`;
 };
 
 // Google
-async function googleLogin() {
+async function googleAuth() {
     const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: { redirectTo: window.location.origin + "/login/login.html" }
     });
     if (error) toast("Google sign-in failed.");
 }
-$("googleLogin").onclick = googleLogin;
-$("googleSignup").onclick = googleLogin;
+$("googleLogin").onclick = googleAuth;
+$("googleSignup").onclick = googleAuth;
 
 // Password reset
 $("resetForm").onsubmit = async e => {

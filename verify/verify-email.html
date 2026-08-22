@@ -13,7 +13,7 @@
 :root{--navy:#1B2A5C;--green:#4CAF50;--teal:#2CB5B8;--bg:#F4F6FA;--text:#374151;--muted:#6B7280;--border:#E5E7EB;--danger:#DC2626}
 *{margin:0;padding:0;box-sizing:border-box}
 body{min-height:100vh;display:grid;place-items:center;background:var(--bg);font-family:'Segoe UI',system-ui,sans-serif;padding:20px}
-.card{background:#fff;border-radius:16px;padding:48px;max-width:480px;width:100%;text-align:center;box-shadow:0 4px 24px rgba(27,42,92,.06);border:1px solid var(--border)}
+.card{background:#fff;border-radius:16px;padding:48px;max-width:520px;width:100%;text-align:center;box-shadow:0 4px 24px rgba(27,42,92,.06);border:1px solid var(--border)}
 .card img{width:180px;margin:0 auto 24px;display:block}
 .eyebrow{color:var(--teal);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
 .card h2{color:var(--navy);font-size:1.5rem;margin-bottom:8px}
@@ -26,43 +26,65 @@ body{min-height:100vh;display:grid;place-items:center;background:var(--bg);font-
 .dot.ok{background:var(--green);animation:none}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 @keyframes spin{to{transform:rotate(360deg)}}
-.countdown{color:var(--teal);font-weight:700}
+
+.code-inputs{display:flex;gap:8px;justify-content:center;margin-bottom:24px}
+.code-input{width:42px;height:52px;text-align:center;font-size:1.4rem;font-weight:700;color:var(--navy);border:2px solid var(--border);border-radius:10px;background:#FAFBFC;outline:none;transition:border .2s,box-shadow .2s}
+.code-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(44,181,184,.12);background:#fff}
+.code-input.filled{border-color:var(--navy);background:#fff}
+
 .actions{display:flex;flex-direction:column;gap:12px}
 .btn{padding:13px;border:none;border-radius:8px;font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;transition:background .2s;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}
 .btn-primary{background:var(--navy);color:#fff}.btn-primary:hover{background:#2E4A8E}
 .btn-secondary{background:#F3F4F6;color:var(--text)}.btn-secondary:hover{background:#E5E7EB}
 .btn:disabled{opacity:.5;cursor:not-allowed}
+
 .help{border-top:1px solid var(--border);margin-top:24px;padding-top:20px}
-.help p{font-size:.82rem;color:var(--muted);margin-bottom:12px}
+.help p{font-size:.82rem;color:var(--muted);margin-bottom:8px}
+.help a{color:var(--teal);text-decoration:none;font-weight:500}
+
 .toast{position:fixed;top:20px;right:20px;padding:14px 20px;border-radius:8px;font-size:.9rem;z-index:9999;transform:translateX(120%);transition:transform .3s}
 .toast.show{transform:translateX(0)}
 .toast-error{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA}
 .toast-success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0}
-@media(max-width:480px){.card{padding:32px 24px}.card img{width:150px}}
+
+.hide{display:none!important}
+@media(max-width:480px){.card{padding:32px 24px}.card img{width:150px}.code-inputs{gap:5px}.code-input{width:36px;height:44px;font-size:1.2rem}}
 </style>
 </head>
 <body>
 <div class="card">
     <img src="/bg.jpeg" alt="Beko ComplianceOS">
     <p class="eyebrow" id="eyebrow">Email verification</p>
-    <h2 id="title">Check your inbox</h2>
-    <p id="message">We sent a verification link to <strong id="userEmail">your email</strong>. Click the link and we'll automatically redirect you back to the app.</p>
+    <h2 id="title">Enter your verification code</h2>
+    <p id="message">We sent an 8-digit code to <strong id="userEmail">your email</strong>. Enter it below to verify your account.</p>
+
+    <div class="code-inputs" id="codeInputs">
+        <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code" data-idx="0">
+        <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="1">
+        <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="2">
+        <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="3">
+        <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="4">
+        <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="5">
+        <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="6">
+        <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="7">
+    </div>
 
     <div class="status" id="statusBox">
-        <span class="status-icon" id="statusIcon">✓</span>
+        <span class="status-icon" id="statusIcon">&#10003;</span>
         <span class="dot" id="dot"></span>
-        <span id="statusText">Waiting for verification</span>
+        <span id="statusText">Waiting for code</span>
     </div>
 
     <div class="actions" id="actions">
-        <button class="btn btn-primary" id="checkBtn">I've verified my email</button>
+        <button class="btn btn-primary" id="verifyBtn">Verify code</button>
         <a class="btn btn-secondary" id="openEmailBtn" href="#" target="_blank" rel="noopener">Open email app</a>
-        <button class="btn btn-secondary" id="resendBtn">Resend verification email</button>
+        <button class="btn btn-secondary" id="resendBtn">Resend code</button>
         <button class="btn btn-secondary" id="logoutBtn">Use a different account</button>
     </div>
 
     <div class="help">
-        <p>Didn't receive it? Check your spam or junk folder. Verification links expire after 24 hours.</p>
+        <p>Didn't receive it? Check your spam or junk folder.</p>
+        <p><a href="#" id="linkFallback">Verify with email link instead &rarr;</a></p>
     </div>
 </div>
 
@@ -77,8 +99,7 @@ const message = $("message");
 const statusText = $("statusText");
 const dot = $("dot");
 const statusIcon = $("statusIcon");
-const checkBtn = $("checkBtn");
-const openEmailBtn = $("openEmailBtn");
+const codeInputs = document.querySelectorAll(".code-input");
 
 function setStatus(state, text) {
     if (state === "loading") {
@@ -101,17 +122,13 @@ function setStatus(state, text) {
 }
 
 function setVerified() {
-    title.textContent = "Email verified";
-    message.innerHTML = "Great! Your email has been confirmed. You'll be redirected to the app in a few seconds.";
+    title.textContent = "Email verified!";
+    message.innerHTML = "Your email has been confirmed. Redirecting you to the app&hellip;";
     setStatus("success", "Verified successfully");
-    checkBtn.textContent = "Continue to app";
-    checkBtn.onclick = () => routeUser("/verify/verify-email.html");
-}
-
-function setError(text) {
-    title.textContent = "Verification issue";
-    message.textContent = text || "We couldn't confirm your email. You can resend the verification email or try signing in again.";
-    setStatus("error", "Verification failed");
+    $("verifyBtn").textContent = "Continue to app";
+    $("verifyBtn").onclick = () => routeUser("/verify/verify-email.html");
+    codeInputs.forEach(i => i.disabled = true);
+    $("resendBtn").classList.add("hide");
 }
 
 function detectEmailProvider(email) {
@@ -128,38 +145,96 @@ function detectEmailProvider(email) {
     return providers[domain] || "mailto:" + (email || "");
 }
 
-async function checkVerification(auto = false) {
-    const { data: { user }, error } = await supabase.auth.getUser();
-    if (error || !user) {
-        if (!auto) window.location.href = "/login/login.html";
-        return false;
-    }
+// Code input behaviour: auto-advance, paste support, backspace navigation
+codeInputs.forEach((input, idx) => {
+    input.addEventListener("input", e => {
+        const v = e.target.value.replace(/[^0-9]/g, "");
+        e.target.value = v;
+        if (v) {
+            e.target.classList.add("filled");
+            if (idx < 7) codeInputs[idx + 1].focus();
+        } else {
+            e.target.classList.remove("filled");
+        }
+    });
+    input.addEventListener("keydown", e => {
+        if (e.key === "Backspace" && !e.target.value && idx > 0) {
+            codeInputs[idx - 1].focus();
+            codeInputs[idx - 1].value = "";
+            codeInputs[idx - 1].classList.remove("filled");
+        }
+    });
+    input.addEventListener("paste", e => {
+        e.preventDefault();
+        const text = (e.clipboardData || window.clipboardData).getData("text").replace(/[^0-9]/g, "").slice(0, 8);
+        for (let i = 0; i < text.length; i++) {
+            codeInputs[i].value = text[i];
+            codeInputs[i].classList.add("filled");
+        }
+        if (text.length === 8) codeInputs[7].focus();
+        else if (text.length > 0) codeInputs[text.length].focus();
+    });
+});
 
-    if (user.email_confirmed_at) {
-        setVerified();
-        return true;
-    }
-    return false;
+function getCode() {
+    return Array.from(codeInputs).map(i => i.value).join("");
 }
 
+function clearCode() {
+    codeInputs.forEach(i => { i.value = ""; i.classList.remove("filled"); });
+    codeInputs[0].focus();
+}
+
+// Auto-submit when 8 digits entered
+codeInputs[7].addEventListener("input", () => {
+    if (getCode().length === 8) verifyCode();
+});
+
+// Verify the OTP
+async function verifyCode() {
+    const code = getCode();
+    if (code.length !== 8) return toast("Enter all 8 digits");
+
+    const { data: { user } } = await supabase.auth.getUser();
+    const email = user?.email || $("userEmail").textContent;
+
+    const btn = $("verifyBtn");
+    loading(btn, true);
+    setStatus("loading", "Verifying&hellip;");
+
+    const { error } = await supabase.auth.verifyOtp({
+        email,
+        token: code,
+        type: "email"
+    });
+
+    if (error) {
+        setStatus("error", error.message.includes("expired") ? "Code expired" : "Invalid code");
+        toast(error.message);
+        clearCode();
+        loading(btn, false);
+        return;
+    }
+
+    setVerified();
+    loading(btn, false);
+    setTimeout(() => routeUser("/verify/verify-email.html"), 1500);
+}
+
+$("verifyBtn").onclick = verifyCode;
+
+// Poll for link-based verification (fallback)
 async function startPolling() {
     let attempts = 0;
-    const maxAttempts = 60; // ~3 minutes
-    setStatus("loading", "Checking verification status...");
-
     const timer = setInterval(async () => {
         attempts++;
-        const verified = await checkVerification(true);
-        if (verified) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user?.email_confirmed_at) {
             clearInterval(timer);
-            // Give user a moment to see success, then redirect
+            setVerified();
             setTimeout(() => routeUser("/verify/verify-email.html"), 1500);
-            return;
         }
-        if (attempts >= maxAttempts) {
-            clearInterval(timer);
-            setStatus("", "Still waiting — click the button below once you've verified");
-        }
+        if (attempts >= 40) clearInterval(timer);
     }, 3000);
 }
 
@@ -169,38 +244,29 @@ if (userErr || !user) {
     window.location.href = "/login/login.html";
 } else {
     $("userEmail").textContent = user.email;
-    openEmailBtn.href = detectEmailProvider(user.email);
+    $("openEmailBtn").href = detectEmailProvider(user.email);
 
     if (user.email_confirmed_at) {
         setVerified();
         setTimeout(() => routeUser("/verify/verify-email.html"), 1500);
     } else {
+        codeInputs[0].focus();
         startPolling();
     }
 }
 
-// Manual check button
-checkBtn.onclick = async () => {
-    const btn = checkBtn;
-    loading(btn, true);
-    const verified = await checkVerification();
-    if (verified) {
-        setTimeout(() => routeUser("/verify/verify-email.html"), 800);
-    } else {
-        setStatus("", "Not verified yet. Check your inbox and click the link.");
-    }
-    loading(btn, false);
-};
-
-// Resend
+// Resend code
 $("resendBtn").onclick = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
     const btn = $("resendBtn");
     loading(btn, true);
-    const { error } = await supabase.auth.resend({ type: "signup", email: user.email });
+    const { error } = await supabase.auth.signInWithOtp({ email: user.email });
     if (error) toast(error.message);
-    else toast("Verification email sent! Check your inbox.", "success");
+    else {
+        toast("New code sent! Check your inbox.", "success");
+        clearCode();
+    }
     loading(btn, false);
 };
 
@@ -208,6 +274,16 @@ $("resendBtn").onclick = async () => {
 $("logoutBtn").onclick = async () => {
     await supabase.auth.signOut();
     window.location.href = "/login/login.html";
+};
+
+// Fallback: resend link-based verification
+$("linkFallback").onclick = async e => {
+    e.preventDefault();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { error } = await supabase.auth.resend({ type: "signup", email: user.email });
+    if (error) toast(error.message);
+    else toast("Verification link sent! Check your inbox.", "success");
 };
 </script>
 <script>

@@ -23,8 +23,9 @@
 
 ## Features
 
-- **Email/password & Google authentication** via Supabase Auth
-- **Password reset** and confirm-password validation
+- **Email code (OTP), password & Google authentication** via Supabase Auth
+- **6-digit verification code** for email verification instead of links
+- **Password reset** via email link
 - **Multi-step onboarding wizard** that collects business profile data
 - **Compliance score calculator** (0–100) based on business profile
 - **Protected dashboard** with company profile, score, alerts, and deadlines
@@ -177,27 +178,58 @@ Open `http://localhost:3000`.
 
 ## Authentication Flow
 
+The app uses **6-digit email verification codes** (OTP) as the primary authentication method.
+
 ```
 User opens app
   │
   ▼
 Splash screen  ──►  Login page
                       │
-        ┌─────────────┼─────────────┐
-        ▼             ▼             ▼
-   Email Login    Email Signup   Google Login
-        │             │             │
-        │             ▼             │
-        │     Verify Email ────────►│
-        │             │             │
-        └──────┬──────┘             │
-               ▼                    │
-        Onboarding Wizard ◄─────────┘
+        ┌─────────────┼──────────────────┐
+        ▼             ▼                  ▼
+   Send Code    Password Login      Google Login
+        │             │                  │
+        ▼             │                  │
+   Enter 6-digit      │                  │
+   code on verify     │                  │
+   page               │                  │
+        │             │                  │
+   (signup) ──► Signup form ──► Code     │
+        │             │             │    │
+        └──────┬──────┴─────────────┘    │
+               ▼                         │
+        Onboarding Wizard ◄──────────────┘
         (6-step business profile)
                │
                ▼
         Compliance Dashboard
 ```
+
+### SMTP Configuration (Custom Sender Email)
+
+To send verification emails from `bekocompliance9@gmail.com` instead of Supabase's default:
+
+1. Go to **Supabase Dashboard → Authentication → SMTP Settings**
+2. Enable **Custom SMTP**
+3. Fill in:
+   - **Sender email:** `bekocompliance9@gmail.com`
+   - **Host:** `smtp.gmail.com`
+   - **Port:** `587`
+   - **Username:** `bekocompliance9@gmail.com`
+   - **Password:** *(use a Gmail [App Password](https://myaccount.google.com/apppasswords), not your regular password)*
+4. Click **Save changes**
+
+> **Note:** You must have 2-Step Verification enabled on the Gmail account to generate an App Password.
+
+### Supabase Auth Settings
+
+In **Supabase Dashboard → Authentication → Settings**:
+
+- **Enable Email provider:** ON
+- **Confirm email:** ON
+- **Secure email change:** OFF
+- **Secure password change:** OFF
 
 ### Routing Rules (enforced by `shared/router.js`)
 
