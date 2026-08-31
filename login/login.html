@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1B2A5C">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/bg.jpeg">
@@ -248,19 +248,56 @@ $("loginForm").onsubmit = async e => {
     // Hide inline verify from previous attempts
     $("inlineVerify").classList.add("hide");
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+    const { data: signInData, error } = await supabase.auth.signInWithPassword({ email, password: pass });
+
     if (error) {
         const msg = error.message.toLowerCase();
-        if (msg.includes("invalid login") || msg.includes("invalid email")) {
-            toast("Invalid email or password");
+        const status = error.status;
+
+        // Supabase returns 400 with "Invalid login credentials" for BOTH
+        // wrong password AND unconfirmed email. We need to check if the
+        // user exists and is unverified by attempting to send an OTP.
+        if (status === 400 || msg.includes("invalid login") || msg.includes("invalid email") || msg.includes("invalid credentials")) {
+
+            // Try sending an OTP code — if this succeeds, the account exists
+            // but is unverified. If it fails, the credentials are truly wrong.
+            const { error: otpError } = await supabase.auth.signInWithOtp({ email });
+
+            if (!otpError) {
+                // OTP sent successfully → account exists, email is just unverified
+                toast("Email not verified. Check your inbox for a code.", "success");
+                showInlineVerify(email);
+            } else {
+                // OTP also failed — truly invalid credentials
+                const otpMsg = otpError.message.toLowerCase();
+                if (otpMsg.includes("invalid") || otpMsg.includes("not found") || otpMsg.includes("registered")) {
+                    toast("Invalid email or password. Please try again.");
+                } else {
+                    toast("Login failed. Please check your email and password.");
+                }
+            }
+
         } else if (msg.includes("not confirmed") || msg.includes("email not confirmed")) {
-            // User exists but hasn't verified email — send code and show inline verify
+            // Explicit "not confirmed" message (older Supabase versions)
             toast("Email not verified. Sending code...", "success");
             await supabase.auth.signInWithOtp({ email });
             showInlineVerify(email);
+
+        } else if (status >= 500) {
+            toast("Server error. Please try again in a moment.");
+
         } else {
             toast(error.message);
         }
+        loading(btn, false);
+        return;
+    }
+
+    // Check if the signed-in user has a confirmed email
+    if (signInData?.user && !signInData.user.email_confirmed_at) {
+        toast("Email not verified. Sending code...", "success");
+        await supabase.auth.signInWithOtp({ email });
+        showInlineVerify(email);
         loading(btn, false);
         return;
     }
@@ -429,7 +466,18 @@ $("signupForm").onsubmit = async e => {
     });
 
     if (error) {
-        toast(error.message);
+        const msg = error.message.toLowerCase();
+        const status = error.status;
+
+        if (status >= 500) {
+            toast("Server error during signup. This is usually temporary — please try again in a moment.");
+        } else if (msg.includes("already registered") || msg.includes("already exists")) {
+            toast("This email is already registered. Try signing in instead.");
+        } else if (msg.includes("rate limit") || msg.includes("too many")) {
+            toast("Too many attempts. Please wait a minute and try again.");
+        } else {
+            toast("Signup failed: " + error.message);
+        }
         loading(btn, false);
         return;
     }
