@@ -460,7 +460,7 @@ $("signupForm").onsubmit = async e => {
 
     loading(btn, true);
 
-    const { error } = await supabase.auth.signUp({
+    const { data: signUpData, error } = await supabase.auth.signUp({
         email, password: pass,
         options: { data: { full_name: name } }
     });
@@ -469,8 +469,12 @@ $("signupForm").onsubmit = async e => {
         const msg = error.message.toLowerCase();
         const status = error.status;
 
+        // Log full error for debugging
+        console.error("Signup error:", { status, message: error.message, code: error.code, full: error });
+
         if (status >= 500) {
-            toast("Server error during signup. This is usually temporary — please try again in a moment.");
+            toast("Server error during signup. Check browser console (F12) for details.");
+            console.error("500 error details:", JSON.stringify(error, null, 2));
         } else if (msg.includes("already registered") || msg.includes("already exists")) {
             toast("This email is already registered. Try signing in instead.");
         } else if (msg.includes("rate limit") || msg.includes("too many")) {
@@ -481,6 +485,9 @@ $("signupForm").onsubmit = async e => {
         loading(btn, false);
         return;
     }
+
+    // Log success for debugging
+    console.log("Signup success:", signUpData);
 
     // Account created — redirect to verify page which auto-sends the code
     toast("Account created! Sending verification code...", "success");
