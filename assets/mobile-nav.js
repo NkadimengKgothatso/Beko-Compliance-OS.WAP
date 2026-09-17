@@ -12,7 +12,7 @@
   const nav = aside.querySelector('nav');
   const userBox = aside.querySelector('.user-box');
   const existingLogout = aside.querySelector('.logout');
-  const logoSrc = aside.querySelector('img')?.src || '/bg.jpeg';
+  const logoSrc = aside.querySelector('img')?.src || '/beko-logo.png';
 
   // Create mobile header
   const header = document.createElement('header');

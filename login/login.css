@@ -6,7 +6,8 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
 /* ── Brand Panel (left) ── */
 .brand-panel{background:linear-gradient(160deg,#1B2A5C 0%,#1E3A6E 50%,#1B5A5C 100%);padding:60px 48px;display:flex;flex-direction:column;justify-content:center;color:#fff;position:relative;overflow:hidden}
 .brand-panel::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(44,181,184,.12) 0%,transparent 50%)}
-.brand-panel img{width:240px;margin-bottom:32px;filter:brightness(1.15);position:relative;background:rgba(255,255,255,.12);padding:18px 24px;border-radius:18px;backdrop-filter:blur(4px)}
+.brand-panel img{width:225px;margin-bottom:14px;position:relative;background:#fff;padding:16px 20px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.22)}
+.brand-panel .slogan{position:relative;opacity:1;font-size:.78rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#9FE8E9;margin-bottom:26px}
 .brand-panel h1{font-size:1.8rem;margin-bottom:12px;position:relative}
 .brand-panel p{opacity:.8;line-height:1.6;position:relative}
 .brand-panel ul{list-style:none;margin-top:24px;position:relative}
@@ -32,6 +33,16 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
 .match-msg{font-size:.82rem;margin-top:4px;font-weight:500;min-height:18px}
 .match-msg.error{color:var(--danger)}
 .match-msg.success{color:var(--green)}
+
+/* ── Terms / Privacy acceptance ── */
+.agree{display:flex;gap:10px;align-items:flex-start;margin:2px 0 14px;font-size:.82rem;color:var(--text);line-height:1.5;cursor:pointer}
+.agree input{margin-top:2px;width:16px;height:16px;accent-color:var(--green);flex:none;cursor:pointer}
+.agree a{color:var(--teal);font-weight:600;text-decoration:none}
+.agree a:hover{text-decoration:underline}
+.legal-links{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:28px;font-size:.78rem;color:var(--muted)}
+.legal-links span{opacity:.5}
+.legal-links a{color:var(--muted);text-decoration:none;font-weight:500}
+.legal-links a:hover{color:var(--navy);text-decoration:underline}
 
 /* ── Buttons ── */
 .btn{width:100%;padding:13px;border:none;border-radius:8px;font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;transition:background .2s,transform .1s;display:inline-flex;align-items:center;justify-content:center;gap:8px}

@@ -15,7 +15,8 @@
 <body>
 
 <section class="brand-panel">
-    <img src="/bg.jpeg" alt="Beko ComplianceOS">
+    <img src="/beko-logo.png" alt="Beko ComplianceOS">
+    <p class="slogan">Compliance. Clarity. Confidence.</p>
     <h1>Simplify your business compliance</h1>
     <p>Navigate SARS, CIPC, and regulatory responsibilities with clear guidance and automated reminders.</p>
     <ul>
@@ -134,8 +135,12 @@
                 <input type="password" id="signupConfirmPass" placeholder="Re-enter your password" minlength="6" required>
             </div>
             <p id="passMatchMsg" class="match-msg"></p>
+            <label class="agree">
+                <input type="checkbox" id="agreeTerms" required>
+                <span>I agree to the <a href="/terms/terms.html" target="_blank" rel="noopener">Terms of Use</a> and <a href="/privacy/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span>
+            </label>
             <p style="font-size:.8rem;color:var(--muted);margin-bottom:14px">We'll email you an 8-digit verification code to confirm your account.</p>
-            <button type="submit" class="btn btn-green">Create Account &amp; Send Code</button>
+            <button type="submit" class="btn btn-green">I Agree &amp; Create Account</button>
         </form>
     </div>
 
@@ -152,6 +157,12 @@
         </form>
         <p class="form-footer"><a href="#" id="backLogin">&larr; Back to sign in</a></p>
     </div>
+
+    <p class="legal-links">
+        <a href="/terms/terms.html">Terms of Use</a>
+        <span>&middot;</span>
+        <a href="/privacy/privacy.html">Privacy Policy</a>
+    </p>
 
 </section>
 

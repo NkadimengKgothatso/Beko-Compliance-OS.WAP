@@ -76,7 +76,7 @@ function loadLogo() {
             resolve(logoDataUrl);
         };
         img.onerror = () => resolve(null);
-        img.src = "/bg.jpeg";
+        img.src = "/beko-logo.png";
     });
 }
 
