@@ -1,4 +1,4 @@
-const CACHE_NAME = 'beko-compliance-os-v2';
+const CACHE_NAME = 'beko-compliance-os-v3';
 const ASSETS = [
   '/',
   '/index.html',
@@ -69,6 +69,7 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
   const { request } = event;
+  if (request.method !== 'GET') return;
   const url = new URL(request.url);
 
   // Always fetch Supabase API/storage live
@@ -79,25 +80,38 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Same-origin pages/assets: cache first, then network
+  // Same-origin pages/assets: network first so users always get the latest
+  // HTML/CSS/JS, with the cache kept as an offline fallback.
   if (url.origin === self.location.origin) {
     event.respondWith(
-      caches.match(request).then(cached => {
-        if (cached) return cached;
-        return fetch(request)
-          .then(response => {
+      fetch(request)
+        .then(response => {
+          if (response && response.ok) {
             const clone = response.clone();
             caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
-            return response;
-          })
-          .catch(() => caches.match('/index.html'));
-      })
+          }
+          return response;
+        })
+        .catch(async () => {
+          const cached = await caches.match(request);
+          if (cached) return cached;
+          if (request.mode === 'navigate') return caches.match('/index.html');
+          return Response.error();
+        })
     );
     return;
   }
 
   // External CDN resources: network first, cache fallback
   event.respondWith(
-    fetch(request).catch(() => caches.match(request))
+    fetch(request)
+      .then(response => {
+        if (response && response.ok) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
+        }
+        return response;
+      })
+      .catch(() => caches.match(request))
   );
 });

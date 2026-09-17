@@ -12,6 +12,7 @@ const statusIcon = $("statusIcon");
 const codeInputs = document.querySelectorAll(".code-input");
 const COOLDOWN_SECONDS = 60;
 let cooldownTimer = null;
+let currentEmail = null;
 
 function setStatus(state, text) {
     if (state === "loading") {
@@ -34,6 +35,7 @@ function setStatus(state, text) {
 }
 
 function setVerified() {
+    sessionStorage.removeItem("beko_verify_email");
     title.textContent = "Email verified!";
     message.innerHTML = "Your email has been confirmed. Redirecting you to the app&hellip;";
     setStatus("success", "Verified successfully");
@@ -137,8 +139,7 @@ async function verifyCode() {
     const code = getCode();
     if (code.length !== 8) return toast("Enter all 8 digits");
 
-    const { data: { user } } = await supabase.auth.getUser();
-    const email = user?.email || $("userEmail").textContent;
+    const email = currentEmail || $("userEmail").textContent;
 
     const btn = $("verifyBtn");
     loading(btn, true);
@@ -191,16 +192,24 @@ function startPolling() {
 
 // ─── Send verification code ─────────────────────────────────────────
 async function sendCode() {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return false;
+    if (!currentEmail) return false;
 
     try {
-        const { error } = await supabase.auth.signInWithOtp({ email: user.email });
+        const { error } = await supabase.auth.signInWithOtp({ email: currentEmail });
         if (error) {
+            const msg = error.message.toLowerCase();
+            if (msg.includes("security purposes") || msg.includes("only request this after") ||
+                msg.includes("rate limit") || msg.includes("too many")) {
+                // A code was sent moments ago (usually at signup) — it's still
+                // valid, so keep the entry UI calm instead of showing an error.
+                toast("A code has already been sent to " + currentEmail + ". Check your inbox.", "success");
+                startCooldown();
+                return true;
+            }
             toast("Could not send code: " + error.message);
             return false;
         }
-        toast("Verification code sent to " + user.email, "success");
+        toast("Verification code sent to " + currentEmail, "success");
         startCooldown();
         return true;
     } catch (err) {
@@ -210,20 +219,28 @@ async function sendCode() {
 }
 
 // ─── Init ────────────────────────────────────────────────────────────
-const { data: { user }, error: userErr } = await supabase.auth.getUser();
-if (userErr || !user) {
+// Users arriving from signup have no session yet, so fall back to the
+// email the login page handed over (or a ?email= query param).
+const { data: { user } } = await supabase.auth.getUser();
+const pendingEmail =
+    user?.email ||
+    sessionStorage.getItem("beko_verify_email") ||
+    new URLSearchParams(window.location.search).get("email");
+
+if (!pendingEmail) {
     window.location.href = "/login/login.html";
 } else {
-    $("userEmail").textContent = user.email;
-    $("openEmailBtn").href = detectEmailProvider(user.email);
+    currentEmail = pendingEmail;
+    $("userEmail").textContent = pendingEmail;
+    $("openEmailBtn").href = detectEmailProvider(pendingEmail);
 
-    if (user.email_confirmed_at) {
+    if (user?.email_confirmed_at) {
         setVerified();
         setTimeout(() => routeUser("/verify/verify-email.html"), 1500);
     } else {
         // Auto-send a verification code on page load
         codeInputs[0].focus();
-        startPolling();
+        if (user) startPolling();
         await sendCode();
     }
 }
@@ -242,6 +259,7 @@ $("resendBtn").onclick = async () => {
 
 // ─── Logout / use different account ──────────────────────────────────
 $("logoutBtn").onclick = async () => {
+    sessionStorage.removeItem("beko_verify_email");
     await supabase.auth.signOut();
     window.location.href = "/login/login.html";
 };
@@ -249,9 +267,8 @@ $("logoutBtn").onclick = async () => {
 // ─── Fallback: resend link-based verification ────────────────────────
 $("linkFallback").onclick = async e => {
     e.preventDefault();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    const { error } = await supabase.auth.resend({ type: "signup", email: user.email });
+    if (!currentEmail) return;
+    const { error } = await supabase.auth.resend({ type: "signup", email: currentEmail });
     if (error) toast(error.message);
     else toast("Verification link sent! Check your inbox.", "success");
 };

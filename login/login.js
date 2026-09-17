@@ -3,14 +3,14 @@ import { supabase } from "/supabase.js";
 import { routeUser } from "/shared/router.js";
 import { toast, loading } from "/shared/ui.js";
 
-// Unregister any old service worker so stale cached files don't interfere
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
-}
-
 const $ = id => document.getElementById(id);
 const views = { login: $("loginView"), code: $("codeView"), signup: $("signupView"), reset: $("resetView") };
 const tabs  = { login: $("tabLogin"), code: $("tabCode"), signup: $("tabSignup") };
+
+// Supabase rate-limits OTP emails per address. That message means a code is
+// already in the user's inbox, so we still show the code entry UI.
+const RATE_LIMIT_HINTS = ["security purposes", "only request this after", "rate limit", "too many"];
+const isRateLimited = message => RATE_LIMIT_HINTS.some(hint => message.toLowerCase().includes(hint));
 
 function show(name) {
     Object.values(views).forEach(v => v.classList.add("hide"));
@@ -64,6 +64,10 @@ $("loginForm").onsubmit = async e => {
             if (!otpError) {
                 // OTP sent successfully → account exists, email is just unverified
                 toast("Email not verified. Check your inbox for a code.", "success");
+                showInlineVerify(email);
+            } else if (isRateLimited(otpError.message)) {
+                // A code was sent moments ago — show the entry UI anyway
+                toast("A code has already been sent. Enter it below.", "success");
                 showInlineVerify(email);
             } else {
                 // OTP also failed — truly invalid credentials
@@ -234,19 +238,24 @@ $("codeForm").onsubmit = async e => {
     loading(btn, true);
 
     const { error } = await supabase.auth.signInWithOtp({ email });
-    if (error) {
+    if (error && !isRateLimited(error.message)) {
         toast(error.message);
         loading(btn, false);
         return;
     }
 
     loading(btn, false);
+    if (error) toast("A code has already been sent. Enter it below.", "success");
+    showCodeEntry(email);
+};
+
+function showCodeEntry(email) {
     $("codeSentEmail").textContent = email;
     $("codeForm").classList.add("hide");
     $("codeEntry").classList.remove("hide");
     codeEntry.clear();
     startCooldown($("codeResend"), $("codeCooldown"), 60);
-};
+}
 
 async function verifyCode() {
     const token = codeEntry.getCode();
@@ -333,8 +342,10 @@ $("signupForm").onsubmit = async e => {
     // Log success for debugging
     console.log("Signup success:", signUpData);
 
-    // Account created — redirect to verify page which auto-sends the code
+    // Account created — redirect to verify page which auto-sends the code.
+    // Signup leaves no session, so hand the email over to the verify page.
     toast("Account created! Sending verification code...", "success");
+    sessionStorage.setItem("beko_verify_email", email);
     window.location.href = "/verify/verify-email.html";
 };
 
