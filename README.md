@@ -62,6 +62,8 @@
 Beko-Compliance-OS.WAP/
 ├── supabase.js               ← Supabase init (URL + anon key)
 ├── index.html                ← Splash / welcome screen
+├── index.css                 ← Splash page styles
+├── index.js                  ← Splash redirect + service worker registration
 ├── manifest.json             ← PWA manifest
 ├── service-worker.js         ← PWA service worker (offline caching)
 ├── bg.jpeg                   ← Logo image
@@ -70,51 +72,82 @@ Beko-Compliance-OS.WAP/
 │   ├── router.js             ← Auth routing (verify → onboard → dashboard)
 │   └── ui.js                 ← Toast + loading helpers
 │
-├── login/                    ← Login, signup, and password reset
-│   └── login.html            ← Self-contained page
-│
-├── verify/                   ← Email verification
-│   └── verify-email.html     ← Self-contained page
-│
-├── onboarding/               ← Multi-step onboarding wizard
-│   └── onboarding.html       ← Self-contained page
-│
-├── dashboard/                ← Protected compliance dashboard
-│   └── dashboard.html        ← Self-contained page
-│
 ├── assets/                   ← Shared CSS/JS used by multiple pages
 │   ├── mobile-nav.css
 │   └── mobile-nav.js
 │
+├── login/                    ← Login, signup, and password reset
+│   ├── login.html
+│   ├── login.css
+│   └── login.js
+│
+├── verify/                   ← Email verification
+│   ├── verify-email.html
+│   ├── verify-email.css
+│   └── verify-email.js
+│
+├── onboarding/               ← Multi-step onboarding wizard
+│   ├── onboarding.html
+│   ├── onboarding.css
+│   └── onboarding.js
+│
+├── dashboard/                ← Protected compliance dashboard
+│   ├── dashboard.html
+│   ├── dashboard.css
+│   └── dashboard.js
+│
 ├── templates/                ← Downloadable legal/compliance templates
-│   └── templates.html
+│   ├── templates.html
+│   ├── templates.css
+│   └── templates.js
 │
 ├── education/                ← Legal education hub
-│   └── education.html
+│   ├── education.html
+│   ├── education.css
+│   └── education.js
 │
 ├── tenders/                  ← Tender listings, alerts, and tracking
-│   └── tenders.html
+│   ├── tenders.html
+│   ├── tenders.css
+│   └── tenders.js
 │
 ├── aml/                      ← AML/FICA risk screener
-│   └── aml.html
+│   ├── aml.html
+│   ├── aml.css
+│   └── aml.js
 │
 ├── notifications/            ← In-app notifications
-│   └── notifications.html
+│   ├── notifications.html
+│   ├── notifications.css
+│   └── notifications.js
 │
 ├── consultation/             ← Book legal consultations
-│   └── consultation.html
+│   ├── consultation.html
+│   ├── consultation.css
+│   └── consultation.js
 │
 ├── profile/                  ← User profile and settings
-│   └── profile.html
+│   ├── profile.html
+│   ├── profile.css
+│   └── profile.js
 │
 ├── admin/                    ← Admin panel for managing content
-│   └── admin.html
+│   ├── admin.html
+│   ├── admin.css
+│   └── admin.js
 │
 ├── compliance/               ← POPIA, SARS, CIPC, and document vault
-│   └── compliance.html
+│   ├── compliance.html
+│   ├── compliance.css
+│   └── compliance.js
+│
+├── presentation/             ← Slide deck
+│   ├── slides.html
+│   ├── slides.css
+│   └── slides.js
 │
 ├── emails/                   ← Branded email HTML templates
-│   ├── verify-email.html
+│   ├── verify-email.html     ← (styles kept inline — email clients strip <style> blocks)
 │   ├── password-reset.html
 │   └── welcome.html
 │
@@ -123,8 +156,17 @@ Beko-Compliance-OS.WAP/
     ├── supabase-migration-v3.sql ← Adds is_admin flag (legacy)
     ├── supabase-migration-v4.sql ← Adds compliance tables, storage, and admin policies
     ├── implementation-summary.md
-    └── beko_complianceos_desktop_portal.html
+    ├── test-checklist.md
+    ├── fix-auth-trigger.sql
+    ├── beko_complianceos_desktop_portal.html
+    ├── beko_complianceos_desktop_portal.css
+    └── beko_complianceos_desktop_portal.js
 ```
+
+Each page keeps its markup, styles, and behaviour in separate
+`.html` / `.css` / `.js` files within the same folder. Email templates
+under `emails/` are the exception — their styles stay inline because most
+email clients discard `<style>` blocks.
 
 ---
 
