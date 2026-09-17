@@ -110,75 +110,79 @@ $("loginForm").onsubmit = async e => {
 const inlineInputs = document.querySelectorAll("#inlineCodeInputs .code-input");
 let inlineCooldownTimer = null;
 
-function showInlineVerify(email) {
-    $("inlineVerify").classList.remove("hide");
-    $("inlineEmail").textContent = email;
-    inlineInputs.forEach(i => { i.value = ""; i.classList.remove("filled"); });
-    inlineInputs[0].focus();
-    startInlineCooldown(60);
+// Reusable 8-digit code input group: numeric filtering, auto-advance,
+// backspace navigation, paste support, auto-submit when complete.
+function setupCodeInputs(inputs, { onComplete }) {
+    const getCode = () => Array.from(inputs).map(i => i.value).join("");
+    const clear = () => {
+        inputs.forEach(i => { i.value = ""; i.classList.remove("filled"); });
+        inputs[0].focus();
+    };
+
+    inputs.forEach((input, idx) => {
+        input.addEventListener("input", e => {
+            const v = e.target.value.replace(/[^0-9]/g, "");
+            e.target.value = v;
+            if (v) {
+                e.target.classList.add("filled");
+                if (idx < inputs.length - 1) inputs[idx + 1].focus();
+            } else {
+                e.target.classList.remove("filled");
+            }
+            if (getCode().length === inputs.length) onComplete();
+        });
+        input.addEventListener("keydown", e => {
+            if (e.key === "Backspace" && !e.target.value && idx > 0) {
+                inputs[idx - 1].focus();
+                inputs[idx - 1].value = "";
+                inputs[idx - 1].classList.remove("filled");
+            }
+        });
+        input.addEventListener("paste", e => {
+            e.preventDefault();
+            const text = (e.clipboardData || window.clipboardData).getData("text").replace(/[^0-9]/g, "").slice(0, inputs.length);
+            for (let i = 0; i < text.length; i++) {
+                inputs[i].value = text[i];
+                inputs[i].classList.add("filled");
+            }
+            if (text.length === inputs.length) onComplete();
+            else if (text.length > 0) inputs[text.length].focus();
+        });
+    });
+
+    return { getCode, clear };
 }
 
-function startInlineCooldown(seconds) {
+function startCooldown(resendEl, labelEl, seconds) {
     let remaining = seconds;
-    $("inlineResend").style.pointerEvents = "none";
-    $("inlineResend").style.opacity = "0.4";
+    resendEl.style.pointerEvents = "none";
+    resendEl.style.opacity = "0.4";
     clearInterval(inlineCooldownTimer);
-    $("inlineCooldown").textContent = `Resend available in ${remaining}s`;
+    labelEl.textContent = `Resend available in ${remaining}s`;
     inlineCooldownTimer = setInterval(() => {
         remaining--;
         if (remaining <= 0) {
             clearInterval(inlineCooldownTimer);
-            $("inlineCooldown").textContent = "";
-            $("inlineResend").style.pointerEvents = "";
-            $("inlineResend").style.opacity = "";
+            labelEl.textContent = "";
+            resendEl.style.pointerEvents = "";
+            resendEl.style.opacity = "";
         } else {
-            $("inlineCooldown").textContent = `Resend available in ${remaining}s`;
+            labelEl.textContent = `Resend available in ${remaining}s`;
         }
     }, 1000);
 }
 
-// Code input behaviour for inline verify
-inlineInputs.forEach((input, idx) => {
-    input.addEventListener("input", e => {
-        const v = e.target.value.replace(/[^0-9]/g, "");
-        e.target.value = v;
-        if (v) {
-            e.target.classList.add("filled");
-            if (idx < 7) inlineInputs[idx + 1].focus();
-        } else {
-            e.target.classList.remove("filled");
-        }
-    });
-    input.addEventListener("keydown", e => {
-        if (e.key === "Backspace" && !e.target.value && idx > 0) {
-            inlineInputs[idx - 1].focus();
-            inlineInputs[idx - 1].value = "";
-            inlineInputs[idx - 1].classList.remove("filled");
-        }
-    });
-    input.addEventListener("paste", e => {
-        e.preventDefault();
-        const text = (e.clipboardData || window.clipboardData).getData("text").replace(/[^0-9]/g, "").slice(0, 8);
-        for (let i = 0; i < text.length; i++) {
-            inlineInputs[i].value = text[i];
-            inlineInputs[i].classList.add("filled");
-        }
-        if (text.length === 8) inlineInputs[7].focus();
-        else if (text.length > 0) inlineInputs[text.length].focus();
-    });
-});
-
-function getInlineCode() {
-    return Array.from(inlineInputs).map(i => i.value).join("");
+function showInlineVerify(email) {
+    $("inlineVerify").classList.remove("hide");
+    $("inlineEmail").textContent = email;
+    inline.clear();
+    startCooldown($("inlineResend"), $("inlineCooldown"), 60);
 }
 
-// Auto-submit when 8 digits entered
-inlineInputs[7].addEventListener("input", () => {
-    if (getInlineCode().length === 8) verifyInlineCode();
-});
+const inline = setupCodeInputs(inlineInputs, { onComplete: verifyInlineCode });
 
 async function verifyInlineCode() {
-    const code = getInlineCode();
+    const code = inline.getCode();
     if (code.length !== 8) return toast("Enter all 8 digits");
 
     const email = $("inlineEmail").textContent;
@@ -193,8 +197,7 @@ async function verifyInlineCode() {
 
     if (error) {
         toast(error.message);
-        inlineInputs.forEach(i => { i.value = ""; i.classList.remove("filled"); });
-        inlineInputs[0].focus();
+        inline.clear();
         loading(btn, false);
         return;
     }
@@ -213,13 +216,15 @@ $("inlineResend").onclick = async e => {
     const { error } = await supabase.auth.signInWithOtp({ email });
     if (error) { toast(error.message); return; }
     toast("New code sent!", "success");
-    inlineInputs.forEach(i => { i.value = ""; i.classList.remove("filled"); });
-    inlineInputs[0].focus();
-    startInlineCooldown(60);
+    inline.clear();
+    startCooldown($("inlineResend"), $("inlineCooldown"), 60);
 };
 
 
 // ─── SEND CODE (OTP Login) ──────────────────────────────────────────
+const codeInputs = document.querySelectorAll("#codeInputs .code-input");
+const codeEntry = setupCodeInputs(codeInputs, { onComplete: verifyCode });
+
 $("codeForm").onsubmit = async e => {
     e.preventDefault();
     const btn = e.target.querySelector("button[type=submit]");
@@ -235,11 +240,52 @@ $("codeForm").onsubmit = async e => {
         return;
     }
 
-    toast("Code sent! Check your inbox.", "success");
-    // Redirect to verify page — user enters code there
-    setTimeout(() => {
-        window.location.href = "/verify/verify-email.html";
-    }, 800);
+    loading(btn, false);
+    $("codeSentEmail").textContent = email;
+    $("codeForm").classList.add("hide");
+    $("codeEntry").classList.remove("hide");
+    codeEntry.clear();
+    startCooldown($("codeResend"), $("codeCooldown"), 60);
+};
+
+async function verifyCode() {
+    const token = codeEntry.getCode();
+    if (token.length !== 8) return toast("Enter all 8 digits");
+
+    const email = $("codeSentEmail").textContent;
+    const btn = $("codeVerifyBtn");
+    loading(btn, true);
+
+    const { error } = await supabase.auth.verifyOtp({ email, token, type: "email" });
+
+    if (error) {
+        toast(error.message);
+        codeEntry.clear();
+        loading(btn, false);
+        return;
+    }
+
+    toast("Signed in!", "success");
+    loading(btn, false);
+    await routeUser("/login/login.html");
+}
+
+$("codeVerifyBtn").onclick = verifyCode;
+
+$("codeResend").onclick = async e => {
+    e.preventDefault();
+    const email = $("codeSentEmail").textContent;
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    if (error) { toast(error.message); return; }
+    toast("New code sent!", "success");
+    codeEntry.clear();
+    startCooldown($("codeResend"), $("codeCooldown"), 60);
+};
+
+$("codeChangeEmail").onclick = e => {
+    e.preventDefault();
+    $("codeEntry").classList.add("hide");
+    $("codeForm").classList.remove("hide");
 };
 
 
