@@ -4,8 +4,8 @@ import { routeUser } from "/shared/router.js";
 import { toast, loading } from "/shared/ui.js";
 
 const $ = id => document.getElementById(id);
-const views = { login: $("loginView"), code: $("codeView"), signup: $("signupView"), reset: $("resetView") };
-const tabs  = { login: $("tabLogin"), code: $("tabCode"), signup: $("tabSignup") };
+const views = { login: $("loginView"), signup: $("signupView"), reset: $("resetView") };
+const tabs  = { login: $("tabLogin"), signup: $("tabSignup") };
 
 // Supabase rate-limits OTP emails per address. That message means a code is
 // already in the user's inbox, so we still show the code entry UI.
@@ -21,7 +21,6 @@ function show(name) {
 
 // Tab switching
 tabs.login.onclick  = () => show("login");
-tabs.code.onclick   = () => show("code");
 tabs.signup.onclick = () => show("signup");
 
 // Reset back-link
@@ -222,79 +221,6 @@ $("inlineResend").onclick = async e => {
     toast("New code sent!", "success");
     inline.clear();
     startCooldown($("inlineResend"), $("inlineCooldown"), 60);
-};
-
-
-// ─── SEND CODE (OTP Login) ──────────────────────────────────────────
-const codeInputs = document.querySelectorAll("#codeInputs .code-input");
-const codeEntry = setupCodeInputs(codeInputs, { onComplete: verifyCode });
-
-$("codeForm").onsubmit = async e => {
-    e.preventDefault();
-    const btn = e.target.querySelector("button[type=submit]");
-    const email = $("codeEmail").value.trim();
-
-    if (!email) return toast("Enter your email");
-    loading(btn, true);
-
-    const { error } = await supabase.auth.signInWithOtp({ email });
-    if (error && !isRateLimited(error.message)) {
-        toast(error.message);
-        loading(btn, false);
-        return;
-    }
-
-    loading(btn, false);
-    if (error) toast("A code has already been sent. Enter it below.", "success");
-    showCodeEntry(email);
-};
-
-function showCodeEntry(email) {
-    $("codeSentEmail").textContent = email;
-    $("codeForm").classList.add("hide");
-    $("codeEntry").classList.remove("hide");
-    codeEntry.clear();
-    startCooldown($("codeResend"), $("codeCooldown"), 60);
-}
-
-async function verifyCode() {
-    const token = codeEntry.getCode();
-    if (token.length !== 8) return toast("Enter all 8 digits");
-
-    const email = $("codeSentEmail").textContent;
-    const btn = $("codeVerifyBtn");
-    loading(btn, true);
-
-    const { error } = await supabase.auth.verifyOtp({ email, token, type: "email" });
-
-    if (error) {
-        toast(error.message);
-        codeEntry.clear();
-        loading(btn, false);
-        return;
-    }
-
-    toast("Signed in!", "success");
-    loading(btn, false);
-    await routeUser("/login/login.html");
-}
-
-$("codeVerifyBtn").onclick = verifyCode;
-
-$("codeResend").onclick = async e => {
-    e.preventDefault();
-    const email = $("codeSentEmail").textContent;
-    const { error } = await supabase.auth.signInWithOtp({ email });
-    if (error) { toast(error.message); return; }
-    toast("New code sent!", "success");
-    codeEntry.clear();
-    startCooldown($("codeResend"), $("codeCooldown"), 60);
-};
-
-$("codeChangeEmail").onclick = e => {
-    e.preventDefault();
-    $("codeEntry").classList.add("hide");
-    $("codeForm").classList.remove("hide");
 };
 
 

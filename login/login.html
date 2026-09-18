@@ -9,7 +9,6 @@
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/bg.jpeg">
 <title>Login — Beko ComplianceOS</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="login.css">
 </head>
 <body>
@@ -32,7 +31,6 @@
     <!-- Tabs -->
     <div class="tabs">
         <button class="tab active" id="tabLogin" type="button">Sign In</button>
-        <button class="tab" id="tabCode" type="button">Send Code</button>
         <button class="tab" id="tabSignup" type="button">Create Account</button>
     </div>
 
@@ -71,44 +69,6 @@
             <button class="btn btn-teal" id="inlineVerifyBtn" style="width:auto;padding:10px 24px;margin:0 auto">Verify code</button>
             <p class="cooldown" id="inlineCooldown"></p>
             <p style="margin-top:10px"><a href="#" class="link" id="inlineResend">Resend code</a></p>
-        </div>
-    </div>
-
-    <!-- ═══════════ SEND CODE VIEW (OTP Login) ═══════════ -->
-    <div id="codeView" class="hide">
-        <h2>Sign in with code</h2>
-        <p class="sub">No password needed — we'll email you a one-time code.</p>
-
-        <form id="codeForm">
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="codeEmail" placeholder="you@company.co.za" required>
-            </div>
-            <button type="submit" class="btn btn-teal"><i class="fa-solid fa-paper-plane"></i> Send Verification Code</button>
-        </form>
-
-        <!-- Code entry (shown after the code is sent) -->
-        <div id="codeEntry" class="code-entry hide">
-            <div class="code-entry-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
-            <h3>Check your inbox</h3>
-            <p>We sent an 8-digit code to <strong id="codeSentEmail"></strong>. Enter it below to sign in.</p>
-            <div class="code-inputs" id="codeInputs">
-                <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="0">
-                <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="1">
-                <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="2">
-                <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="3">
-                <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="4">
-                <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="5">
-                <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="6">
-                <input type="text" class="code-input" maxlength="1" inputmode="numeric" pattern="[0-9]" data-idx="7">
-            </div>
-            <button class="btn btn-teal" id="codeVerifyBtn">Verify &amp; Sign In</button>
-            <p class="cooldown" id="codeCooldown"></p>
-            <p class="code-entry-links">
-                <a href="#" class="link" id="codeResend">Resend code</a>
-                <span>&middot;</span>
-                <a href="#" class="link" id="codeChangeEmail">Use a different email</a>
-            </p>
         </div>
     </div>
 
