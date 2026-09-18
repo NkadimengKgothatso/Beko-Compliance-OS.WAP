@@ -1,4 +1,4 @@
-const CACHE_NAME = 'beko-compliance-os-v4';
+const CACHE_NAME = 'beko-compliance-os-v5';
 const ASSETS = [
   '/',
   '/index.html',
@@ -7,6 +7,9 @@ const ASSETS = [
   '/login/login.html',
   '/login/login.css',
   '/login/login.js',
+  '/signup/signup.html',
+  '/signup/signup.css',
+  '/signup/signup.js',
   '/verify/verify-email.html',
   '/verify/verify-email.css',
   '/verify/verify-email.js',

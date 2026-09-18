@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1B2A5C">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/bg.jpeg">
+<title>Create Account — Beko ComplianceOS</title>
+<link rel="stylesheet" href="signup.css">
+</head>
+<body>
+
+<section class="brand-panel">
+    <img src="/beko-logo.png" alt="Beko ComplianceOS">
+    <p class="slogan">Compliance. Clarity. Confidence.</p>
+    <h1>Simplify your business compliance</h1>
+    <p>Navigate SARS, CIPC, and regulatory responsibilities with clear guidance and automated reminders.</p>
+    <ul>
+        <li>Monitor compliance obligations and deadlines</li>
+        <li>Automated reminders via email and in-app</li>
+        <li>Step-by-step guidance for each task</li>
+        <li>Legal templates and business documents</li>
+    </ul>
+</section>
+
+<section class="form-panel">
+
+    <div>
+        <h2>Create your account</h2>
+        <p class="sub">Get started with your compliance journey.</p>
+
+        <form id="signupForm">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="fullName" placeholder="Your full name" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="signupEmail" placeholder="you@company.co.za" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="signupPass" placeholder="Minimum 6 characters" minlength="6" required>
+            </div>
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" id="signupConfirmPass" placeholder="Re-enter your password" minlength="6" required>
+            </div>
+            <p id="passMatchMsg" class="match-msg"></p>
+            <label class="agree">
+                <input type="checkbox" id="agreeTerms" required>
+                <span>I agree to the <a href="/terms/terms.html" target="_blank" rel="noopener">Terms of Use</a> and <a href="/privacy/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span>
+            </label>
+            <p class="code-note">We'll email you an 8-digit verification code to confirm your account.</p>
+            <button type="submit" class="btn btn-green">I Agree &amp; Create Account</button>
+        </form>
+    </div>
+
+    <p class="form-footer">Already have an account? <a href="/login/login.html">Sign in</a></p>
+
+    <p class="legal-links">
+        <a href="/terms/terms.html">Terms of Use</a>
+        <span>&middot;</span>
+        <a href="/privacy/privacy.html">Privacy Policy</a>
+    </p>
+
+</section>
+
+<script type="module" src="signup.js"></script>
+
+</body>
+</html>

@@ -85,7 +85,7 @@
   <div class="app-flow" style="margin-top:24px">
     <div class="flow-step"><strong>1</strong><br>Splash Screen</div>
     <span class="flow-arrow">→</span>
-    <div class="flow-step"><strong>2</strong><br>Login / Signup</div>
+    <div class="flow-step"><strong>2</strong><br>Sign Up<br>or Sign In</div>
     <span class="flow-arrow">→</span>
     <div class="flow-step"><strong>3</strong><br>Email Verify<br>(8-digit OTP)</div>
     <span class="flow-arrow">→</span>
@@ -96,7 +96,7 @@
   <div style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:24px">
     <div class="feature-card">
       <h3>Smart Routing</h3>
-      <p>The app automatically routes users based on verification status, onboarding completion, and company profile existence. No dead ends.</p>
+      <p>The app routes users by verification status, onboarding completion, and company profile existence. Sign-up and unverified sign-ins both hand off to the verification screen. No dead ends.</p>
     </div>
     <div class="feature-card">
       <h3>Compliance Score Engine</h3>
@@ -106,40 +106,99 @@
   <p class="slide-number">4</p>
 </div>
 
-<!-- SLIDE 5: Login & Auth -->
+<!-- SLIDE 5: Sign-Up & Sign-In -->
 <div class="slide slide-light" data-slide="5">
   <p class="eyebrow">App Walkthrough — Step 1</p>
-  <h2>Login & Authentication</h2>
-  <div class="two-col" style="margin-top:16px">
-    <div>
-      <div class="card-light" style="margin-bottom:16px">
-        <h3>Three Sign-In Methods</h3>
-        <p><strong>Sign In</strong> — Email + password with forgot-password reset<br>
-        <strong>Send Code</strong> — OTP-based passwordless login<br>
-        <strong>Create Account</strong> — Name, email, password with live match validation</p>
+  <h2 style="margin-bottom:14px">Sign-Up &amp; Sign-In</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    <div class="card-light">
+      <h3>Two Separate Pages</h3>
+      <p><strong>Sign In</strong> (login.html) — email + password, forgot-password reset, and a link to create an account.<br>
+      <strong>Create Account</strong> (signup.html) — full name, email, password + confirmation with live match validation, and Terms &amp; Privacy acceptance.</p>
+    </div>
+    <div class="card-light">
+      <h3>Email Verification</h3>
+      <p>An 8-digit code is emailed to the user. After signup — or when an unverified user tries to sign in — the app hands off to the verification screen, with auto-advance, paste support, auto-submit, and a resend cooldown.</p>
+    </div>
+  </div>
+  <div class="three-col" style="margin-top:18px;gap:16px;align-items:start">
+    <div class="mock-screen" style="padding:12px">
+      <div class="screen-header" style="margin-bottom:8px">
+        <div class="dot" style="background:#FF5F57"></div>
+        <div class="dot" style="background:#FEBC2E"></div>
+        <div class="dot" style="background:#28C840"></div>
+        <span style="margin-left:8px;font-size:.7rem;color:#6B7280">login.html</span>
       </div>
-      <div class="card-light">
-        <h3>Email Verification</h3>
-        <p>8-digit OTP code sent via email. Features auto-advance, paste support, auto-submit, resend cooldown timer, and inline verification on the login page if an unverified user tries to sign in.</p>
+      <div class="screen-body" style="font-size:.72rem;color:#374151;min-height:0;padding:10px">
+        <strong style="font-size:.82rem;color:#1B2A5C">Welcome back</strong>
+        <div style="color:#6B7280;font-size:.64rem;margin:2px 0 6px">Sign in to manage your compliance dashboard.</div>
+        <label style="font-size:.62rem;font-weight:600">Email</label>
+        <div style="padding:5px 8px;background:#fff;border:1px solid #E5E7EB;border-radius:6px;font-size:.68rem;margin:2px 0 5px;color:#9CA3AF">you@company.co.za</div>
+        <label style="font-size:.62rem;font-weight:600">Password</label>
+        <div style="padding:5px 8px;background:#fff;border:1px solid #E5E7EB;border-radius:6px;font-size:.68rem;margin:2px 0 2px">&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</div>
+        <div style="text-align:right;font-size:.62rem;color:#2CB5B8;margin-bottom:6px">Forgot password?</div>
+        <div style="padding:6px;background:#1B2A5C;color:#fff;border-radius:6px;text-align:center;font-size:.7rem;font-weight:600">Sign In</div>
+        <div style="text-align:center;font-size:.62rem;color:#6B7280;margin-top:6px">New to Beko ComplianceOS? <span style="color:#2CB5B8;font-weight:600">Create an account</span></div>
       </div>
     </div>
-    <div>
-      <div class="mock-screen">
-        <div class="screen-header">
-          <div class="dot" style="background:#FF5F57"></div>
-          <div class="dot" style="background:#FEBC2E"></div>
-          <div class="dot" style="background:#28C840"></div>
-          <span style="margin-left:8px;font-size:.75rem;color:#6B7280">login.html</span>
-        </div>
-        <div class="screen-body" style="font-size:.8rem;color:#374151">
-          <div style="display:flex;gap:0;margin-bottom:12px;border-bottom:2px solid #E5E7EB">
-            <div style="padding:8px 16px;font-weight:600;font-size:.75rem;color:#1B2A5C;border-bottom:2px solid #1B2A5C;margin-bottom:-2px">Sign In</div>
-            <div style="padding:8px 16px;font-size:.75rem;color:#6B7280">Send Code</div>
-            <div style="padding:8px 16px;font-size:.75rem;color:#6B7280">Create Account</div>
+    <div class="mock-screen" style="padding:12px">
+      <div class="screen-header" style="margin-bottom:8px">
+        <div class="dot" style="background:#FF5F57"></div>
+        <div class="dot" style="background:#FEBC2E"></div>
+        <div class="dot" style="background:#28C840"></div>
+        <span style="margin-left:8px;font-size:.7rem;color:#6B7280">signup.html</span>
+      </div>
+      <div class="screen-body" style="font-size:.72rem;color:#374151;min-height:0;padding:10px">
+        <strong style="font-size:.82rem;color:#1B2A5C">Create your account</strong>
+        <div style="color:#6B7280;font-size:.64rem;margin:2px 0 6px">Get started with your compliance journey.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
+          <div>
+            <label style="font-size:.62rem;font-weight:600">Full Name</label>
+            <div style="padding:5px 7px;background:#fff;border:1px solid #E5E7EB;border-radius:6px;font-size:.66rem;margin:2px 0 0;color:#9CA3AF">Your full name</div>
           </div>
-          <div style="margin-bottom:8px"><label style="font-size:.7rem;font-weight:600">Email</label><div style="padding:8px;background:#fff;border:1px solid #E5E7EB;border-radius:6px;font-size:.75rem;margin-top:2px">you@company.co.za</div></div>
-          <div style="margin-bottom:8px"><label style="font-size:.7rem;font-weight:600">Password</label><div style="padding:8px;background:#fff;border:1px solid #E5E7EB;border-radius:6px;font-size:.75rem;margin-top:2px">••••••••</div></div>
-          <div style="padding:8px;background:#1B2A5C;color:#fff;border-radius:6px;text-align:center;font-size:.75rem;font-weight:600;margin-top:8px">Sign In</div>
+          <div>
+            <label style="font-size:.62rem;font-weight:600">Email</label>
+            <div style="padding:5px 7px;background:#fff;border:1px solid #E5E7EB;border-radius:6px;font-size:.66rem;margin:2px 0 0;color:#9CA3AF">you@company.co.za</div>
+          </div>
+          <div>
+            <label style="font-size:.62rem;font-weight:600">Password</label>
+            <div style="padding:5px 7px;background:#fff;border:1px solid #E5E7EB;border-radius:6px;font-size:.66rem;margin:2px 0 0">&bull;&bull;&bull;&bull;&bull;&bull;</div>
+          </div>
+          <div>
+            <label style="font-size:.62rem;font-weight:600">Confirm Password</label>
+            <div style="padding:5px 7px;background:#fff;border:1px solid #4CAF50;border-radius:6px;font-size:.66rem;margin:2px 0 0">&bull;&bull;&bull;&bull;&bull;&bull;</div>
+          </div>
+        </div>
+        <div style="font-size:.62rem;color:#4CAF50;margin:3px 0 5px">Passwords match</div>
+        <div style="font-size:.62rem;color:#374151;margin-bottom:6px"><span style="color:#4CAF50;font-weight:700">&#10003;</span> I agree to the <span style="color:#2CB5B8;text-decoration:underline">Terms of Use</span> and <span style="color:#2CB5B8;text-decoration:underline">Privacy Policy</span>.</div>
+        <div style="padding:6px;background:#4CAF50;color:#fff;border-radius:6px;text-align:center;font-size:.7rem;font-weight:600">I Agree &amp; Create Account</div>
+        <div style="text-align:center;font-size:.62rem;color:#6B7280;margin-top:6px">Already have an account? <span style="color:#2CB5B8;font-weight:600">Sign in</span></div>
+      </div>
+    </div>
+    <div class="mock-screen" style="padding:12px">
+      <div class="screen-header" style="margin-bottom:8px">
+        <div class="dot" style="background:#FF5F57"></div>
+        <div class="dot" style="background:#FEBC2E"></div>
+        <div class="dot" style="background:#28C840"></div>
+        <span style="margin-left:8px;font-size:.7rem;color:#6B7280">verify-email.html</span>
+      </div>
+      <div class="screen-body" style="font-size:.72rem;color:#374151;min-height:0;padding:10px;text-align:center">
+        <strong style="font-size:.82rem;color:#1B2A5C">Enter your verification code</strong>
+        <div style="color:#6B7280;font-size:.64rem;margin:2px 0 8px">We sent an 8-digit code to you@company.co.za</div>
+        <div style="display:flex;gap:3px;justify-content:center;margin-bottom:8px">
+          <div style="flex:1;height:24px;line-height:24px;background:#fff;border:1px solid #E5E7EB;border-radius:5px;font-size:.66rem;font-weight:600">4</div>
+          <div style="flex:1;height:24px;line-height:24px;background:#fff;border:1px solid #E5E7EB;border-radius:5px;font-size:.66rem;font-weight:600">8</div>
+          <div style="flex:1;height:24px;line-height:24px;background:#fff;border:1px solid #E5E7EB;border-radius:5px;font-size:.66rem;font-weight:600">2</div>
+          <div style="flex:1;height:24px;line-height:24px;background:#fff;border:1px solid #E5E7EB;border-radius:5px;font-size:.66rem;font-weight:600">9</div>
+          <div style="flex:1;height:24px;line-height:24px;background:#fff;border:1px solid #E5E7EB;border-radius:5px;font-size:.66rem;font-weight:600">1</div>
+          <div style="flex:1;height:24px;line-height:24px;background:#fff;border:1px solid #E5E7EB;border-radius:5px;font-size:.66rem;font-weight:600">0</div>
+          <div style="flex:1;height:24px;line-height:24px;background:#fff;border:1px solid #E5E7EB;border-radius:5px;font-size:.66rem;font-weight:600">6</div>
+          <div style="flex:1;height:24px;line-height:24px;background:#fff;border:1px solid #E5E7EB;border-radius:5px;font-size:.66rem;font-weight:600">3</div>
+        </div>
+        <div style="padding:6px;background:#1B2A5C;color:#fff;border-radius:6px;font-size:.7rem;font-weight:600">Verify code</div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px">
+          <span style="font-size:.6rem;color:#9CA3AF">Resend code (45s)</span>
+          <span style="font-size:.6rem;color:#2CB5B8">Use a different account</span>
         </div>
       </div>
     </div>
@@ -342,7 +401,7 @@
     <div>
       <table style="width:100%;font-size:.88rem;border-collapse:collapse">
         <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:10px;font-weight:600;color:var(--navy)">Frontend</td><td style="padding:10px;color:var(--muted)">Vanilla HTML / CSS / JavaScript (ES Modules)</td></tr>
-        <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:10px;font-weight:600;color:var(--navy)">Authentication</td><td style="padding:10px;color:var(--muted)">Supabase Auth (email/password + OTP + Google OAuth)</td></tr>
+        <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:10px;font-weight:600;color:var(--navy)">Authentication</td><td style="padding:10px;color:var(--muted)">Supabase Auth (email/password, email OTP verification, password reset)</td></tr>
         <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:10px;font-weight:600;color:var(--navy)">Database</td><td style="padding:10px;color:var(--muted)">Supabase PostgreSQL with Row Level Security</td></tr>
         <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:10px;font-weight:600;color:var(--navy)">File Storage</td><td style="padding:10px;color:var(--muted)">Supabase Storage (document vault)</td></tr>
         <tr style="border-bottom:1px solid #E5E7EB"><td style="padding:10px;font-weight:600;color:var(--navy)">Hosting</td><td style="padding:10px;color:var(--muted)">Vercel (static deploy)</td></tr>
@@ -375,7 +434,7 @@
   <table class="gap-table">
     <thead><tr><th>Feature</th><th>Business Report / Plan</th><th>Current Status</th><th></th></tr></thead>
     <tbody>
-      <tr><td>Authentication (email/password, OTP)</td><td>Required</td><td><span class="badge badge-done">Done</span></td><td>Full auth flow with 8-digit OTP, Google OAuth, password reset</td></tr>
+      <tr><td>Authentication (email/password, OTP)</td><td>Required</td><td><span class="badge badge-done">Done</span></td><td>Full auth flow: separate sign-up &amp; sign-in pages, 8-digit email OTP verification, password reset</td></tr>
       <tr><td>Onboarding wizard (business profile)</td><td>Required</td><td><span class="badge badge-done">Done</span></td><td>6-step wizard with score calculation</td></tr>
       <tr><td>Compliance Dashboard</td><td>Core MVP</td><td><span class="badge badge-done">Done</span></td><td>Score, alerts, business details, compliance setup</td></tr>
       <tr><td>Template Library</td><td>Core MVP</td><td><span class="badge badge-done">Done</span></td><td>22 templates with branded PDF downloads</td></tr>

@@ -24,8 +24,16 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
 .form-group label{display:block;font-weight:600;font-size:.82rem;color:var(--text);margin-bottom:6px}
 .form-group input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:.95rem;background:#FAFBFC;transition:border .2s,box-shadow .2s}
 .form-group input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(44,181,184,.1);background:#fff}
+.match-msg{font-size:.82rem;margin-top:4px;font-weight:500;min-height:18px}
+.match-msg.error{color:var(--danger)}
+.match-msg.success{color:var(--green)}
 
-/* ── Legal links ── */
+/* ── Terms / Privacy acceptance ── */
+.agree{display:flex;gap:10px;align-items:flex-start;margin:2px 0 14px;font-size:.82rem;color:var(--text);line-height:1.5;cursor:pointer}
+.agree input{margin-top:2px;width:16px;height:16px;accent-color:var(--green);flex:none;cursor:pointer}
+.agree a{color:var(--teal);font-weight:600;text-decoration:none}
+.agree a:hover{text-decoration:underline}
+.code-note{font-size:.8rem;color:var(--muted);margin-bottom:14px}
 .legal-links{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:28px;font-size:.78rem;color:var(--muted)}
 .legal-links span{opacity:.5}
 .legal-links a{color:var(--muted);text-decoration:none;font-weight:500}
@@ -34,20 +42,16 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
 /* ── Buttons ── */
 .btn{width:100%;padding:13px;border:none;border-radius:8px;font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;transition:background .2s,transform .1s;display:inline-flex;align-items:center;justify-content:center;gap:8px}
 .btn:active{transform:scale(.99)}
-.btn-primary{background:var(--navy);color:#fff}
-.btn-primary:hover{background:#2E4A8E}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:#388E3C}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 
 /* ── Misc ── */
-.link{color:var(--teal);text-decoration:none;font-size:.85rem;font-weight:500}
-.link:hover{text-decoration:underline}
 .form-footer{text-align:center;margin-top:18px;font-size:.82rem;color:var(--muted)}
 .form-footer a{color:var(--navy);font-weight:600;text-decoration:none}
-.hide{display:none!important}
 .toast{position:fixed;top:20px;right:20px;padding:14px 20px;border-radius:8px;font-size:.9rem;font-weight:500;z-index:9999;transform:translateX(120%);transition:transform .3s ease}
 .toast.show{transform:translateX(0)}
 .toast-error{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA}
 .toast-success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0}
-.forgot{text-align:right;margin-bottom:14px}
 
 @media(max-width:768px){body{grid-template-columns:1fr}.brand-panel{display:none}.form-panel{padding:32px 20px}}
