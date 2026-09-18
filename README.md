@@ -38,7 +38,8 @@
 - **Consultation booking** — request help from partner law firms
 - **Notifications centre** — compliance reminders and read/unread state
 - **Row Level Security** — users can only read/write their own data
-- **Compliance centre** — POPIA readiness checklist, SARS tax calendar, CIPC annual-return reminders, and a document vault with Supabase Storage
+- **Compliance centre** — POPIA readiness checklist, SARS tax calendar, and CIPC annual-return reminders
+- **Documents centre** — upload compliance documents (PDF, Word, Excel, images; 10 MB max) with live upload status, outstanding-document tracking that clears as you upload, and secure per-user Supabase Storage
 - **Admin panel** — manage tenders, broadcast notifications, and update consultation statuses
 - **Progressive Web App (PWA)** — install on mobile home screen, offline app shell caching, themed status bar
 - **Responsive design** — works on desktop, tablet, and mobile
@@ -70,7 +71,8 @@ Beko-Compliance-OS.WAP/
 │
 ├── shared/                   ← Shared utility modules
 │   ├── router.js             ← Auth routing (verify → onboard → dashboard)
-│   └── ui.js                 ← Toast + loading helpers
+│   ├── ui.js                 ← Toast + loading helpers
+│   └── compliance-docs.js    ← Required-document rules, matching, and file validation
 │
 ├── assets/                   ← Shared CSS/JS used by multiple pages
 │   ├── mobile-nav.css
@@ -136,10 +138,15 @@ Beko-Compliance-OS.WAP/
 │   ├── admin.css
 │   └── admin.js
 │
-├── compliance/               ← POPIA, SARS, CIPC, and document vault
+├── compliance/               ← POPIA, SARS, and CIPC compliance tools
 │   ├── compliance.html
 │   ├── compliance.css
 │   └── compliance.js
+│
+├── documents/                ← Document centre (uploads + outstanding requirements)
+│   ├── documents.html
+│   ├── documents.css
+│   └── documents.js
 │
 ├── presentation/             ← Slide deck
 │   ├── slides.html
@@ -155,6 +162,7 @@ Beko-Compliance-OS.WAP/
     ├── supabase-schema.sql   ← Full database schema (clean slate)
     ├── supabase-migration-v3.sql ← Adds is_admin flag (legacy)
     ├── supabase-migration-v4.sql ← Adds compliance tables, storage, and admin policies
+    ├── supabase-migration-v5.sql ← Adds document types and storage bucket limits
     ├── implementation-summary.md
     ├── test-checklist.md
     ├── fix-auth-trigger.sql
@@ -202,6 +210,7 @@ Choose one option based on whether you already have data in Supabase:
 1. In Supabase, go to **SQL Editor → New Query**
 2. Open [docs/supabase-migration-v4.sql](docs/supabase-migration-v4.sql) and copy the contents
 3. Click **Run**
+4. Repeat for [docs/supabase-migration-v5.sql](docs/supabase-migration-v5.sql) (document types + storage limits)
 
 > The migration adds all new tables **and** ensures the auth trigger that creates a `profiles` row on sign-up is present. If you see "database error saving user" during signup, re-run the migration.
 
@@ -308,10 +317,10 @@ The app uses **Supabase PostgreSQL** with Row Level Security enabled:
 - **`popia_checklists`** — User POPIA readiness checklists
 - **`tax_deadlines`** — SARS/CIPC deadline calendar
 - **`cipc_reminders`** — User CIPC annual-return reminder settings
-- **`documents`** — Document vault metadata (files live in Supabase Storage)
+- **`documents`** — Document vault metadata (files live in Supabase Storage; `doc_type` links a file to the requirement it satisfies)
 
 Full schema: [docs/supabase-schema.sql](docs/supabase-schema.sql)  
-Non-destructive migration: [docs/supabase-migration-v4.sql](docs/supabase-migration-v4.sql)
+Non-destructive migrations: [docs/supabase-migration-v4.sql](docs/supabase-migration-v4.sql), [docs/supabase-migration-v5.sql](docs/supabase-migration-v5.sql)
 
 Row Level Security policies ensure each user can only access their own rows.
 

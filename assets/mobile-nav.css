@@ -1,5 +1,16 @@
 /* Mobile navigation overlay for Beko ComplianceOS sidebar pages */
 
+:root{
+--navy:#1B2A5C;--navy-hover:#2E4A8E;--navy-deep:#0F1A3A;--navy-teal:#1B4A5C;
+--green:#4CAF50;--green-hover:#388E3C;
+--teal:#2CB5B8;--teal-light:#9FE8E9;--teal-tint:#E0F2F1;--teal-dark:#0F4C4F;
+--bg:#F4F6FA;--text:#374151;--muted:#6B7280;--border:#E5E7EB;
+--surface:#FAFBFC;--surface-hover:#F3F4F6;
+--danger:#DC2626;--danger-hover:#B91C1C;--danger-bg:#FEE2E2;--danger-border:#FECACA;--danger-text:#991B1B;
+--success-bg:#ECFDF5;--success-border:#A7F3D0;--success-text:#065F46;
+--warn:#D97706;--warn-bg:#FFFBEB;--warn-border:#FDE68A;--warn-text:#92400E
+}
+
 .mobile-header {
   display: none;
   position: fixed;
@@ -8,7 +19,7 @@
   right: 0;
   height: 56px;
   background: #fff;
-  border-bottom: 1px solid var(--border, #E5E7EB);
+  border-bottom: 1px solid var(--border);
   align-items: center;
   justify-content: space-between;
   padding: 0 16px;
@@ -36,14 +47,14 @@
 }
 
 .hamburger:hover {
-  background: #F3F4F6;
+  background: var(--surface-hover);
 }
 
 .hamburger span {
   display: block;
   width: 22px;
   height: 2px;
-  background: var(--navy, #1B2A5C);
+  background: var(--navy);
   border-radius: 2px;
   transition: transform 0.2s, opacity 0.2s;
 }
@@ -81,18 +92,18 @@
 
 .mobile-menu .menu-user {
   padding: 20px 16px;
-  border-bottom: 1px solid var(--border, #E5E7EB);
+  border-bottom: 1px solid var(--border);
 }
 
 .mobile-menu .menu-user .name {
   font-weight: 600;
-  color: var(--navy, #1B2A5C);
+  color: var(--navy);
   font-size: 0.95rem;
 }
 
 .mobile-menu .menu-user .email {
   font-size: 0.8rem;
-  color: var(--muted, #6B7280);
+  color: var(--muted);
   word-break: break-all;
 }
 
@@ -108,29 +119,29 @@
   padding: 14px 12px;
   border-radius: 8px;
   text-decoration: none;
-  color: var(--text, #374151);
+  color: var(--text);
   font-size: 0.92rem;
   font-weight: 500;
   margin-bottom: 4px;
 }
 
 .mobile-menu nav a:hover {
-  background: #F3F4F6;
+  background: var(--surface-hover);
 }
 
 .mobile-menu nav a.active {
-  background: #EFF8F0;
-  color: var(--navy, #1B2A5C);
+  background: var(--success-bg);
+  color: var(--navy);
   font-weight: 600;
 }
 
 .mobile-menu .logout {
   margin: 16px;
   padding: 12px;
-  border: 1px solid var(--border, #E5E7EB);
+  border: 1px solid var(--border);
   border-radius: 8px;
   background: #fff;
-  color: var(--text, #374151);
+  color: var(--text);
   font: inherit;
   font-size: 0.9rem;
   font-weight: 600;
@@ -138,9 +149,9 @@
 }
 
 .mobile-menu .logout:hover {
-  background: #FEE2E2;
-  color: var(--danger, #DC2626);
-  border-color: #FECACA;
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-color: var(--danger-border);
 }
 
 @media (max-width: 1024px) {

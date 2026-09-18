@@ -1,9 +1,18 @@
-
+:root{
+--navy:#1B2A5C;--navy-hover:#2E4A8E;--navy-deep:#0F1A3A;--navy-teal:#1B4A5C;
+--green:#4CAF50;--green-hover:#388E3C;
+--teal:#2CB5B8;--teal-light:#9FE8E9;--teal-tint:#E0F2F1;--teal-dark:#0F4C4F;
+--bg:#F4F6FA;--text:#374151;--muted:#6B7280;--border:#E5E7EB;
+--surface:#FAFBFC;--surface-hover:#F3F4F6;
+--danger:#DC2626;--danger-hover:#B91C1C;--danger-bg:#FEE2E2;--danger-border:#FECACA;--danger-text:#991B1B;
+--success-bg:#ECFDF5;--success-border:#A7F3D0;--success-text:#065F46;
+--warn:#D97706;--warn-bg:#FFFBEB;--warn-border:#FDE68A;--warn-text:#92400E
+}
 *{margin:0;padding:0;box-sizing:border-box}
 body{min-height:100vh;display:grid;place-items:center;background:linear-gradient(160deg,#0F1A3A 0%,#1B2A5C 40%,#1B4A5C 100%);font-family:'Segoe UI',system-ui,sans-serif;color:#fff;overflow:hidden}
 .splash{text-align:center;animation:fadeIn .8s ease}
 .splash img{width:300px;max-width:78vw;margin-bottom:22px}
-.splash .slogan{font-size:1.05rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#9FE8E9;margin-bottom:40px}
+.splash .slogan{font-size:1.05rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--teal-light);margin-bottom:40px}
 .bar{width:200px;height:3px;background:rgba(255,255,255,.15);border-radius:3px;margin:0 auto;overflow:hidden}
 .bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#2CB5B8,#4CAF50);border-radius:3px;animation:load 2s ease forwards}
 @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}

@@ -87,6 +87,7 @@
                 <div class="field"><label>Accounting software</label><select id="accounting"><option value="">Select</option><option value="sage">Sage</option><option value="xero">Xero</option><option value="quickbooks">QuickBooks</option><option value="pastel">Pastel</option><option value="excel">Excel / spreadsheets</option><option value="other">Other</option><option value="none">None</option></select></div>
                 <div class="field"><label>Payroll system</label><select id="payroll"><option value="">Select</option><option value="sage-payroll">Sage Payroll</option><option value="payspace">PaySpace</option><option value="simplepay">SimplePay</option><option value="excel">Excel</option><option value="other">Other</option><option value="none">None</option></select></div>
             </div>
+            <div class="field"><label>Do you import or export goods?</label><select id="importsExports"><option value="no">No</option><option value="yes">Yes</option><option value="unsure">Not sure</option></select></div>
         </div>
 
         <!-- Step 5: Compliance habits -->
@@ -106,7 +107,7 @@
         <!-- Step 6: Score -->
         <div class="step">
             <h3>Your initial compliance score</h3>
-            <div class="score-card"><p>Starting score</p><strong id="scoreVal">--%</strong><span id="scoreMsg">Complete the steps to generate your score.</span></div>
+            <div class="score-card" id="scoreCard"><p>Starting score</p><strong id="scoreVal">--%</strong><span id="scoreMsg">Complete the steps to generate your score.</span></div>
         </div>
 
         <!-- Navigation -->

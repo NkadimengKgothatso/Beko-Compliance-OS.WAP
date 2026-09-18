@@ -1,8 +1,12 @@
 
 import { supabase } from "/supabase.js";
+import { buildComplianceReport, bandFor, STATUS_LABELS } from "/shared/obligations.js";
 
 let currentUser = null;
 let popiaRow = null;
+let docsCache = [];
+let completionsCache = [];
+let migrationWarned = false;
 
 const popiaItems = [
     { id: "accountability", group: "Accountability", text: "Appoint an information officer responsible for POPIA compliance" },
@@ -42,14 +46,27 @@ function daysUntil(d) {
 // Tabs
 const tabs = document.querySelectorAll(".tab");
 const panels = document.querySelectorAll(".panel");
+
+function activateTab(id) {
+    if (!document.getElementById(id + "Panel")) return;
+    tabs.forEach(x => x.classList.remove("active"));
+    panels.forEach(x => x.classList.remove("active"));
+    document.querySelector(`.tab[data-tab="${id}"]`)?.classList.add("active");
+    document.getElementById(id + "Panel").classList.add("active");
+}
+
 tabs.forEach(t => {
     t.onclick = () => {
-        tabs.forEach(x => x.classList.remove("active"));
-        panels.forEach(x => x.classList.remove("active"));
-        t.classList.add("active");
-        document.getElementById(t.dataset.tab + "Panel").classList.add("active");
+        if (t.dataset.href) {
+            window.location.href = t.dataset.href;
+            return;
+        }
+        activateTab(t.dataset.tab);
+        history.replaceState(null, "", "#" + t.dataset.tab);
     };
 });
+
+window.addEventListener("hashchange", () => activateTab(window.location.hash.slice(1)));
 
 async function init() {
     const { data: { user }, error } = await supabase.auth.getUser();
@@ -61,16 +78,212 @@ async function init() {
     document.getElementById("userEmail").textContent = user.email;
     document.getElementById("userName").textContent = user.user_metadata?.full_name || "User";
 
-    loadPopia();
+    const hash = window.location.hash.slice(1);
+    if (hash) activateTab(hash);
+
+    await loadPopia();
+    loadScore();
     loadSarsCalendar();
     loadCipcReminder();
-    loadDocuments();
 }
 
 document.getElementById("logoutBtn").onclick = async () => {
     await supabase.auth.signOut();
     window.location.href = "/login/login.html";
 };
+
+// ---- Compliance score ----
+
+function fmtDate(iso) {
+    if (!iso) return "—";
+    return new Date(iso + "T00:00:00").toLocaleDateString("en-ZA", { day: "numeric", month: "short", year: "numeric" });
+}
+
+async function fetchCompletions() {
+    const { data, error } = await supabase
+        .from("obligation_completions")
+        .select("*")
+        .eq("user_id", currentUser.id);
+    if (error) {
+        // Table is added by docs/supabase-migration-v6.sql
+        if (!migrationWarned) {
+            migrationWarned = true;
+            toast("Obligation tracking needs a one-time database update (supabase-migration-v6.sql).", "error");
+        }
+        return [];
+    }
+    return data || [];
+}
+
+async function loadScore() {
+    const [{ data: company, error: companyErr }, completions, { data: docs, error: docsErr }] = await Promise.all([
+        supabase.from("company_profiles").select("*").eq("id", currentUser.id).maybeSingle(),
+        fetchCompletions(),
+        supabase.from("documents").select("*").eq("user_id", currentUser.id)
+    ]);
+
+    if (companyErr) return toast("Failed to load company profile: " + companyErr.message);
+    if (docsErr) console.error("Compliance: documents query error:", docsErr);
+
+    if (!company) {
+        document.getElementById("scorePanel").classList.add("no-profile");
+        document.getElementById("scoreHero").innerHTML = `
+            <div class="score-hero-text">
+                <h2>No business profile yet</h2>
+                <p>Complete onboarding so we can work out which obligations apply to your business and score them.</p>
+                <button class="btn btn-primary btn-sm" id="scoreOnboardingBtn">Complete onboarding</button>
+            </div>`;
+        document.getElementById("scoreOnboardingBtn").onclick = () => { window.location.href = "/onboarding/onboarding.html"; };
+        return;
+    }
+
+    document.getElementById("scorePanel").classList.remove("no-profile");
+    completionsCache = completions;
+    docsCache = docs || [];
+    renderScore(buildComplianceReport(company, {
+        completions: completionsCache,
+        docs: docsCache,
+        popia: popiaRow
+    }));
+}
+
+function renderScore(report) {
+    const hero = document.getElementById("scoreHero");
+    hero.className = `score-hero band-${report.band.id}`;
+    const dial = document.getElementById("scoreDial");
+    dial.style.setProperty("--score", report.score);
+
+    document.getElementById("scoreValue").textContent = `${report.score}%`;
+    document.getElementById("scoreBand").textContent = report.band.label;
+    document.getElementById("scoreSummary").textContent =
+        report.improvements.length
+            ? `${report.improvements.length} obligation${report.improvements.length === 1 ? "" : "s"} need action, starting with the ones worth the most points.`
+            : "Nothing needs action right now — keep your records and documents up to date.";
+
+    const c = report.counts;
+    document.getElementById("scoreCounts").textContent = [
+        `${report.applicableCount} obligations apply to your business`,
+        c.overdue ? `${c.overdue} overdue` : null,
+        c.dueSoon ? `${c.dueSoon} due soon` : null,
+        `${c.completed} completed`,
+        c.notApplicable ? `${c.notApplicable} not applicable (excluded from the score)` : null
+    ].filter(Boolean).join(" · ");
+
+    document.getElementById("regulatorGrid").innerHTML = report.byRegulator.map(reg => `
+        <div class="regulator-card">
+            <div class="reg-name">${reg.label}</div>
+            <div class="reg-score reg-${bandFor(reg.score).id}">${reg.score}%</div>
+            <div class="reg-meta">${reg.count} obligation${reg.count === 1 ? "" : "s"} · ${Math.round((reg.weight / report.totalWeight) * 100)}% of your score</div>
+        </div>`).join("");
+
+    renderImprovements(report);
+    renderObligations(report);
+}
+
+function renderImprovements(report) {
+    const el = document.getElementById("improvements");
+    if (!report.improvements.length) {
+        el.innerHTML = `<div class="empty">No overdue or due-soon obligations. We'll flag the next one here when it approaches.</div>`;
+        return;
+    }
+
+    el.innerHTML = report.improvements.map(item => {
+        const overdue = item.status === "overdue";
+        const due = overdue
+            ? `Overdue since ${fmtDate(item.dueDate)}${item.weeksOverdue ? ` (${item.weeksOverdue} week${item.weeksOverdue === 1 ? "" : "s"})` : ""}`
+            : `Due ${fmtDate(item.dueDate)}`;
+        const periods = item.missedCount > 1 ? ` · ${item.missedCount} periods outstanding` : "";
+        return `
+        <div class="improvement ${overdue ? "" : "soon"}">
+            <div class="improvement-head">
+                <div>
+                    <strong>${item.title}</strong>
+                    <span class="badge ${overdue ? "badge-overdue" : "badge-soon"}">${due}${periods}</span>
+                </div>
+                <span class="impact-badge">Completing this adds +${item.impact} point${item.impact === 1 ? "" : "s"}</span>
+            </div>
+            <p>${item.why}</p>
+            <p class="improvement-action"><strong>Next step:</strong> ${item.action}</p>
+            ${item.periodKey ? `<button class="btn btn-green btn-sm" data-action="complete" data-id="${item.id}" data-key="${item.periodKey}"><i class="fas fa-check"></i> Mark complete</button>` : ""}
+        </div>`;
+    }).join("");
+}
+
+const STATUS_RANK = { overdue: 0, due_soon: 1, pending: 2, completed: 3, not_applicable: 4 };
+const BADGE_CLASS = { overdue: "badge-overdue", due_soon: "badge-soon", pending: "badge-upcoming", completed: "badge-completed", not_applicable: "badge-na" };
+
+function renderObligations(report) {
+    const tbody = document.getElementById("obligationsBody");
+    const rows = [...report.obligations].sort((a, b) => {
+        const rank = STATUS_RANK[a.status] - STATUS_RANK[b.status];
+        if (rank) return rank;
+        return (a.dueDate || "9999-99-99") < (b.dueDate || "9999-99-99") ? -1 : 1;
+    });
+
+    tbody.innerHTML = rows.map(o => {
+        const detail = [o.dueRule, o.note].filter(Boolean).join(" — ");
+        let action = "";
+        if (o.status === "overdue" || o.status === "due_soon") {
+            action = `<button class="btn btn-secondary btn-sm" data-action="complete" data-id="${o.id}" data-key="${o.periodKey}">Mark complete</button>`;
+        } else if (o.status === "completed" && o.source === "manual" && o.periodKey) {
+            action = `<button class="btn btn-secondary btn-sm" data-action="undo" data-id="${o.id}" data-key="${o.periodKey}">Undo</button>`;
+        }
+        const sourceNote = o.status === "completed" && o.source && o.source !== "manual" ? " (from your profile)" : "";
+        return `
+        <tr>
+            <td><strong>${o.title}</strong><div class="row-sub">${detail}</div></td>
+            <td>${o.regulatorLabel}</td>
+            <td>${o.frequencyLabel}</td>
+            <td>${fmtDate(o.dueDate)}${o.status !== "completed" && o.nextDue ? `<div class="row-sub">Next: ${fmtDate(o.nextDue)}</div>` : ""}</td>
+            <td><span class="badge ${BADGE_CLASS[o.status]}">${STATUS_LABELS[o.status]}</span>${sourceNote}</td>
+            <td>${action}</td>
+        </tr>`;
+    }).join("");
+}
+
+document.getElementById("scorePanel").addEventListener("click", async e => {
+    const btn = e.target.closest("button[data-action]");
+    if (!btn) return;
+    const { action, id, key } = btn.dataset;
+    btn.disabled = true;
+
+    if (action === "complete") {
+        const { error } = await supabase.from("obligation_completions").insert({
+            user_id: currentUser.id,
+            obligation_id: id,
+            period_key: key
+        });
+        if (error) {
+            btn.disabled = false;
+            return toast("Could not save: " + error.message);
+        }
+        toast("Marked as completed — score updated", "success");
+    } else {
+        const { error } = await supabase.from("obligation_completions")
+            .delete()
+            .eq("user_id", currentUser.id)
+            .eq("obligation_id", id)
+            .eq("period_key", key);
+        if (error) {
+            btn.disabled = false;
+            return toast("Could not undo: " + error.message);
+        }
+        toast("Completion removed — score updated", "success");
+    }
+
+    await loadScore();
+});
+
+async function refreshScore() {
+    completionsCache = await fetchCompletions();
+    const { data: company } = await supabase.from("company_profiles").select("*").eq("id", currentUser.id).maybeSingle();
+    if (!company) return;
+    renderScore(buildComplianceReport(company, {
+        completions: completionsCache,
+        docs: docsCache,
+        popia: popiaRow
+    }));
+}
 
 // POPIA
 async function loadPopia() {
@@ -115,6 +328,7 @@ function renderPopia() {
                 row.classList.toggle("checked", e.target.checked);
                 updatePopiaProgress();
                 toast("Progress saved", "success");
+                refreshScore();
             };
             div.appendChild(row);
         });
@@ -220,93 +434,5 @@ document.getElementById("saveCipcBtn").onclick = async () => {
     updateCipcStatus(regDate);
     toast("Reminder saved", "success");
 };
-
-// Document Vault
-const fileDrop = document.getElementById("fileDrop");
-const fileInput = document.getElementById("fileInput");
-
-fileDrop.onclick = () => fileInput.click();
-fileDrop.ondragover = (e) => { e.preventDefault(); fileDrop.style.borderColor = "var(--teal)"; };
-fileDrop.ondragleave = () => { fileDrop.style.borderColor = ""; };
-fileDrop.ondrop = (e) => {
-    e.preventDefault();
-    fileDrop.style.borderColor = "";
-    handleFiles(e.dataTransfer.files);
-};
-fileInput.onchange = (e) => handleFiles(e.target.files);
-
-async function handleFiles(files) {
-    for (const file of files) {
-        await uploadFile(file);
-    }
-    fileInput.value = "";
-}
-
-async function uploadFile(file) {
-    const path = `${currentUser.id}/${Date.now()}_${file.name}`;
-    const { error: upErr } = await supabase.storage.from("documents").upload(path, file);
-    if (upErr) return toast(`Upload failed for ${file.name}: ${upErr.message}`);
-
-    const { error: dbErr } = await supabase.from("documents").insert({
-        user_id: currentUser.id,
-        filename: file.name,
-        storage_path: path,
-        file_type: file.type,
-        size_bytes: file.size
-    });
-    if (dbErr) return toast("Failed to save document record: " + dbErr.message);
-    toast(`${file.name} uploaded`, "success");
-    loadDocuments();
-}
-
-function formatBytes(bytes) {
-    if (bytes === 0) return "0 B";
-    const k = 1024;
-    const sizes = ["B", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
-}
-
-async function loadDocuments() {
-    const { data, error } = await supabase.from("documents").select("*").eq("user_id", currentUser.id).order("created_at", { ascending: false });
-    if (error) return toast("Failed to load documents: " + error.message);
-    const list = document.getElementById("fileList");
-    list.innerHTML = "";
-    document.getElementById("filesEmpty").classList.toggle("hidden", (data || []).length > 0);
-
-    (data || []).forEach(doc => {
-        const row = document.createElement("div");
-        row.className = "file-row";
-        row.innerHTML = `
-            <div class="meta">
-                <span class="name"><i class="fas fa-file"></i> ${doc.filename}</span>
-                <span class="size">${formatBytes(doc.size_bytes || 0)} · ${formatDate(doc.created_at)}</span>
-            </div>
-            <div class="actions">
-                <button class="btn btn-secondary btn-sm" data-download="${doc.id}" style="padding:6px 12px;font-size:.75rem">Download</button>
-                <button class="btn btn-danger btn-sm" data-delete="${doc.id}" style="padding:6px 12px;font-size:.75rem">Delete</button>
-            </div>
-        `;
-        row.querySelector("[data-download]").onclick = () => downloadDocument(doc);
-        row.querySelector("[data-delete]").onclick = () => deleteDocument(doc);
-        list.appendChild(row);
-    });
-}
-
-async function downloadDocument(doc) {
-    const { data, error } = await supabase.storage.from("documents").createSignedUrl(doc.storage_path, 60);
-    if (error) return toast("Download link failed: " + error.message);
-    window.open(data.signedUrl, "_blank");
-}
-
-async function deleteDocument(doc) {
-    if (!confirm(`Delete ${doc.filename}?`)) return;
-    const { error: storageErr } = await supabase.storage.from("documents").remove([doc.storage_path]);
-    if (storageErr) return toast("Delete failed: " + storageErr.message);
-    const { error: dbErr } = await supabase.from("documents").delete().eq("id", doc.id);
-    if (dbErr) return toast("Failed to remove record: " + dbErr.message);
-    toast("Document deleted", "success");
-    loadDocuments();
-}
 
 init();

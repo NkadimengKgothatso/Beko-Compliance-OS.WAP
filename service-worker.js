@@ -1,4 +1,4 @@
-const CACHE_NAME = 'beko-compliance-os-v5';
+const CACHE_NAME = 'beko-compliance-os-v7';
 const ASSETS = [
   '/',
   '/index.html',
@@ -40,6 +40,11 @@ const ASSETS = [
   '/compliance/compliance.html',
   '/compliance/compliance.css',
   '/compliance/compliance.js',
+  '/documents/documents.html',
+  '/documents/documents.css',
+  '/documents/documents.js',
+  '/shared/compliance-docs.js',
+  '/shared/obligations.js',
   '/profile/profile.html',
   '/profile/profile.css',
   '/profile/profile.js',

@@ -26,6 +26,7 @@
         <a href="/notifications/notifications.html">Notifications</a>
         <a href="/consultation/consultation.html">Consultation</a>
         <a href="/compliance/compliance.html">Compliance</a>
+        <a href="/documents/documents.html">Documents</a>
         <a href="/profile/profile.html">Profile</a>
     </nav>
     <div class="user-box">
@@ -53,8 +54,8 @@
     <div id="dashboardContent">
         <div class="stats">
             <article class="stat"><h2 id="scoreStat">--%</h2><p>Compliance score</p><strong id="scoreLabel">Loading</strong></article>
-            <article class="stat warn"><h2>5</h2><p>Days to VAT deadline</p><strong>Act soon</strong></article>
-            <article class="stat danger"><h2>1</h2><p>Overdue filing</p><strong>UIF — penalty risk</strong></article>
+            <article class="stat warn" id="dueSoonStat"><h2 id="dueSoonCount">—</h2><p>Due within 14 days</p><strong id="dueSoonNote">Checking deadlines</strong></article>
+            <article class="stat danger" id="overdueStat"><h2 id="overdueCount">—</h2><p>Overdue obligations</p><strong id="overdueNote">Checking deadlines</strong></article>
             <article class="stat good"><h2 id="actionsCount">—</h2><p>Actions required</p><strong>Review tasks</strong></article>
         </div>
         <div class="score-section">
@@ -67,8 +68,11 @@
             </div>
             <div class="alerts-card">
                 <h3>Alerts</h3>
-                <div class="alert alert-danger"><h4>Late on UIF submission</h4><p>Penalty risk detected — act immediately</p></div>
-                <div class="alert alert-warn"><h4>VAT return due soon</h4><p>File before the deadline to avoid interest</p></div>
+                <div id="dashboardAlerts"></div>
+                <div class="alert alert-warn alert-link hidden" id="missingDocsAlert" role="link" tabindex="0">
+                    <h4>Outstanding documents</h4>
+                    <p id="missingDocsText">Some required documents are still missing. Click to upload them.</p>
+                </div>
             </div>
         </div>
         <div class="bottom">

@@ -12,10 +12,7 @@ function toast(message) {
 
 function toastError(message) {
     const el = document.createElement("div");
-    el.className = "toast toast-success";
-    el.style.background = "#FEE2E2";
-    el.style.color = "#991B1B";
-    el.style.border = "1px solid #FECACA";
+    el.className = "toast toast-error";
     el.textContent = message;
     document.body.appendChild(el);
     requestAnimationFrame(() => el.classList.add("show"));

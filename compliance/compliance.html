@@ -27,6 +27,7 @@
         <a href="/notifications/notifications.html">Notifications</a>
         <a href="/consultation/consultation.html">Consultation</a>
         <a href="/compliance/compliance.html" class="active">Compliance</a>
+        <a href="/documents/documents.html">Documents</a>
         <a href="/profile/profile.html">Profile</a>
     </nav>
     <div class="user-box">
@@ -39,18 +40,51 @@
 <main>
     <div class="header">
         <h1>Compliance centre</h1>
-        <p>Track POPIA readiness, SARS deadlines, CIPC annual returns, and store compliance documents.</p>
+        <p>Your compliance score, POPIA readiness, SARS deadlines, and CIPC annual returns — built from the obligations that apply to your business.</p>
     </div>
 
     <div class="tabs">
-        <button class="tab active" data-tab="popia">POPIA Checklist</button>
+        <button class="tab active" data-tab="score">Score</button>
+        <button class="tab" data-tab="popia">POPIA Checklist</button>
         <button class="tab" data-tab="sars">SARS Tax Calendar</button>
         <button class="tab" data-tab="cipc">CIPC Reminder</button>
-        <button class="tab" data-tab="documents">Document Vault</button>
+        <button class="tab" data-href="/documents/documents.html">Documents</button>
+    </div>
+
+    <!-- Compliance Score -->
+    <div class="panel active" id="scorePanel">
+        <div class="score-hero" id="scoreHero">
+            <div class="score-dial" id="scoreDial">
+                <span id="scoreValue">—</span>
+                <small>out of 100</small>
+            </div>
+            <div class="score-hero-text">
+                <h2 id="scoreBand">Calculating your score...</h2>
+                <p id="scoreSummary">Building your obligation set from your business profile.</p>
+                <p class="score-counts" id="scoreCounts"></p>
+            </div>
+        </div>
+
+        <h3 class="section-title">Breakdown by regulator</h3>
+        <div class="regulator-grid" id="regulatorGrid"></div>
+
+        <h3 class="section-title">How to improve your score</h3>
+        <div id="improvements"></div>
+
+        <h3 class="section-title">Your obligations</h3>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>Obligation</th><th>Regulator</th><th>Frequency</th><th>Due</th><th>Status</th><th></th></tr>
+                </thead>
+                <tbody id="obligationsBody"></tbody>
+            </table>
+        </div>
+        <p class="score-note">Completed and upcoming obligations earn full marks, due-soon items slightly less, and overdue items lose 5% of their value for every week they stay overdue. Obligations that do not apply to your business are excluded from the score entirely — they are not counted as zero.</p>
     </div>
 
     <!-- POPIA Checklist -->
-    <div class="panel active" id="popiaPanel">
+    <div class="panel" id="popiaPanel">
         <div class="progress-wrap">
             <div class="progress-label"><span>POPIA readiness</span><span id="popiaPercent">0%</span></div>
             <progress id="popiaProgress" value="0" max="100"></progress>
@@ -98,22 +132,10 @@
         </div>
         <button class="btn btn-primary" id="saveCipcBtn"><i class="fas fa-save"></i> Save reminder</button>
 
-        <div id="cipcStatus" style="margin-top:24px;padding:20px;background:#F9FAFB;border-radius:12px;border:1px solid var(--border)">
+        <div id="cipcStatus" style="margin-top:24px;padding:20px;background:var(--surface);border-radius:12px;border:1px solid var(--border)">
             <h3 style="font-size:1rem;color:var(--navy);margin-bottom:8px">Next annual return</h3>
             <p id="cipcNextDue" style="font-size:.9rem;color:var(--muted)">Enter your registration date to calculate the next due date.</p>
         </div>
-    </div>
-
-    <!-- Document Vault -->
-    <div class="panel" id="documentsPanel">
-        <div class="file-drop" id="fileDrop">
-            <i class="fas fa-cloud-upload-alt"></i>
-            <div style="font-weight:600;color:var(--navy)">Click or drag files here to upload</div>
-            <div style="font-size:.8rem;color:var(--muted);margin-top:4px">PDFs, images, spreadsheets, or Word docs</div>
-            <input type="file" id="fileInput" multiple style="display:none">
-        </div>
-        <div class="file-list" id="fileList"></div>
-        <div id="filesEmpty" class="empty hidden">No documents uploaded yet.</div>
     </div>
 </main>
 

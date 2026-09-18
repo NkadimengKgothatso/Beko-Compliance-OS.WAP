@@ -1,10 +1,19 @@
 
 import { supabase } from "/supabase.js";
+import { missingDocsFor } from "/shared/compliance-docs.js";
+import { buildComplianceReport } from "/shared/obligations.js";
+
+let migrationWarned = false;
 
 function fmt(v) {
     if (v === null || v === undefined || v === "") return "Not set";
     if (typeof v === "boolean") return v ? "Yes" : "No";
     return String(v).replace(/_/g, " ").split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+}
+
+function fmtDate(iso) {
+    if (!iso) return "—";
+    return new Date(iso + "T00:00:00").toLocaleDateString("en-ZA", { day: "numeric", month: "short", year: "numeric" });
 }
 
 function toast(message, type = "error") {
@@ -68,23 +77,10 @@ async function loadDashboard() {
         if (fixErr) console.error("Dashboard: failed to fix onboarding flag:", fixErr);
     }
 
-    const score = profile.compliance_score || 0;
-    const statusLabel = score >= 80 ? "Strong position" : score >= 60 ? "Needs attention" : score >= 40 ? "Moderate risk" : "High risk";
-
     document.getElementById("userName").textContent = userData?.full_name || user.user_metadata?.full_name || "User";
     document.getElementById("displayName").textContent = userData?.full_name || user.user_metadata?.full_name || "User";
     document.getElementById("userEmail").textContent = user.email;
     document.getElementById("companyName").textContent = profile.business_name || userData?.company_name || "Company";
-
-    document.getElementById("scoreStat").textContent = `${score}%`;
-    document.getElementById("scoreLabel").textContent = statusLabel;
-    document.getElementById("scoreBig").textContent = `${score}%`;
-    document.getElementById("scoreStatus").textContent = statusLabel;
-    document.getElementById("scoreBar").value = score;
-    document.getElementById("scoreSummary").textContent = profile.score_summary || "Your compliance profile is loaded.";
-
-    const actions = score >= 80 ? 2 : score >= 60 ? 4 : score >= 40 ? 6 : 8;
-    document.getElementById("actionsCount").textContent = actions;
 
     document.getElementById("businessList").innerHTML = `
         <li><span>Registration number</span><strong>${fmt(profile.registration_number)}</strong></li>
@@ -109,6 +105,122 @@ async function loadDashboard() {
         <li><span>COIDA registered</span><strong>${fmt(profile.coida_registered)}</strong></li>
         <li><span>SDL registered</span><strong>${fmt(profile.sdl_registered)}</strong></li>
     `;
+
+    const [docs, completions, popia] = await Promise.all([
+        supabase.from("documents").select("*").eq("user_id", user.id),
+        fetchCompletions(user.id),
+        supabase.from("popia_checklists").select("*").eq("user_id", user.id).maybeSingle()
+    ]);
+    if (docs.error) console.error("Dashboard: documents query error:", docs.error);
+
+    const report = buildComplianceReport(profile, {
+        completions,
+        docs: docs.data || [],
+        popia: popia.data
+    });
+
+    renderScore(report, profile);
+    loadMissingDocuments(user.id, profile, docs.data || []);
+}
+
+async function fetchCompletions(userId) {
+    const { data, error } = await supabase
+        .from("obligation_completions")
+        .select("*")
+        .eq("user_id", userId);
+    if (error) {
+        // Table is added by docs/supabase-migration-v6.sql
+        if (!migrationWarned) {
+            migrationWarned = true;
+            toast("Obligation tracking needs a one-time database update (supabase-migration-v6.sql).", "error");
+        }
+        return [];
+    }
+    return data || [];
+}
+
+function renderScore(report, profile) {
+    document.getElementById("scoreStat").textContent = `${report.score}%`;
+    document.getElementById("scoreLabel").textContent = report.band.short;
+    document.getElementById("scoreBig").textContent = `${report.score}%`;
+    document.getElementById("scoreBig").className = `score-big ${report.band.id}`;
+    document.getElementById("scoreStatus").textContent = report.band.label;
+    document.getElementById("scoreBar").value = report.score;
+    document.getElementById("scoreSummary").textContent =
+        `${report.summary}. ${report.applicableCount} obligations apply to your business — see the full breakdown in the Compliance centre.`;
+
+    document.getElementById("actionsCount").textContent = report.improvements.length;
+
+    const { overdue, dueSoon } = report.counts;
+    const overdueTop = report.improvements.find(i => i.status === "overdue");
+    const soonTop = report.improvements.find(i => i.status === "due_soon");
+
+    const soonStat = document.getElementById("dueSoonStat");
+    soonStat.className = `stat ${dueSoon ? "warn" : "good"}`;
+    document.getElementById("dueSoonCount").textContent = dueSoon;
+    document.getElementById("dueSoonNote").textContent = dueSoon ? soonTop.title : "Nothing due in the next 14 days";
+
+    const overdueStat = document.getElementById("overdueStat");
+    overdueStat.className = `stat ${overdue ? "danger" : "good"}`;
+    document.getElementById("overdueCount").textContent = overdue;
+    document.getElementById("overdueNote").textContent = overdue ? overdueTop.title : "None — good standing";
+
+    renderAlerts(report);
+
+    // Keep the stored score fresh for other pages (best effort).
+    if (report.score !== (profile.compliance_score || 0)) {
+        supabase.from("company_profiles")
+            .update({ compliance_score: report.score, score_summary: report.band.label })
+            .eq("id", profile.id)
+            .then(({ error }) => { if (error) console.error("Dashboard: score sync failed:", error); });
+    }
+}
+
+function renderAlerts(report) {
+    const el = document.getElementById("dashboardAlerts");
+    const go = () => { window.location.href = "/compliance/compliance.html#score"; };
+
+    if (!report.improvements.length) {
+        el.innerHTML = `<div class="alert alert-success"><h4>No action needed</h4><p>All applicable obligations are on track.</p></div>`;
+        return;
+    }
+
+    el.innerHTML = report.improvements.slice(0, 2).map(i => {
+        const when = i.status === "overdue"
+            ? `${i.missedCount > 1 ? `${i.missedCount} periods outstanding — ` : ""}${i.weeksOverdue ? `${i.weeksOverdue} week${i.weeksOverdue === 1 ? "" : "s"} overdue` : "overdue since " + fmtDate(i.dueDate)}`
+            : `Due ${fmtDate(i.dueDate)}`;
+        return `
+        <div class="alert ${i.status === "overdue" ? "alert-danger" : "alert-warn"} alert-link" role="link" tabindex="0" data-alert>
+            <h4>${i.title} — ${when}</h4>
+            <p>${i.action} (worth +${i.impact} point${i.impact === 1 ? "" : "s"})</p>
+        </div>`;
+    }).join("");
+
+    el.querySelectorAll("[data-alert]").forEach(node => {
+        node.onclick = go;
+        node.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } };
+    });
+}
+
+async function loadMissingDocuments(userId, profile, docs) {
+    const alertEl = document.getElementById("missingDocsAlert");
+
+    const missing = missingDocsFor(profile, docs || []);
+    if (!missing.length) return;
+
+    const names = missing.map(d => d.label);
+    const shown = names.slice(0, 3).join(", ") + (names.length > 3 ? ` and ${names.length - 3} more` : "");
+    document.getElementById("missingDocsText").textContent =
+        `${missing.length} required document${missing.length === 1 ? "" : "s"} outstanding: ${shown}. Click to upload.`;
+
+    alertEl.classList.remove("hidden");
+    alertEl.onclick = () => { window.location.href = "/documents/documents.html"; };
+    alertEl.onkeydown = (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            window.location.href = "/documents/documents.html";
+        }
+    };
 }
 
 document.getElementById("logoutBtn").onclick = async () => {

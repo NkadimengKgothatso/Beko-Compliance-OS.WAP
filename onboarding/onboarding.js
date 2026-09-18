@@ -2,6 +2,7 @@
 import { supabase } from "/supabase.js";
 import { routeUser } from "/shared/router.js";
 import { toast, loading } from "/shared/ui.js";
+import { buildComplianceReport } from "/shared/obligations.js";
 
 const steps = document.querySelectorAll(".step");
 const journeyItems = document.querySelectorAll("#journey li");
@@ -34,56 +35,9 @@ function validate() {
 document.getElementById("nextBtn").onclick = () => { if (validate()) goTo(current + 1); };
 document.getElementById("backBtn").onclick = () => goTo(Math.max(0, current - 1));
 
-function calcScore() {
+function buildProfileDraft() {
     const g = id => document.getElementById(id).value;
-    let s = 45;
-    if (g("businessName")) s += 5;
-    if (g("businessType")) s += 5;
-    if (g("businessType") === "sole-proprietor" || g("regNumber")) s += 8;
-    if (g("province")) s += 5;
-    if (g("industry")) s += 3;
-    if (g("industrySubsector")) s += 2;
-    if (g("vat") === "yes") s += 7;
-    if (g("vat") === "unsure") s -= 5;
-    if (g("taxNumber")) s += 5;
-    if (g("uifNumber")) s += 3;
-    if (g("cipcReturn") === "current") s += 5;
-    if (g("cipcReturn") === "overdue") s -= 5;
-    if (Number(g("employees")) > 0) s += 5;
-    if (Number(g("directors")) >= 1) s += 2;
-    if (g("industry")) s += 5;
-    if (g("revenue")) s += 5;
-    if (g("accounting") && g("accounting") !== "none") s += 5;
-    if (g("payroll") && g("payroll") !== "none") s += 5;
-    if (g("taxFiling") === "current") s += 10;
-    if (g("taxFiling") === "recent") s += 5;
-    if (g("taxFiling") === "late") s -= 8;
-    if (g("taxFiling") === "never") s -= 12;
-    if (document.getElementById("hasRecords").checked) s += 5;
-    if (document.getElementById("hasBusinessPlan").checked) s += 3;
-    if (document.getElementById("hasContracts").checked) s += 2;
-    if (g("bbbeeLevel") && g("bbbeeLevel") !== "non-compliant") s += 4;
-    if (g("coida") === "yes") s += 3;
-    if (document.getElementById("sdlRegistered").checked) s += 2;
-    s = Math.max(0, Math.min(100, s));
-    document.getElementById("scoreVal").textContent = `${s}%`;
-    const msgs = [[80,"Strong start! Your dashboard will focus on upcoming deadlines."],[60,"Good foundation. A few gaps to address."],[40,"Moderate risk. Your dashboard starts with urgent basics."],[0,"High risk. We'll focus on stabilising core obligations."]];
-    document.getElementById("scoreMsg").textContent = msgs.find(([t]) => s >= t)?.[1] || "";
-    return s;
-}
-
-function setValue(id, val) { const el = document.getElementById(id); if (el) el.value = val; }
-function setChecked(id, val) { const el = document.getElementById(id); if (el) el.checked = val; }
-
-document.getElementById("form").onsubmit = async e => {
-    e.preventDefault();
-    if (!user) return toast("Not signed in. Please log in again.");
-    const btn = document.getElementById("finishBtn");
-    loading(btn, true);
-    console.log("Onboarding: starting save for user", user.id);
-
-    const g = id => document.getElementById(id).value;
-    const profile = {
+    return {
         id: user.id,
         business_name: g("businessName"), business_type: g("businessType"),
         registration_number: g("regNumber") || null,
@@ -104,9 +58,37 @@ document.getElementById("form").onsubmit = async e => {
         has_records: document.getElementById("hasRecords").checked,
         has_business_plan: document.getElementById("hasBusinessPlan").checked,
         has_contracts: document.getElementById("hasContracts").checked,
+        imports_exports: g("importsExports"),
     };
-    const score = calcScore();
-    const summary = score >= 80 ? "Strong position" : score >= 60 ? "Needs attention" : score >= 40 ? "Moderate risk" : "High risk";
+}
+
+function calcScore() {
+    const report = buildComplianceReport(buildProfileDraft(), {});
+    document.getElementById("scoreVal").textContent = `${report.score}%`;
+    document.getElementById("scoreMsg").textContent =
+        `${report.band.label} — ${report.applicableCount} obligation${report.applicableCount === 1 ? "" : "s"} apply to your business.`;
+    const card = document.getElementById("scoreCard");
+    card.classList.remove("band-excellent", "band-good", "band-at-risk", "band-critical");
+    card.classList.add(`band-${report.band.id}`);
+    return report;
+}
+
+function setValue(id, val) { const el = document.getElementById(id); if (el) el.value = val; }
+function setChecked(id, val) { const el = document.getElementById(id); if (el) el.checked = val; }
+
+document.getElementById("form").onsubmit = async e => {
+    e.preventDefault();
+    if (!user) return toast("Not signed in. Please log in again.");
+    const btn = document.getElementById("finishBtn");
+    loading(btn, true);
+    console.log("Onboarding: starting save for user", user.id);
+
+    const g = id => document.getElementById(id).value;
+    const profile = buildProfileDraft();
+    const { imports_exports, ...profileCore } = profile;
+    const report = calcScore();
+    const score = report.score;
+    const summary = report.band.label;
 
     try {
         // Ensure profile row exists then update it (fixes users who signed up before trigger)
@@ -128,7 +110,7 @@ document.getElementById("form").onsubmit = async e => {
 
         // Save company profile
         const { error: companyErr } = await supabase.from("company_profiles").upsert({
-            ...profile, compliance_score: score, score_summary: summary
+            ...profileCore, compliance_score: score, score_summary: summary
         });
         if (companyErr) {
             console.error("Onboarding: company upsert error:", companyErr);
@@ -151,6 +133,13 @@ document.getElementById("form").onsubmit = async e => {
         } else {
             console.log("Onboarding: verified company row exists");
         }
+
+        // Best-effort: column added in docs/supabase-migration-v6.sql — don't block onboarding if it's missing
+        const { error: ieErr } = await supabase
+            .from("company_profiles")
+            .update({ imports_exports })
+            .eq("id", user.id);
+        if (ieErr) console.warn("Onboarding: imports_exports not saved (run docs/supabase-migration-v6.sql):", ieErr.message);
 
         toast("Profile saved! Loading dashboard...", "success");
         setTimeout(() => { window.location.href = "/dashboard/dashboard.html"; }, 600);

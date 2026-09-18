@@ -1,13 +1,22 @@
 
-:root{--navy:#1B2A5C;--green:#4CAF50;--teal:#2CB5B8;--bg:#F4F6FA;--text:#374151;--muted:#6B7280;--border:#E5E7EB;--danger:#DC2626}
+:root{
+--navy:#1B2A5C;--navy-hover:#2E4A8E;--navy-deep:#0F1A3A;--navy-teal:#1B4A5C;
+--green:#4CAF50;--green-hover:#388E3C;
+--teal:#2CB5B8;--teal-light:#9FE8E9;--teal-tint:#E0F2F1;--teal-dark:#0F4C4F;
+--bg:#F4F6FA;--text:#374151;--muted:#6B7280;--border:#E5E7EB;
+--surface:#FAFBFC;--surface-hover:#F3F4F6;
+--danger:#DC2626;--danger-hover:#B91C1C;--danger-bg:#FEE2E2;--danger-border:#FECACA;--danger-text:#991B1B;
+--success-bg:#ECFDF5;--success-border:#A7F3D0;--success-text:#065F46;
+--warn:#D97706;--warn-bg:#FFFBEB;--warn-border:#FDE68A;--warn-text:#92400E
+}
 *{margin:0;padding:0;box-sizing:border-box}
 body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg)}
 
 /* ── Brand Panel (left) ── */
-.brand-panel{background:linear-gradient(160deg,#1B2A5C 0%,#1E3A6E 50%,#1B5A5C 100%);padding:60px 48px;display:flex;flex-direction:column;justify-content:center;color:#fff;position:relative;overflow:hidden}
+.brand-panel{background:linear-gradient(160deg,#0F1A3A 0%,#1B2A5C 40%,#1B4A5C 100%);padding:60px 48px;display:flex;flex-direction:column;justify-content:center;color:#fff;position:relative;overflow:hidden}
 .brand-panel::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(44,181,184,.12) 0%,transparent 50%)}
 .brand-panel img{width:225px;margin-bottom:14px;position:relative;background:#fff;padding:16px 20px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.22)}
-.brand-panel .slogan{position:relative;opacity:1;font-size:.78rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#9FE8E9;margin-bottom:26px}
+.brand-panel .slogan{position:relative;opacity:1;font-size:.78rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--teal-light);margin-bottom:26px}
 .brand-panel h1{font-size:1.8rem;margin-bottom:12px;position:relative}
 .brand-panel p{opacity:.8;line-height:1.6;position:relative}
 .brand-panel ul{list-style:none;margin-top:24px;position:relative}
@@ -22,7 +31,7 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
 /* ── Form Elements ── */
 .form-group{margin-bottom:16px}
 .form-group label{display:block;font-weight:600;font-size:.82rem;color:var(--text);margin-bottom:6px}
-.form-group input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:.95rem;background:#FAFBFC;transition:border .2s,box-shadow .2s}
+.form-group input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:.95rem;background:var(--surface);transition:border .2s,box-shadow .2s}
 .form-group input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(44,181,184,.1);background:#fff}
 
 /* ── Legal links ── */
@@ -35,7 +44,7 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
 .btn{width:100%;padding:13px;border:none;border-radius:8px;font:inherit;font-weight:600;font-size:.9rem;cursor:pointer;transition:background .2s,transform .1s;display:inline-flex;align-items:center;justify-content:center;gap:8px}
 .btn:active{transform:scale(.99)}
 .btn-primary{background:var(--navy);color:#fff}
-.btn-primary:hover{background:#2E4A8E}
+.btn-primary:hover{background:var(--navy-hover)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 
 /* ── Misc ── */
@@ -46,8 +55,8 @@ body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;font-family:'Se
 .hide{display:none!important}
 .toast{position:fixed;top:20px;right:20px;padding:14px 20px;border-radius:8px;font-size:.9rem;font-weight:500;z-index:9999;transform:translateX(120%);transition:transform .3s ease}
 .toast.show{transform:translateX(0)}
-.toast-error{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA}
-.toast-success{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0}
+.toast-error{background:var(--danger-bg);color:var(--danger-text);border:1px solid var(--danger-border)}
+.toast-success{background:var(--success-bg);color:var(--success-text);border:1px solid var(--success-border)}
 .forgot{text-align:right;margin-bottom:14px}
 
 @media(max-width:768px){body{grid-template-columns:1fr}.brand-panel{display:none}.form-panel{padding:32px 20px}}

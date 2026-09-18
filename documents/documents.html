@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1B2A5C">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/bg.jpeg">
+<title>Documents — Beko ComplianceOS</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/assets/mobile-nav.css">
+<script src="/assets/mobile-nav.js" defer></script>
+<link rel="stylesheet" href="documents.css">
+</head>
+<body>
+
+<aside>
+    <img src="/beko-logo.png" alt="Beko ComplianceOS">
+    <nav>
+        <a href="/dashboard/dashboard.html">Dashboard</a>
+        <a href="/templates/templates.html">Templates</a>
+        <a href="/education/education.html">Education Hub</a>
+        <a href="/tenders/tenders.html">Tenders</a>
+        <a href="/aml/aml.html">AML Screener</a>
+        <a href="/notifications/notifications.html">Notifications</a>
+        <a href="/consultation/consultation.html">Consultation</a>
+        <a href="/compliance/compliance.html">Compliance</a>
+        <a href="/documents/documents.html" class="active">Documents</a>
+        <a href="/profile/profile.html">Profile</a>
+    </nav>
+    <div class="user-box">
+        <div class="name" id="userName">User</div>
+        <div class="email" id="userEmail">—</div>
+        <button class="logout" id="logoutBtn">Logout</button>
+    </div>
+</aside>
+
+<main>
+    <div class="header">
+        <div class="header-row">
+            <div>
+                <p class="eyebrow">Document centre</p>
+                <h1>Documents</h1>
+                <p>Upload the documents your business is missing and keep every file stored securely in one place.</p>
+            </div>
+            <button class="btn btn-primary" id="quickUpload"><i class="fas fa-upload"></i> Upload document</button>
+        </div>
+    </div>
+
+    <div class="progress-wrap">
+        <div class="progress-label"><span>Document readiness</span><span id="docsPercent">0%</span></div>
+        <progress id="docsProgress" value="0" max="100"></progress>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" data-tab="outstanding">Outstanding Documents <span class="count-pill" id="missingCount">0</span></button>
+        <button class="tab" data-tab="all">All Documents</button>
+    </div>
+
+    <div class="upload-queue hidden" id="uploadQueue"></div>
+
+    <!-- Outstanding required documents -->
+    <div class="panel active" id="outstandingPanel">
+        <p class="panel-hint">These are the documents your business is expected to keep on file. Upload a file for each one to clear its missing flag. PDF, Word, Excel, or image files &middot; Max 10 MB each.</p>
+        <div class="req-list" id="outstandingList"></div>
+        <div id="outstandingEmpty" class="empty hidden">
+            <i class="fas fa-circle-check"></i>
+            No outstanding documents — everything required is uploaded.
+        </div>
+    </div>
+
+    <!-- All uploaded documents -->
+    <div class="panel" id="allPanel">
+        <div class="file-drop" id="fileDrop">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <div class="drop-title">Click or drag files here to upload</div>
+            <div class="drop-hint">PDF, Word, Excel, or image files &middot; Max 10 MB each</div>
+            <input type="file" id="fileInput" multiple style="display:none" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
+        </div>
+        <div class="file-list" id="fileList"></div>
+        <div id="filesEmpty" class="empty hidden">No documents uploaded yet.</div>
+    </div>
+
+    <input type="file" id="reqInput" style="display:none" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
+</main>
+
+<script type="module" src="documents.js"></script>
+</body>
+</html>

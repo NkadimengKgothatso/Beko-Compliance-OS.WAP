@@ -62,7 +62,7 @@ async function loadHistory() {
         const date = new Date(h.created_at).toLocaleDateString("en-ZA");
         const el = document.createElement("div");
         el.className = "row";
-        el.style = "display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #F3F4F6";
+        el.style = "display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--surface-hover)";
         el.innerHTML = `
             <span><strong>${h.risk_level}</strong> · Score ${h.score}%</span>
             <span style="color:var(--muted);font-size:.85rem">${date}</span>
